@@ -1,0 +1,16 @@
+# atejeda
+# load it: [[ -f $HOME/.atejeda_profile ]] && . $HOME/.atejeda_profile
+
+# user defined
+
+# aliases
+alias ll='ls -l'
+alias ssh-aoc='ssh ssh.aoc.nrao.edu -l $USER $*'
+alias ssh-cv='ssh ssh.cv.nrao.edu -l $USER $*'
+alias yum-install='apt-get $*'
+alias yum-search='apt-cache $*'
+
+# exports
+export PATH=$HOME/bin:$PATH
+
+# functions
