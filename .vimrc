@@ -1,0 +1,1 @@
+/media/atejeda/primary/repo/github/confs/vim/vimrc
