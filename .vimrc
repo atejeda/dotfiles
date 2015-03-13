@@ -1,4 +1,16 @@
+" 
 " atejeda
+"
+" plugins:
+"   https://github.com/tpope/vim-fugitive
+"   https://github.com/kien/ctrlp.vim
+"   https://github.com/scrooloose/nerdtree
+"   https://github.com/bling/vim-airline
+"   https://github.com/scrooloose/nerdcommenter
+"   https://github.com/Lokaltog/vim-easymotion
+"   https://github.com/davidhalter/jedi-vim
+"   https://github.com/scrooloose/syntastic
+"
 
 syntax on
 "colors slate
