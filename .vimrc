@@ -12,6 +12,10 @@
 "   https://github.com/scrooloose/syntastic
 "
 
+
+" pathogen
+execute pathogen#infect()
+
 syntax on
 "colors slate
 	
@@ -50,3 +54,8 @@ set noswapfile
 " disable visual bell
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
+
+" plugins
+
+"airline
+set laststatus=2
