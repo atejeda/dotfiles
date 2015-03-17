@@ -12,18 +12,27 @@
 "   https://github.com/scrooloose/syntastic
 "
 
+" Colors setup
+" Update your .screenrc file and add the following:
+" attrcolor b ".I"
+" termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E38;5;%dm'
+" defbce "on"
+set t_Co=256
 
-" pathogen
+" pathogen and plugins
 execute pathogen#infect()
 
-syntax on
-"colors slate
-	
-" font for gvim
-"if has('gui_running')
-"    set guifont=Monospace\ 7
-"endif
+" gui configuration
+if has('gui_running')
+    "set guifont=Monospace\ 7
+    colors pablo
+endif
 
+"
+" configuration
+"
+
+syntax on
 " tab = 4 spaces
 filetype plugin indent on
 set tabstop=4
@@ -33,10 +42,9 @@ set expandtab
 autocmd FileType make setlocal noexpandtab
 "autocmd FileType * set tabstop=2|set shiftwidth=2|set noexpandtab " python
 "autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab " python
-
 " stuff
-set nowrap " don't wrap lines
-set number " always show line numbers
+"set nowrap " don't wrap lines
+"set number " always show line numbers
 set showmatch " set show matching parenthesis
 set ignorecase " ignore case when searching
 set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
@@ -50,12 +58,9 @@ set visualbell " don't beep
 set noerrorbells " don't beep
 set nobackup
 set noswapfile
-
 " disable visual bell
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
 
-" plugins
-
-"airline
+" airspeed
 set laststatus=2
