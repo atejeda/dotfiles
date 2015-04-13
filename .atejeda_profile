@@ -3,14 +3,18 @@
 
 # user defined
 
+export PS1='\[\033[01;30m\]\t `if [ $? = 0 ]; then echo "\[\033[01;32m\]<0>"; else echo "\[\033[01;31m\]<0>"; fi` \[\033[00;31m\]\h\[\033[00;37m\]:\[\033[00;34m\]\w\[\033[00m\] > '
+
 # aliases
 alias ll='ls -l'
 alias ssh-aoc='ssh ssh.aoc.nrao.edu -l $USER $*'
 alias ssh-cv='ssh ssh.cv.nrao.edu -l $USER $*'
-alias yum-install='apt-get $*'
-alias yum-search='apt-cache $*'
+alias ubuntu-yum='apt-get $*'
+alias ubuntu-yum-search='apt-cache $*'
+alias env-acs='. /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs'
+alias ssh-dell='ssh 146.88.7.84 $*'
+alias tar-bz='tar cjf $1.tar.bz2 $1'
+alias tar-gz='tar czf $1.tar.gz $1'
 
 # exports
 export PATH=$HOME/bin:$PATH
-
-# functions
