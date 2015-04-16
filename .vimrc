@@ -26,7 +26,7 @@ execute pathogen#infect()
 
 " gui configuration
 if has('gui_running')
-    set guifont=Monospace\ 9
+    "set guifont=Monospace\ 9
     colors Sunburst
 else
     colors railscasts

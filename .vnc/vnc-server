@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# default geometry is 1280x1024 
+unalias vncserver
+cmd="vncserver -geometry 1600x1200 -depth 16 :$1"
+echo $cmd && eval $cmd
