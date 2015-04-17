@@ -3,7 +3,7 @@
 
 # user defined
 
-export PS1="\[\e[00;37m\]\T \h \u > \[\e[0m\]"
+export PS1="\[\e[00;37m\]\T \u@\H \W >\[\e[0m\]"
 
 # aliases
 alias ll='ls -l'
