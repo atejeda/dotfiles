@@ -9,12 +9,9 @@ export PS1='\[\033[01;30m\]\t `if [ $? = 0 ]; then echo "\[\033[01;32m\]<0>"; el
 alias ll='ls -l'
 alias ssh-aoc='ssh ssh.aoc.nrao.edu -l $USER $*'
 alias ssh-cv='ssh ssh.cv.nrao.edu -l $USER $*'
-alias ubuntu-yum='apt-get $*'
-alias ubuntu-yum-search='apt-cache $*'
-alias env-acs='. /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs'
+alias acs-env='. /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs'
 alias ssh-dell='ssh 146.88.7.84 $*'
-alias tar-bz='tar cjf $1.tar.bz2 $1'
-alias tar-gz='tar czf $1.tar.gz $1'
+alias gpg-file='gpg -c --cipher-algo AES256'
 
 # exports
 export PATH=$HOME/bin:$PATH
