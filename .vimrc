@@ -26,7 +26,11 @@ execute pathogen#infect()
 
 " gui configuration
 if has('gui_running')
-    "set guifont=Monospace\ 9
+    if $HOSTNAME == "hangar18"
+        set guifont=Monospace\ 7
+    else
+        set guifont=Monospace\ 9
+    endif
     colors Sunburst
 else
     colors railscasts
