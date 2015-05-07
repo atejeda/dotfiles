@@ -1,6 +1,11 @@
 " 
 " atejeda
 "
+
+" checkout the modules by:
+"   git submodule init
+"   git sobmodule update
+"
 " plugins:
 "   https://github.com/tpope/vim-fugitive
 "   https://github.com/kien/ctrlp.vim
@@ -22,8 +27,6 @@ set t_Co=256
 " pathogen and plugins
 execute pathogen#infect()
 
-
-
 " gui configuration
 if has('gui_running')
     if $HOSTNAME == "hangar18"
@@ -39,7 +42,7 @@ endif
 "
 " configuration
 "
-
+"
 syntax on
 " tab = 4 spaces
 filetype plugin indent on
