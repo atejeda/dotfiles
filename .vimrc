@@ -17,6 +17,11 @@
 "   https://github.com/scrooloose/syntastic
 "
 
+" encoding
+
+set encoding=utf-8
+set fileencoding=utf-8
+
 " Colors setup
 " Update your .screenrc file and add the following:
 " attrcolor b ".I"
