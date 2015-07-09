@@ -2,10 +2,10 @@
 # [[ -f $HOME/.atejeda_profile ]] && . $HOME/.atejeda_profile
 
 # locate configuration
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
+#export LC_ALL=en_US.UTF-8
+#export LANG=en_US.UTF-8
+#export LANGUAGE=en_US.UTF-8
+#export LC_CTYPE=en_US.UTF-8
 
 # user defined
 # export PS1="\[\e[00;37m\]\T \u@\H \W >\[\e[0m\] "
