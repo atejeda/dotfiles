@@ -1,5 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_cnt =9
 let g:netrw_dirhist_1='/export/home/hangar18/atejeda'
 let g:netrw_dirhist_2='/export/home/hangar18/atejeda/.Mathematica'
 let g:netrw_dirhist_3='/export/home/hangar18/atejeda/Desktop/refactor/jstartalma/src'
@@ -7,3 +7,5 @@ let g:netrw_dirhist_4='/export/home/hangar18/atejeda'
 let g:netrw_dirhist_5='/export/home/hangar18/atejeda/Desktop/casa-cpp-test/catch'
 let g:netrw_dirhist_6='/export/home/hangar18/atejeda'
 let g:netrw_dirhist_7='/export/home/hangar18/atejeda/dotfiles'
+let g:netrw_dirhist_8='/export/home/hangar18/atejeda/Desktop/ICT-TICKETS/ICT-5149/trunk/TMCDB/Persistence'
+let g:netrw_dirhist_9='/export/home/hangar18/atejeda/Desktop/wsdl.xml'

@@ -30,7 +30,7 @@ INTLIST_FILE=$INTLIST_ROOT/intlist
 # setup the the intlist
 if [[ -f $INTLIST_FILE ]]; then
     for _intlist in $(cat $INTLIST_FILE); do
-        export INTLIST=$INTLIST_ROOT/$_intlist:$INTLIST
+        export INTLIST=$INTLIST:$INTLIST_ROOT/$_intlist
     done
 fi
 
