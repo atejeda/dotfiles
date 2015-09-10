@@ -37,7 +37,7 @@ if has('gui_running')
     if $HOSTNAME == "hangar18"
         set guifont=Monospace\ 9
     else
-        set guifont=Monospace\ 9
+        set guifont=Hack\ 10
     endif
     colors Sunburst
 else

@@ -8,9 +8,9 @@
 #export LC_CTYPE=en_US.UTF-8
 
 # aliases
-alias ll='ls -lhtrF'
-alias la='ls -A'
-alias l='ls -CF'
+#alias ll='ls -lhtrF'
+#alias la='ls -A'
+#alias l='ls -CF'
 
 # ssh-connections
 alias encrypt-file='gpg -c --cipher-algo AES256'
