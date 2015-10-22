@@ -1,4 +1,11 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/export/home/hangar18/atejeda/powerline/fonts'
-let g:netrw_dirhist_2='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/RELEASE-B/ICD/SharedCode/TMCDB/alma.obops.tmcdb.explorer'
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.tycho'
+let g:netrw_dirhist_2='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.targetplatform'
+let g:netrw_dirhist_3='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.tycho'
+let g:netrw_dirhist_4='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.app'
+let g:netrw_dirhist_5='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.tycho'
+let g:netrw_dirhist_6='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.app'
+let g:netrw_dirhist_7='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4/alma.tmcdb.hardware.explorer.builder'
+let g:netrw_dirhist_8='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/Eclipse4'
+let g:netrw_dirhist_9='/export/home/hangar18/atejeda/Desktop/repo/svn/alma/trunk/CONTROL/TMCDB/Explorer/e4/src/alma.tmcdb.hardware.explorer.builder'

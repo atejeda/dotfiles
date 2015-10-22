@@ -15,6 +15,7 @@
 # ssh-connections
 alias encrypt-file='gpg -c --cipher-algo AES256'
 alias reload-profile=". ~/.bashrc"
+alias gen-introot='getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null && export INTROOT=$PWD/$1_introot && reload-profile'
 
 # functions
 
@@ -27,6 +28,7 @@ PROFILE_ALMA=/alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
 INTLIST_ROOT=/alma/intlist
 INTLIST_FILE=$INTLIST_ROOT/intlist
 
+unset INTLIST
 # setup the the intlist
 if [[ -f $INTLIST_FILE ]]; then
     for _intlist in $(cat $INTLIST_FILE); do
@@ -38,10 +40,14 @@ fi
 [[ -f $PROFILE_ALMA ]] && . $PROFILE_ALMA
 
 function show-alma {
+    if [[ ! -z $INTROOT ]] && echo "introot : " $INTROOT
     if [[ -f $INTLIST_FILE ]]; then
         echo "intlist:"
         for _intlist in $(cat $INTLIST_FILE); do
-            echo "$INTLIST_ROOT/$_intlist"
+            echo "    $INTLIST_ROOT/$_intlist"
         done
     fi
 }
+
+export PS1="*\h \W % "
+
