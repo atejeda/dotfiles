@@ -1,5 +1,5 @@
 # atejeda
-# [[ -f $HOME/dotfiles/.atejeda_profile ]] && . $HOME/dotfiles/.atejeda_profile
+# [[ -f $HOME/dotfiles/.atejeda.profile ]] && . $HOME/dotfiles/.atejeda.profile
 
 # locales
 #export LC_ALL=en_US.UTF-8
