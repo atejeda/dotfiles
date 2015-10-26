@@ -46,9 +46,10 @@ fi
 [[ -f $PROFILE_ALMA ]] && . $PROFILE_ALMA
 
 function show-alma {
-    [[ ! -z $INTROOT ]] && echo "introot : " $INTROOT
+    echo "ACS " readlink -f /alma/ACS-current
+    [[ ! -z $INTROOT ]] && echo "INTROOT : " $INTROOT
     if [[ -f $INTLIST_FILE ]]; then
-        echo "intlist:"
+        echo "INTLIST :"
         for _intlist in $(cat $INTLIST_FILE); do
             echo "    $INTLIST_ROOT/$_intlist"
         done
