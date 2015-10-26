@@ -19,6 +19,11 @@ alias gen-introot='getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null 
 
 # functions
 
+generate-introot {
+    getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null && export INTROOT=$PWD/$1_introot && reload-profile'
+    show-alma
+}
+
 # exports
 export PATH=$HOME/bin:$PATH
 export EDITOR=vim
@@ -40,7 +45,7 @@ fi
 [[ -f $PROFILE_ALMA ]] && . $PROFILE_ALMA
 
 function show-alma {
-    if [[ ! -z $INTROOT ]] && echo "introot : " $INTROOT
+    [[ ! -z $INTROOT ]] && echo "introot : " $INTROOT
     if [[ -f $INTLIST_FILE ]]; then
         echo "intlist:"
         for _intlist in $(cat $INTLIST_FILE); do
