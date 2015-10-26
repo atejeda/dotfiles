@@ -15,13 +15,14 @@
 # ssh-connections
 alias encrypt-file='gpg -c --cipher-algo AES256'
 alias reload-profile=". ~/.bashrc"
-alias gen-introot='getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null && export INTROOT=$PWD/$1_introot && reload-profile'
 
 # functions
 
-generate-introot {
-    getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null && export INTROOT=$PWD/$1_introot && reload-profile'
-    show-alma
+function generate-introot {
+    getTemplateForDirectory INTROOT $PWD/$1_introot >> /dev/null;
+    export INTROOT=$PWD/$1_introot;
+    reload-profile;
+    show-alma;
 }
 
 # exports
