@@ -2,10 +2,11 @@
   core:
     audioBeep: false
     themes: [
-      "one-dark-ui"
+      "seti-ui"
       "atom-dark-syntax"
     ]
   editor:
+    fontFamily: "monospace"
     fontSize: 12
     invisibles: {}
     scrollPastEnd: true
@@ -14,5 +15,6 @@
     tabType: "soft"
   "exception-reporting":
     userId: "02056aa3-6498-e6a6-9b00-d974527c951b"
+  "one-dark-ui": {}
   welcome:
     showOnStartup: false
