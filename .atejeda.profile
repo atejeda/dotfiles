@@ -59,3 +59,4 @@ function show-alma {
 export PS1="*\h \W % "
 if [[ -f `which svn-1.8.10` ]]; then alias svn=svn-1.7.7; fi
 
+export PATH=/home/atejeda/anaconda2/bin:$PATH
