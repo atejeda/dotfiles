@@ -1,6 +1,14 @@
 "*":
+  "atom-beautify":
+    _analyticsUserId: "a0de7585-f8a2-45a5-9493-12a53abbd2a6"
   core:
     audioBeep: false
+    ignoredNames: [
+      ".git"
+      ".svn"
+      ".pyc"
+      ".class"
+    ]
     themes: [
       "seti-ui"
       "atom-dark-syntax"
