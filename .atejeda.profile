@@ -44,6 +44,7 @@ if [[ -f $HOME/.alma ]]; then
     # load profile
     . $PROFILE_ALMA
     [[ -f $HOME/.conda ]] && export PATH=/home/atejeda/anaconda2/bin:$PATH
+    export PS1="# "
 fi
 
 # several outputs
