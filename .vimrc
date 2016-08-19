@@ -57,3 +57,18 @@ set nobackup
 set noswapfile
 set noerrorbells visualbell t_vb=
 set laststatus=2
+
+" vim hints
+" http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
+":map #list of maps
+":verbose map , # print the map on that key
+"Ctrl-I #Tab
+"Ctrl-[ #Esc
+"Ctrl-M #Enter
+"Ctrl-H #backspace
+
+" key maps
+" invoke a local makefile
+:nmap <C-S-B> :make<CR>
+" list and swith to buffer
+:nmap llb     :ls<CR>:buffer<Space> 
