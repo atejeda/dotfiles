@@ -1,14 +1,5 @@
 # [[ -f $HOME/dotfiles/.atejeda.profile ]] && . $HOME/dotfiles/.atejeda.profile
 
-# general aliases
-alias encrypt-file='gpg -c --cipher-algo AES256'
-alias reload-profile=". ~/.bashrc"
-
-# exports
-export PATH=$HOME/bin:$PATH
-export EDITOR=vim
-export PS1="# "
-
 # load alma stuff
 if [[ -f $HOME/.alma ]]; then
 
@@ -46,6 +37,19 @@ if [[ -f $HOME/.alma ]]; then
     [[ -f $HOME/.conda ]] && export PATH=/home/atejeda/anaconda2/bin:$PATH
     export PS1="# "
 fi
+
+# general aliases
+alias encrypt-file='gpg -c --cipher-algo AES256'
+alias reload-profile=". ~/.bashrc"
+
+# exports
+export PATH=$HOME/bin:$PATH
+export EDITOR=vim
+export PS1="# "
+
+# vim
+bind -r '\C-s'
+stty -ixon
 
 # several outputs
 echo "# `date`"

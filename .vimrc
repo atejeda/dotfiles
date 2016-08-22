@@ -66,9 +66,36 @@ set laststatus=2
 "Ctrl-[ #Esc
 "Ctrl-M #Enter
 "Ctrl-H #backspace
+"Ctrl-R #undo
+"
+"Ctrl+W +/-: increase/decrease height
+"Ctrl+W >/<: increase/decrease width
+"Ctrl+W _: set height (ex. 50<C-w>_)
+"Ctrl+W |: set width (ex. 50<C-w>|)
+"Ctrl+W =: equalize width and height of all windows
+"See also: :help CTRL_W
+"
+" :resize [+-]N - resize a horizontal split, increasing or decreasing
+" height by N characters.
+" :vertical resize [+-]N - resize a vertical split, increasing or
+" decreasing height by N characters.
+" :resize N - resize a horizontal split, setting height to N
+" characters.
+" vertical resize N - resize a vertical split, setting width
+" to N characters.
+" 
+" :set mouse=n
+" (I use 'n', but 'a' also works)
+" and you have to set the tty mouse type
+" :set ttymouse=xterm2
 
 " key maps
-" invoke a local makefile
-:nmap <C-S-B> :make<CR>
-" list and swith to buffer
-:nmap llb     :ls<CR>:buffer<Space> 
+:noremap <C-S-B> :make<CR>
+:noremap <C-S-B> <C-C>:make<CR>
+:inoremap <C-S-B> <C-O>:make<CR>
+
+:nmap llb :ls<CR>:buffer<Space>
+
+:noremap <C-S> :update<CR>
+:vnoremap <C-S> <C-C>:update<CR>
+:inoremap <C-S> <C-O>:update<CR>
