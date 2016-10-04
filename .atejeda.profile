@@ -27,7 +27,7 @@ if [[ -f $HOME/.alma ]]; then
 
     function generate-introot {
         getTemplateForDirectory INTROOT $PWD/INTROOT >> /dev/null;
-        export INTROOT=$PWD/$1_introot;
+        export INTROOT=$PWD/INTROOT;
         reload-profile;
         show-alma;
     }
