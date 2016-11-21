@@ -14,7 +14,7 @@ if [[ -f $HOME/.alma ]]; then
         done
     fi
 
-    function show-alma {
+    function alma {
         echo "ACS     = "`readlink -f /alma/ACS-current`
         [[ ! -z $INTROOT ]] && echo "INTROOT = "$INTROOT
         if [[ -f $INTLIST_FILE ]]; then
@@ -25,11 +25,11 @@ if [[ -f $HOME/.alma ]]; then
         fi
     }
 
-    function generate-introot {
+    function gintroot {
         getTemplateForDirectory INTROOT $PWD/INTROOT >> /dev/null;
         export INTROOT=$PWD/INTROOT;
-        reload-profile;
-        show-alma;
+        rprofile;
+        salma;
     }
 
     # load profile
@@ -50,6 +50,3 @@ export PS1="# "
 # vim
 bind -r '\C-s'
 stty -ixon
-
-# several outputs
-echo "# `date`"
