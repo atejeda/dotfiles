@@ -25,7 +25,7 @@ if [[ -f $HOME/.alma ]]; then
         fi
     }
 
-    function gintroot {
+    function introot {
         getTemplateForDirectory INTROOT $PWD/INTROOT >> /dev/null;
         export INTROOT=$PWD/INTROOT;
         rprofile;
@@ -35,7 +35,6 @@ if [[ -f $HOME/.alma ]]; then
     # load profile
     . $PROFILE_ALMA
     [[ -f $HOME/.conda ]] && export PATH=/home/atejeda/anaconda2/bin:$PATH
-    export PS1="# "
 fi
 
 # general aliases
@@ -45,8 +44,7 @@ alias reload-profile=". ~/.bashrc"
 # exports
 export PATH=$HOME/bin:$PATH
 export EDITOR=vim
-export PS1="# "
 
 # vim
-bind -r '\C-s'
-stty -ixon
+#bind -r '\C-s'
+#stty -ixon

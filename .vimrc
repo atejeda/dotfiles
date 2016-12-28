@@ -16,8 +16,8 @@
 "
 execute pathogen#infect()
 
-if has('gui_running')
-"    colors Sunburst
+"if has('gui_running')
+"colors Sunburst
 "set guifont=Monospace\ 9
 "if $HOSTNAME == "hangar18"
 "set guifont=Monospace\ 9
@@ -26,10 +26,11 @@ if has('gui_running')
 "endif
 "colors Sunburst
 "else
-"colors railscasts
-endif
+"colors mustang
+"endif
 
 syntax on
+colorscheme atom-dark-256
 
 filetype plugin indent on
 
@@ -57,6 +58,16 @@ set nobackup
 set noswapfile
 set noerrorbells visualbell t_vb=
 set laststatus=2
+"set fdc=4
+"set fdl=1
+set number
+set splitright
+set splitbelow
+
+:set mouse=n
+" (I use 'n', but 'a' also works)
+" " and you have to set the tty mouse type
+:set ttymouse=xterm2
 
 " vim hints
 " http://vim.wikia.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
