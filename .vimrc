@@ -16,18 +16,11 @@
 "
 execute pathogen#infect()
 
-"if has('gui_running')
-"colors Sunburst
-"set guifont=Monospace\ 9
 "if $HOSTNAME == "hangar18"
-"set guifont=Monospace\ 9
-"else
-"set guifont=Hack\ 9
-"endif
-"colors Sunburst
-"else
-"colors mustang
-"endif
+if has ('gui_running')
+    set guifont=Monospace\ 8
+    set guifont=Hack\ 8
+endif
 
 syntax on
 colorscheme atom-dark-256

@@ -46,5 +46,5 @@ export PATH=$HOME/bin:$PATH
 export EDITOR=vim
 
 # vim
-#bind -r '\C-s'
-#stty -ixon
+bind -r '\C-s'
+stty -ixon
