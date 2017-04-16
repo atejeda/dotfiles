@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# gnome-session-properties  
+
+# gnome, disable tracker control
+tracker control -k
+
+# gnome, mouse configuration
+xinput --set-prop 10 "Device Accel Constant Deceleration" 2
+xinput --set-prop 10 "Device Accel Velocity Scaling" 1

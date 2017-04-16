@@ -1,9 +1,10 @@
 alias ee='gpg -c --cipher-algo AES256'
 alias rr=". ~/.bashrc"
 
-export PATH=~/anaconda3/bin:$PATH
+export PATH=$HOME/anaconda3/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export EDITOR=vim
+export PS1="\[\e[0;31m\]# \[\e[0;37m\]\t \[\e[0;37m\]\# \[\e[0;32m\]\W \[\e[0;33m\]> \[\e[0m\]"
 
 # vim, control+save
 bind -r '\C-s'
