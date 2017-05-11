@@ -1,10 +1,12 @@
-# [[ -f $HOME/dotfiles/.atejeda.profile ]] && . $HOME/dotfiles/.atejeda.profile
+# general aliases
+alias encrypt-file='gpg -c --cipher-algo AES256'
+alias rr=". ~/.bashrc"
 
 # load alma stuff
 if [[ -f $HOME/.alma ]]; then
 
     PROFILE_ALMA=/alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
-    INTLIST_ROOT=/alma/intlist
+    INTLIST_ROOT=/alma/ACS-current/intlist
     INTLIST_FILE=$INTLIST_ROOT/intlist
 
     unset INTLIST
@@ -14,7 +16,7 @@ if [[ -f $HOME/.alma ]]; then
         done
     fi
 
-    function alma {
+    function aa {
         echo "ACS     = "`readlink -f /alma/ACS-current`
         [[ ! -z $INTROOT ]] && echo "INTROOT = "$INTROOT
         if [[ -f $INTLIST_FILE ]]; then
@@ -25,28 +27,22 @@ if [[ -f $HOME/.alma ]]; then
         fi
     }
 
-    function introot {
+    function ii {
         getTemplateForDirectory INTROOT $PWD/INTROOT >> /dev/null;
         export INTROOT=$PWD/INTROOT;
-        rprofile;
-        salma;
+        rr;
+        aa;
     }
 
-    # load profile
-    . $PROFILE_ALMA
-    [[ -f $HOME/.conda ]] && export PATH=/home/atejeda/anaconda2/bin:$PATH
+    source $PROFILE_ALMA
 fi
-
-# general aliases
-alias encrypt-file='gpg -c --cipher-algo AES256'
-alias reload-profile=". ~/.bashrc"
 
 # exports
 export PATH=$HOME/bin:$PATH
 export EDITOR=vim
 export PS1="\[\e[0;31m\]# \[\e[0;37m\]\t \[\e[0;37m\]\# \[\e[0;32m\]\W \[\e[0;33m\]> \[\e[0m\]"
-export PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$"
+export PS1="alma \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$ "
 
 # vim
-bind -r '\C-s'
-stty -ixon
+#bind -r '\C-s'
+#stty -ixon
