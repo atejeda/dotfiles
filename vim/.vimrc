@@ -13,6 +13,7 @@
 "   https://github.com/Lokaltog/vim-easymotion
 "   https://github.com/davidhalter/jedi-vim
 "   https://github.com/scrooloose/syntastic
+"   https://github.com/editorconfig/editorconfig-vim
 "
 execute pathogen#infect()
 
