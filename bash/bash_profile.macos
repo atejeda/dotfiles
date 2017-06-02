@@ -1,0 +1,21 @@
+alias l.='ls -d .* --color=auto'
+alias ll='ls -l --color=auto'
+alias lr='ls -ltra'
+alias ls='ls --color=auto'
+
+alias ee='gpg -c --cipher-algo AES256'
+alias rr=". ~/.bashrc"
+
+export PATH=$HOME/anaconda3/bin:$PATH
+export PATH=$HOME/bin:$PATH
+export EDITOR=vim
+export PS1="\[\e[0;31m\]# \[\e[0;37m\]\t \[\e[0;37m\]\# \[\e[0;32m\]\W \[\e[0;33m\]> \[\e[0m\]"
+
+# vim, control+save
+bind -r '\C-s'
+stty -ixon
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# nvm use node
