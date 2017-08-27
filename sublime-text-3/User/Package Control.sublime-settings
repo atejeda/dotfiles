@@ -2,7 +2,6 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
-		"SublimeCodeIntel"
 	],
 	"installed_packages":
 	[
@@ -14,6 +13,7 @@
 		"Package Control",
 		"SideBarEnhancements",
 		"Skins",
+		"SublimeCodeIntel",
 		"Terminal",
 		"Theme - Brogrammer",
 		"Trimmer",
