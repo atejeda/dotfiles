@@ -2,12 +2,21 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
+		"SublimeCodeIntel"
 	],
 	"installed_packages":
 	[
+		"Alignment",
 		"Clang Format",
 		"Colorsublime",
+		"Git",
+		"MarkdownEditing",
 		"Package Control",
+		"SideBarEnhancements",
+		"Skins",
+		"Terminal",
+		"Theme - Brogrammer",
+		"Trimmer",
 		"WordCount"
 	]
 }

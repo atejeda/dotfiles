@@ -1,9 +1,10 @@
 {
-	"color_scheme": "Packages/Color Scheme - Default/Twilight.tmTheme",
+	"color_scheme": "Packages/Theme - Brogrammer/brogrammer.tmTheme",
 	"font_face": "Monospace",
 	"font_size": 9,
 	"ignored_packages":
 	[
+		"SublimeCodeIntel",
 		"Vintage"
 	],
 	"rulers":
@@ -11,6 +12,8 @@
 		80,
 		120
 	],
+	"skin": "Theme - Brogrammer/Brogrammer",
 	"tab_size": 4,
+	"theme": "Brogrammer.sublime-theme",
 	"translate_tabs_to_spaces": true
 }
