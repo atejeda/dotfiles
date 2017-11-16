@@ -1,0 +1,15 @@
+[user]
+    name = atejeda
+    email = alexis.tejeda@gmail.com
+[credential]
+    helper = cache --timeout=3600
+[push]
+    default = matching
+[alias]
+    co = checkout
+    ci = commit
+    st = status
+    br = branch
+    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+    type = cat-file -t
+    dump = cat-file -p
