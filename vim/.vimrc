@@ -19,8 +19,8 @@ execute pathogen#infect()
 
 "if $HOSTNAME == "hangar18"
 if has ('gui_running')
-    set guifont=Monospace\ 8
-    set guifont=Hack\ 8
+    set guifont=Monospace\ 9
+    "set guifont=Hack\ 9
 endif
 
 syntax on
