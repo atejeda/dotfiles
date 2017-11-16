@@ -14,5 +14,6 @@
 	"skin": "Theme - Brogrammer/Brogrammer",
 	"tab_size": 4,
 	"theme": "Brogrammer.sublime-theme",
-	"translate_tabs_to_spaces": true
+	"translate_tabs_to_spaces": true,
+	"update_check": false
 }
