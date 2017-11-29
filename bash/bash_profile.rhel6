@@ -50,13 +50,15 @@ export EDITOR=vim
 #export PS1="alma $ "
 
 # git branch on command prompt
-if [[ ${EUID} == 0 ]] ; then
-    export PS1='\[\033[01;31m\]\u@\h \[\033[01;34m\]\w\[\033[01;35m\]$(parse_git_branch)\[\033[01;34m\] \$ \[\033[00m\]'
-else
-    export PS1='\[\033[01;31m\]\u@\h \[\033[01;00m\]\w\[\033[00;33m\]$(parse_git_branch)\[\033[00m\] \$ '
-fi
-# Change the window title of X terminals
-PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}:$(parse_git_branch)\007"'
+# if [[ ${EUID} == 0 ]] ; then
+#     export PS1='\[\033[01;31m\]\u@\h \[\033[01;34m\]\w\[\033[01;35m\]$(parse_git_branch)\[\033[01;34m\] \n\$ \[\033[00m\]'
+# else
+#     export PS1='\[\033[01;31m\]\u@\h \[\033[01;00m\]\w\[\033[00;33m\]$(parse_git_branch)\[\033[00m\] \n\$ '
+# fi
+
+export PS1='\[\033[01;31m\]\h \W\[\033[01;33m\]$(parse_git_branch)\[\033[01;34m\] \[\033[00m\]\$ '
+export PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}:$(parse_git_branch)\007"'
+
 
 # vim
 #bind -r '\C-s'
