@@ -4,7 +4,8 @@
 [credential]
     helper = cache --timeout=3600
 [push]
-    default = matching
+    #default = matching
+    default = current
 [alias]
     co = checkout
     ci = commit
