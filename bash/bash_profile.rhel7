@@ -1,0 +1,66 @@
+# helpers
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
+}
+
+# general aliases
+alias encrypt-file='gpg -c --cipher-algo AES256'
+alias rr=". ~/.bashrc"
+alias ll='ls -lshtr --color=auto'
+
+# load alma stuff
+if [[ -f $HOME/.alma ]]; then
+
+    PROFILE_ALMA=/alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
+    INTLIST_ROOT=/alma/ACS-current/intlist
+    INTLIST_FILE=$INTLIST_ROOT/intlist
+
+    unset INTLIST
+    if [[ -f $INTLIST_FILE ]]; then
+        for _intlist in $(cat $INTLIST_FILE); do
+            export INTLIST=$INTLIST:$INTLIST_ROOT/$_intlist
+        done
+    fi
+
+    function aa {
+        echo "ACS     = "`readlink -f /alma/ACS-current`
+        [[ ! -z $INTROOT ]] && echo "INTROOT = "$INTROOT
+        if [[ -f $INTLIST_FILE ]]; then
+            echo "INTLIST ="
+            for _intlist in $(cat $INTLIST_FILE); do
+                echo "    $INTLIST_ROOT/$_intlist"
+            done
+        fi
+    }
+
+    function ii {
+        getTemplateForDirectory INTROOT $PWD/INTROOT >> /dev/null;
+        export INTROOT=$PWD/INTROOT;
+        rr;
+        aa;
+    }
+
+    source $PROFILE_ALMA
+    ulimit -u 4096
+fi
+
+# exports
+export PATH=$HOME/bin:$PATH
+export EDITOR=vim
+#export PS1="\[\e[0;31m\]# \[\e[0;37m\]\t \[\e[0;37m\]\# \[\e[0;32m\]\W \[\e[0;33m\]> \[\e[0m\]"
+#export PS1="alma $ "
+
+# git branch on command prompt
+# if [[ ${EUID} == 0 ]] ; then
+#     export PS1='\[\033[01;31m\]\u@\h \[\033[01;34m\]\w\[\033[01;35m\]$(parse_git_branch)\[\033[01;34m\] \n\$ \[\033[00m\]'
+# else
+#     export PS1='\[\033[01;31m\]\u@\h \[\033[01;00m\]\w\[\033[00;33m\]$(parse_git_branch)\[\033[00m\] \n\$ '
+# fi
+
+export PS1='\[\033[01;31m\]\h \W\[\033[01;33m\]$(parse_git_branch)\[\033[01;34m\] \[\033[00m\]\$ '
+export PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}:$(parse_git_branch)\007"'
+
+
+# vim
+#bind -r '\C-s'
+#stty -ixon
