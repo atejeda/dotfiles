@@ -24,8 +24,8 @@ if has ('gui_running')
 endif
 
 syntax on
-"colorscheme atom-dark-256
-colorscheme default
+colorscheme atom-dark-256
+"colorscheme default
 
 filetype plugin indent on
 
