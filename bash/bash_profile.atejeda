@@ -10,16 +10,9 @@ parse_git_branch() {
 # exports
 export PATH=$HOME/bin:$PATH
 export EDITOR=vim
-export PS1='$ $([ -n $TMUX ] && tmux rename-window "$PWD$(parse_git_branch)")'
-
 #export PS1='\[\033[01;31m\]\h \W\[\033[01;33m\]$(parse_git_branch)\[\033[01;34m\] \[\033[00m\]\$ '
 #export PROMPT_COMMAND='echo -ne "\033]0;${PWD/$HOME/~}:$(parse_git_branch)\007"'
 
-# vim
-#bind -r '\C-s'
-#stty -ixon
-
-# ALMA
 if [[ -f $HOME/.alma ]]; then
     PROFILE_ALMA=/alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
     INTLIST_ROOT=/alma/ACS-current/intlist
@@ -53,3 +46,6 @@ if [[ -f $HOME/.alma ]]; then
     source $PROFILE_ALMA
     ulimit -u 4096
 fi
+
+
+export PS1='$ $([ -n $TMUX ] && tmux rename-window "$PWD$(parse_git_branch)")'
