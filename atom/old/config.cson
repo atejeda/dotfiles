@@ -1,0 +1,11 @@
+"*":
+  core: {}
+  editor:
+    fontSize: 11
+    showIndentGuide: true
+    softTabs: false
+    tabType: "soft"
+  "exception-reporting":
+    userId: "4e426101-ca3e-4270-9428-fbc8f3b88db5"
+  "one-dark-ui":
+    fontSize: 12
