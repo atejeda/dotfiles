@@ -47,5 +47,4 @@ if [[ -f $HOME/.alma ]]; then
     ulimit -u 4096
 fi
 
-
-export PS1='$ $([ -n $TMUX ] && tmux rename-window "$PWD$(parse_git_branch)")'
+export PS1='> $([ -n $TMUX ] && tmux rename-window "$PWD$(parse_git_branch)")'
