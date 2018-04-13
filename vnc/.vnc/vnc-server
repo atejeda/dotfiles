@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-
+# macbook air 1440x900
+# older 1600x1200
 # default geometry is 1280x1024 
 unalias vncserver
-cmd="vncserver -geometry 1600x1200 -depth 16 :$1"
+cmd="vncserver -geometry 1440x900 -depth 16 :$1"
 echo $cmd && eval $cmd

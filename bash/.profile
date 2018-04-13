@@ -1,6 +1,9 @@
 # atejeda profile
 
-alias ll='ls -l'
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 
 function encrypt_file {
   gpg -c --cipher-algo AES256 $1
@@ -19,6 +22,18 @@ function load_almasw {
 
 function load_profile {
   . ~/.bashrc
+}
+
+function load_nvm {
+  [[ ! -f ~/.nvm ]] && return
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+
+function load_conda {
+  [[ ! -f ~/.conda ]] && return
+  export PATH="~/miniconda3/bin:$PATH"
 }
 
 function load_intlist {
@@ -54,10 +69,12 @@ function rename_tmux_window {
 
 load_intlist
 load_almasw
+load_conda
+load_nvm
 
 export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
-export PS1='$(rename_tmux_window)> '
+export PS1='$(rename_tmux_window)\e[1m\e[32m>\e[39m\e[21m '
 
 # export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
 # ulimit -u 4096
