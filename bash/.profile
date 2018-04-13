@@ -74,7 +74,8 @@ load_nvm
 
 export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
-export PS1='$(rename_tmux_window)\e[1m\e[32m>\e[39m\e[21m '
+#export PS1='$(rename_tmux_window)\e[1m\e[32m>\e[39m\e[21m '
+export PS1='$(rename_tmux_window)> '
 
 # export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
 # ulimit -u 4096
