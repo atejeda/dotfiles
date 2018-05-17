@@ -25,14 +25,12 @@ function load_profile {
 }
 
 function load_nvm {
-  [[ ! -d ~/.nvm ]] && return
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 }
 
 function load_conda {
-  [[ ! -f ~/.conda ]] && return
   export PATH="~/miniconda3/bin:$PATH"
 }
 
@@ -69,8 +67,6 @@ function rename_tmux_window {
 
 load_intlist
 load_almasw
-load_conda
-load_nvm
 
 export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
