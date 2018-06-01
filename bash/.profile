@@ -52,7 +52,7 @@ function load_introot {
   getTemplateForDirectory INTROOT ${INTROOT_DIRECTORY} 2>&1 > /dev/null
   unset INTROOT
   export INTROOT=${INTROOT_DIRECTORY};
-  reload_profile
+  load_profile
 }
 
 function get_git {
