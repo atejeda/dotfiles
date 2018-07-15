@@ -1,7 +1,5 @@
-# atejeda profile
-
 # some more ls aliases
-alias ll='ls -alF'
+alias ll='ls -lF'
 alias la='ls -A'
 alias l='ls -CF'
 
@@ -12,12 +10,18 @@ function encrypt_file {
 function load_almasw {
   [[ ! -f ~/.alma ]] && return
   source /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
-  echo "ALMA profile loaded..."
+  echo "\e[2mALMA profile loaded...\e[0m"
   echo "* * *"
-  echo "ACS     = $ALMASW_RELEASE"
-  echo "INTROOT = ${INTROOT:none}"
-  echo "INTLIST = ${INTLIST:none}"
+  echo "\e[1m\e[92mACSe\[0m     = $ALMASW_RELEASE"
+  echo "\e[1m\e[92mINTROOT\e[0m = ${INTROOT:-none}"
+  echo "\e[1m\e[92mINTLIST\e[0m = ${INTLIST:-none}"
   echo "* * *"
+}
+
+function show_almasw {
+  echo "\e[1m\e[92mACSe\[0m     = $ALMASW_RELEASE"
+  echo "\e[1m\e[92mINTROOT\e[0m = ${INTROOT:-none}"
+  echo "\e[1m\e[92mINTLIST\e[0m = ${INTLIST:-none}"
 }
 
 function load_profile {
@@ -31,7 +35,8 @@ function load_nvm {
 }
 
 function load_conda {
-  export PATH="~/miniconda3/bin:$PATH"
+  [[ ! -f ~/.conda ]] && return
+  export PATH="$HOME/anaconda3/bin:$PATH"
 }
 
 function load_intlist {
@@ -67,11 +72,12 @@ function rename_tmux_window {
 
 load_intlist
 load_almasw
+load_nvm
+load_conda
 
 export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
-#export PS1='$(rename_tmux_window)\e[1m\e[32m>\e[39m\e[21m '
-export PS1='$(rename_tmux_window)> '
+export PS1='$(rename_tmux_window)\e[96m\h\e[39m \e[1m\e[92m\W\e[0m \e[2m\t\e[0m> \[$(tput sgr0)\]'
 
 # export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
 # ulimit -u 4096
