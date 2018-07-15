@@ -1,24 +1,52 @@
 {
-    "editor.fontSize": 12,
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true,
-    "terminal.integrated.fontFamily": "",
-    "terminal.integrated.fontSize": 12,
-    "python.disablePromptForFeatures": [
-        "pylint"
-    ],
-    "gitlens.advanced.messages": {
-        "suppressCommitHasNoPreviousCommitWarning": false,
-        "suppressCommitNotFoundWarning": false,
-        "suppressFileNotUnderSourceControlWarning": true,
-        "suppressGitVersionWarning": false,
-        "suppressLineUncommittedWarning": false,
-        "suppressNoRepositoryWarning": false,
-        "suppressUpdateNotice": true,
-        "suppressWelcomeNotice": false
+    // others
+    "window.zoomLevel": 0,
+    "[typescript]": {},
+    
+    // theme
+    "workbench.iconTheme": "vs-minimal",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorCustomizations" : {
+        "editor.background": "#0E1112",
+        "sideBar.background": "#191F20",
     },
-    "liveServer.settings.donotShowInfoMsg": true,
-    "files.autoSave": "afterDelay",
-    "liveServer.settings.donotVerifyTags": true,
-    "workbench.colorTheme": "Monokai Dimmed"
+    
+    // editor
+    "editor.fontSize": 12,
+    "editor.fontFamily": "Hack",
+    "editor.multiCursorModifier": "alt",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": true,
+    "editor.rulers": [ 80, 100, 120 ],
+
+    // terminal
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.fontFamily": "Hack",
+    
+    // activity bar
+    "workbench.activityBar.visible": false,
+    "zenMode.hideActivityBar": false,
+    
+    // telemetry
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+
+    // git lens
+    "gitlens.codeLens.authors.enabled": false,
+    "gitlens.codeLens.recentChange.enabled": false
 }
+
+// # extensions
+// code --list-extensions
+// # extensions:
+// code --install-extension Equinusocio.vsc-material-theme
+// code --install-extension PKief.material-icon-theme
+// code --install-extension TsumiNa.Seti-theme
+// code --install-extension dbaeumer.vscode-eslint
+// code --install-extension ifaxity.onedark
+// code --install-extension magicstack.MagicPython
+// code --install-extension mohsen1.prettify-json
+// code --install-extension ms-python.python
+// code --install-extension ritwickdey.LiveServer
