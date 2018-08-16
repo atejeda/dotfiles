@@ -29,18 +29,19 @@ function load_profile {
 }
 
 function load_nvm {
+  [[ ! -f ~/.load_nvm ]] && return
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 }
 
 function load_conda {
-  [[ ! -f ~/.conda ]] && return
+  [[ ! -f ~/.load_conda ]] && return
   export PATH="$HOME/anaconda3/bin:$PATH"
 }
 
 function load_intlist {
-  [[ ! -f ~/.alma ]] && return
+  [[ ! -f ~/.load_alma ]] && return
   local INTLIST_ROOT=/alma/ACS-current/intlist
   local INTLIST_FILE=${INTLIST_ROOT}/intlist
   unset INTLIST
@@ -52,7 +53,7 @@ function load_intlist {
 }
 
 function load_introot {
-  [[ ! -f ~/.alma ]] && return
+  [[ ! -f ~/.load_alma ]] && return
   local INTROOT_DIRECTORY=$PWD/$([[ -n $1 ]] && echo $1 || echo INTROOT)
   getTemplateForDirectory INTROOT ${INTROOT_DIRECTORY} 2>&1 > /dev/null
   unset INTROOT
