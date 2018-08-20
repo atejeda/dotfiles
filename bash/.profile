@@ -2,13 +2,11 @@
 alias ll='ls -lF'
 alias la='ls -A'
 alias l='ls -CF'
-
-function encrypt_file {
-  gpg -c --cipher-algo AES256 $1
-}
+alias ef='gpg -c --cipher-algo AES256'
+alias oo='xdg-open'
 
 function load_almasw {
-  [[ ! -f ~/.alma ]] && return
+  [[ ! -f ~/.load_alma ]] && return
   source /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
   echo "\e[2mALMA profile loaded...\e[0m"
   echo "* * *"
