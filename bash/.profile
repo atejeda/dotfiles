@@ -76,7 +76,7 @@ load_conda
 
 export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
-export PS1='$(rename_tmux_window)\e[96m\h\e[39m \e[1m\e[92m\W\e[0m \e[2m\t\e[0m> \[$(tput sgr0)\]'
+export PS1='$(rename_tmux_window)$ '
 
 # export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
 # ulimit -u 4096
