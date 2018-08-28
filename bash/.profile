@@ -8,18 +8,12 @@ alias oo='xdg-open'
 function load_almasw {
   [[ ! -f ~/.load_alma ]] && return
   source /alma/ACS-current/ACSSW/config/.acs/.bash_profile.acs
-  echo "\e[2mALMA profile loaded...\e[0m"
-  echo "* * *"
-  echo "\e[1m\e[92mACSe\[0m     = $ALMASW_RELEASE"
-  echo "\e[1m\e[92mINTROOT\e[0m = ${INTROOT:-none}"
-  echo "\e[1m\e[92mINTLIST\e[0m = ${INTLIST:-none}"
-  echo "* * *"
 }
 
 function show_almasw {
-  echo "\e[1m\e[92mACSe\[0m     = $ALMASW_RELEASE"
-  echo "\e[1m\e[92mINTROOT\e[0m = ${INTROOT:-none}"
-  echo "\e[1m\e[92mINTLIST\e[0m = ${INTLIST:-none}"
+  echo "ACS     = ${ALMASW_RELEASE:-none}"
+  echo "INTROOT = ${INTROOT:-none}"
+  echo "INTLIST = ${INTLIST:-none}"
 }
 
 function load_profile {
