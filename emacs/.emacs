@@ -1,4 +1,5 @@
 ;; packages
+;; M-x package-refresh-contents RET
 ;; M-x package-install RET org RET
 ;; M-x package-install RET auto-complete RET
 ;; M-x package-install RET autopair RET
@@ -11,7 +12,9 @@
 ;; M-x package-install RET smart-mode-line-powerline-theme RET
 ;; M-x package-install RET spaceline RET
 ;; M-x package-install RET spaceline-all-the-icons RET
-;; M-x package-install RET fill-column-indicator
+;; M-x package-install RET fill-column-indicator RET
+;; M-x package-install multiple-cursors
+;; M-x package-install one-themes
 
 ;; theme
 
@@ -35,11 +38,11 @@
  '(send-mail-function (quote smtpmail-send-it))
  '(tool-bar-mode nil))
 
-
 (set-border-color "green") ;; Set emacs border color
 (display-time)
 (line-number-mode 1)
 (column-number-mode 1)
+(global-linum-mode t)
 
 (setq default-frame-alist
       (append default-frame-alist
@@ -49,6 +52,18 @@
                 (set-mouse-color "goldenrod")
                 )))
 
+;;(if (display-graphic-p)
+;;    (setq initial-frame-alist
+;;         '(
+;;            (tool-bar-lines . 1)
+;;            (width . 106)
+;;           (height . 60)
+;;            (background-color . "#131415")
+;;            (left . 50)
+;;            (top . 50)))
+;;  (setq initial-frame-alist '( (tool-bar-lines . 1))))
+;;(setq default-frame-alist initial-frame-alist)
+
 ;; faces
 
 (custom-set-faces
@@ -57,6 +72,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Monospace" :slant normal :weight normal :height 90 :width normal)))))
+
+(if (eq system-type 'darwin)
+    (custom-set-faces
+     '(default ((t (:family "Monaco" :slant normal :weight normal :height 100 :width normal)))))
+  )
 
 ;; tabs and identation
 
@@ -115,6 +135,8 @@ There are two things you can do about this warning:
 
 ;; packages configurations
 
+; lines
+
 (sml/setup)
 (setq sml/theme 'dark)
 
@@ -126,10 +148,12 @@ There are two things you can do about this warning:
 
 (require 'all-the-icons)
 
+; neotree
 (require 'neotree)
 (global-set-key [f8] 'neotree-toggle)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
+; org mode
 (require 'org)
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
@@ -146,8 +170,14 @@ There are two things you can do about this warning:
                     (unless (null neo-window)
                       (setq neo-window-width (window-width neo-window)))))))
 
+; neotree
 (setq neo-window-fixed-size nil)
 
-(require 'fill-column-indicator)
-(setq fci-rule-width 1)
-(setq fci-rule-color "darkblue")
+; one dark pro background color
+(load-theme 'one-dark t)
+(set-background-color "#101113") ; supposed to be 141718
+
+; multiple cursors
+; http://emacsrocks.com/e13.html
+(require 'multiple-cursors)
+
