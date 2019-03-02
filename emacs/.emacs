@@ -15,6 +15,7 @@
 ;; M-x package-install RET fill-column-indicator RET
 ;; M-x package-install multiple-cursors
 ;; M-x package-install one-themes
+;; M-x package-install whitespace
 
 ;; theme
 
@@ -34,7 +35,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (fill-column-indicator spaceline-all-the-icons sr-speedbar smart-mode-line-powerline-theme org neotree dired-k autopair auto-complete all-the-icons)))
+    (whitespace-cleanup-mode fill-column-indicator spaceline-all-the-icons sr-speedbar smart-mode-line-powerline-theme org neotree dired-k autopair auto-complete all-the-icons)))
  '(send-mail-function (quote smtpmail-send-it))
  '(tool-bar-mode nil))
 
@@ -42,7 +43,7 @@
 (display-time)
 (line-number-mode 1)
 (column-number-mode 1)
-(global-linum-mode t)
+;;(global-linum-mode t)
 
 (setq default-frame-alist
       (append default-frame-alist
@@ -174,10 +175,13 @@ There are two things you can do about this warning:
 (setq neo-window-fixed-size nil)
 
 ; one dark pro background color
-(load-theme 'one-dark t)
+;;(load-theme 'one-dark t)
 (set-background-color "#101113") ; supposed to be 141718
 
 ; multiple cursors
 ; http://emacsrocks.com/e13.html
 (require 'multiple-cursors)
 
+(require 'whitespace)
+ (setq whitespace-style '(face empty tabs lines-tail trailing))
+ (global-whitespace-mode t)
