@@ -20,8 +20,8 @@
 ;; look and feel
 
 (display-time)
-(menu-bar-mode -1) 
-(tool-bar-mode -1) 
+(menu-bar-mode -1)
+(tool-bar-mode -1)
 (toggle-scroll-bar -1)
 (column-number-mode 1)
 (line-number-mode 1)
@@ -32,10 +32,10 @@
 (load-theme 'wombat 1)
 (set-face-attribute 'fringe nil :background nil)
 
-(cond 
-  ((eq system-type 'gnu/linux) 
+(cond
+  ((eq system-type 'gnu/linux)
     (set-face-attribute 'default nil :family "Monospace" :height 90))
-  ((eq system-type 'darwin) 
+  ((eq system-type 'darwin)
     (set-face-attribute 'default nil :family "Monaco" :height 100)))
 
 (if (display-graphic-p)
@@ -116,6 +116,7 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
+(setq org-support-shift-select 'always)
 
 ;; neotree
 (require 'neotree)
@@ -135,6 +136,19 @@
 (require 'multiple-cursors)
 
 ;; whitespace
+;; https://www.emacswiki.org/emacs/WhiteSpace
 (require 'whitespace)
- (setq whitespace-style '(face empty tabs lines-tail trailing))
- (global-whitespace-mode t)
+(setq whitespace-style '(face tabs empty lines-tail trailing))
+(global-whitespace-mode t)
+(setq r (whitespace-looking-back whitespace-empty-at-eob-regexp (+ 1 whitespace-point)))
+;;(setq whitespace-newline nil)
+(setq whitespace-empty-at-bob-regexp nil)
+(setq whitespace-empty-at-eob-regexp nil)
+
+;; fill column indicator
+(require 'fill-column-indicator)
+(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(global-fci-mode 1)
+(setq fci-rule-column 79)
+(setq fci-rule-width 1)
+(setq fci-rule-color "white")
