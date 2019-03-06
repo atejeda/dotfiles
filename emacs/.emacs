@@ -13,9 +13,14 @@
 ;; M-x package-install RET spaceline RET
 ;; M-x package-install RET spaceline-all-the-icons RET
 ;; M-x package-install RET fill-column-indicator RET
-;; M-x package-install multiple-cursors
-;; M-x package-install one-themes
-;; M-x package-install whitespace
+;; M-x package-install multiple-cursors RET
+;; M-x package-install RET one-themes RET
+;; M-x package-install RET whitespace RET
+;; M-x package-install RET rtags RET
+;; M-x package-install RET company RET
+;; M-x package-install RET flycheck RET
+;; M-x package-install RET flycheck-rtags RET
+;; M-x package-install RET helm RE
 
 ;; look and feel
 
@@ -79,6 +84,7 @@
       version-control t
       kept-new-versions 3
       kept-old-versions 2)
+;;(setq create-lockfiles nil)
 
 ;; custom keys
 
@@ -95,6 +101,13 @@
 ;; M-x package-refresh-contents
 (require 'package)
 (package-initialize)
+(add-to-list 'package-archives
+             '("elpa.gnu.org" . "https://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa.org" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("stable.melpa.org" . "http://stable.melpa.org/packages/") t)
+;;(package-refresh-contents)
 
 ;; packages configurations
 
@@ -144,6 +157,7 @@
 ;;(setq whitespace-newline nil)
 (setq whitespace-empty-at-bob-regexp nil)
 (setq whitespace-empty-at-eob-regexp nil)
+(setq whitespace-tab nil)
 
 ;; fill column indicator
 (require 'fill-column-indicator)
@@ -152,3 +166,53 @@
 (setq fci-rule-column 79)
 (setq fci-rule-width 1)
 (setq fci-rule-color "white")
+
+;; ensure that we use only rtags checking
+;; https://github.com/Andersbakken/rtags#optional-1
+(defun setup-flycheck-rtags ()
+  (interactive)
+  (flycheck-select-checker 'rtags)
+  ;; RTags creates more accurate overlays.
+  (setq-local flycheck-highlighting-mode nil)
+  (setq-local flycheck-check-syntax-automatically nil))
+
+;; rtags
+(when (require 'rtags nil :noerror)
+  ;; make sure you have company-mode installed
+  (require 'company)
+  (define-key c-mode-base-map (kbd "M-.")
+    (function rtags-find-symbol-at-point))
+  (define-key c-mode-base-map (kbd "M-,")
+    (function rtags-find-references-at-point))
+  ;; disable prelude's use of C-c r, as this is the rtags keyboard prefix
+  ;;;;(define-key prelude-mode-map (kbd "C-c r") nil)
+  ;; install standard rtags keybindings. Do M-. on the symbol below to
+  ;; jump to definition and see the keybindings.
+  (rtags-enable-standard-keybindings)
+  ;; comment this out if you don't have or don't use helm
+  (setq rtags-use-helm t)
+  ;; company completion setup
+  (setq rtags-autostart-diagnostics t)
+  (rtags-diagnostics)
+  (setq rtags-completions-enabled t)
+  (push 'company-rtags company-backends)
+  (global-company-mode)
+  (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+  ;; use rtags flycheck mode -- clang warnings shown inline
+  (require 'flycheck-rtags)
+  ;; c-mode-common-hook is also called by c++-mode
+  (add-hook 'c-mode-common-hook #'setup-flycheck-rtags))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (helm spaceline-all-the-icons smart-mode-line-powerline-theme one-themes neotree multiple-cursors flycheck-rtags fill-column-indicator dired-k company autopair auto-complete))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
