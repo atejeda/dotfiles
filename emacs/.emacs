@@ -41,7 +41,9 @@
   ((eq system-type 'gnu/linux)
     (set-face-attribute 'default nil :family "Monospace" :height 90))
   ((eq system-type 'darwin)
-    (set-face-attribute 'default nil :family "Monaco" :height 100)))
+    (set-face-attribute 'default nil :family "Monaco" :height 90)))
+
+;;(set-frame-font "Monaco-9:antialias=1")
 
 (if (display-graphic-p)
     (progn
@@ -147,6 +149,7 @@
 ;; multiple cursors
 ;; http://emacsrocks.com/e13.html
 (require 'multiple-cursors)
+(global-set-key (kbd "C-c m c") 'mc/edit-lines)
 
 ;; whitespace
 ;; https://www.emacswiki.org/emacs/WhiteSpace
@@ -165,7 +168,7 @@
 (global-fci-mode 1)
 (setq fci-rule-column 79)
 (setq fci-rule-width 1)
-(setq fci-rule-color "white")
+(setq fci-rule-color "grey22")
 
 ;; ensure that we use only rtags checking
 ;; https://github.com/Andersbakken/rtags#optional-1

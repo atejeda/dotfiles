@@ -1,9 +1,9 @@
-# some more ls aliases
 alias ll='ls -lF'
 alias la='ls -A'
 alias l='ls -CF'
 alias ef='gpg -c --cipher-algo AES256'
 alias oo='xdg-open'
+alias gemacs='emacs -nw -bg color-232'
 
 function load_almasw {
   [[ ! -f ~/.load_alma ]] && return
@@ -53,6 +53,12 @@ function load_introot {
   load_profile
 }
 
+function load_gem {
+    [[ ! -f ~/.load_gem ]] && return
+    export GEM_HOME=${HOME}/gems
+    export PATH=${HOME}/gems/bin:$PATH
+}
+
 function get_git {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
 }
@@ -67,9 +73,10 @@ load_intlist
 load_almasw
 load_nvm
 load_conda
+load_gem
 
 export PATH=${HOME}/bin:${PATH}
-export EDITOR=vim
+export EDITOR=gemacs
 export PS1='$(rename_tmux_window)$ '
 
 # export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
