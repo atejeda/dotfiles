@@ -154,10 +154,24 @@
  )
 
 ;; jedi
+;; http://tkf.github.io/emacs-jedi/latest/
 (require 'jedi)
 (add-to-list 'ac-sources 'ac-source-jedi-direct)
-(add-hook 'python-mode-hook 'jedi:setup)
+
+(defun readpp (filepath)
+  (with-temp-buffer
+    (insert-file-contents filepath)
+    (split-string (buffer-string) "\n" t)))
+
+(defun pythonizer ()
+  'jedi-setup
+  (setq jedi:server-args
+        '("--sys-path" "/home/valiant/Desktop/package1"))
+  )
+
+(add-hook 'python-mode-hook 'pythonizer )
 (setq jedi:complete-on-dot t)
+;; M-x jedi:install-server RET
 
 ;; whitespace
 (setq whitespace-style '(face tabs empty lines-tail trailing))
