@@ -1,28 +1,4 @@
-;; packages
-;; M-x package-refresh-contents RET
-;; M-x package-install RET org RET
-;; M-x package-install RET auto-complete RET
-;; M-x package-install RET autopair RET
-;; M-x package-install RET dired-k RET
-;; M-x package-install RET neotree RET
-;; M-x package-install RET all-the-icons
-;; M-x all-the-icons-install-fonts
-;; M-x package-install RET smart-mode-line RET
-;; M-x package-install RET powerline RET
-;; M-x package-install RET smart-mode-line-powerline-theme RET
-;; M-x package-install RET spaceline RET
-;; M-x package-install RET spaceline-all-the-icons RET
-;; M-x package-install RET fill-column-indicator RET
-;; M-x package-install multiple-cursors RET
-;; M-x package-install RET one-themes RET
-;; M-x package-install RET whitespace RET
-;; M-x package-install RET rtags RET
-;; M-x package-install RET company RET
-;; M-x package-install RET flycheck RET
-;; M-x package-install RET flycheck-rtags RET
-;; M-x package-install RET helm RE
-
-;; look and feel
+;; look and feel ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (display-time)
 (menu-bar-mode -1)
@@ -33,34 +9,71 @@
 (global-linum-mode -1)
 (setq inhibit-startup-screen t)
 (setq ring-bell-function 'ignore)
+(savehist-mode 1)
+;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+;; (setq mouse-wheel-progressive-speed nil)
+;; (setq mouse-wheel-follow-mouse 't)
+;; (setq scroll-step 5)
+(define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
+
+;; theme
 
 (load-theme 'wombat 1)
 (set-face-attribute 'fringe nil :background nil)
 
-(cond
-  ((eq system-type 'gnu/linux)
-    (set-face-attribute 'default nil :family "Monospace" :height 90))
-  ((eq system-type 'darwin)
-    (set-face-attribute 'default nil :family "Monaco" :height 100)))
-
+(defun custom-configure-frame (frame)
+  (modify-frame-parameters frame '((vertical-scroll-bars . nil)
+                                   (horizontal-scroll-bars . nil)
+                                   (toggle-scroll-bar))))
+(add-hook 'after-make-frame-functions 'custom-configure-frame)
 (if (display-graphic-p)
     (progn
       (setq color "gray7")
       (set-background-color color)
       (add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (when (display-graphic-p frame)
-              (with-selected-frame frame
-                (set-background-color color))))))
-    (progn
-      (setq color "color-232")
-      (set-background-color color)
-      (add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (when (display-graphic-p frame)
-              (with-selected-frame frame
-                (set-background-color color))))))
-)
+                (lambda (frame)
+                  (when (display-graphic-p frame)
+                    (with-selected-frame frame
+                      (set-background-color color)
+                      (set-face-attribute 'fringe nil :background nil))))))
+  (progn
+    (setq color "color-232")
+    (set-background-color color)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (when (display-graphic-p frame)
+                  (with-selected-frame frame
+                    (set-background-color color)
+                    (set-face-attribute 'fringe nil :background nil))))))
+  )
+
+;; font
+
+(cond
+ ((eq system-type 'gnu/linux)
+  (set-face-attribute 'default nil :family "Monospace" :height 80))
+ ((eq system-type 'darwin)
+  (set-face-attribute 'default nil :family "Monaco" :height 90)))
+
+;; editor ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;; some bindings
+(global-set-key "\C-l" 'goto-line)
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; parens
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+(set-face-background 'show-paren-match-face "#aaaaaa")
+(set-face-attribute 'show-paren-match-face nil
+		    :weight 'bold :underline nil :overline nil :slant 'normal)
+(set-face-foreground 'show-paren-mismatch-face "red")
+(set-face-attribute 'show-paren-mismatch-face nil
+                    :weight 'bold :underline t :overline nil :slant 'normal)
 
 ;; tabs and identation
 
@@ -86,71 +99,81 @@
       kept-old-versions 2)
 ;;(setq create-lockfiles nil)
 
-;; custom keys
+;; packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(global-set-key "\C-l" 'goto-line)
-(global-set-key (kbd "C-x <up>") 'windmove-up)
-(global-set-key (kbd "C-x <down>") 'windmove-down)
-(global-set-key (kbd "C-x <left>") 'windmove-left)
-(global-set-key (kbd "C-x <right>") 'windmove-right)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-;; Have TAB expand in M-:
-(define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
-
-;; melpa
-;; M-x package-refresh-contents
+;;(add-to-list 'load-path "~/.emacs.d")
 (require 'package)
 (package-initialize)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/"))
 (add-to-list 'package-archives
              '("elpa.gnu.org" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa.org" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("stable.melpa.org" . "http://stable.melpa.org/packages/") t)
-;;(package-refresh-contents)
 
-;; packages configurations
+;; packages configuration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;; lines
+;; projectile
+(require 'projectile)
+(projectile-global-mode)
 
-;;(sml/setup)
-;;(setq sml/theme 'dark)
+;; auto-complete
+;;(require 'auto-complete-config)
+;;(ac-config-default)
+;;(setq ac-show-menu-immediately-on-auto-complete t)
 
-(require 'powerline)
-(powerline-default-theme)
-(setq powerline-arrow-shape 'arrow)
-(setq powerline-color1 "grey22")
-(setq powerline-color2 "grey40")
+;; company
+(add-hook 'after-init-hook 'global-company-mode)
+(eval-after-load 'company
+  (lambda ()
+    (set-face-attribute
+     'company-preview
+     nil
+     :background (face-attribute 'company-preview-common :background))))
+(custom-set-faces
+ '(company-preview
+   ((t (:foreground "darkgray" :underline t))))
+ '(company-preview-common
+   ((t (:inherit company-preview))))
+ '(company-tooltip
+   ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-selection
+   ((t (:background "steelblue" :foreground "white"))))
+ '(company-tooltip-common
+   ((((type x)) (:inherit company-tooltip :weight bold))
+    (t (:inherit company-tooltip))))
+ '(company-tooltip-common-selection
+   ((((type x)) (:inherit company-tooltip-selection :weight bold))
+    (t (:inherit company-tooltip-selection))))
+ '(company-scrollbar-fg
+   ((t :background "lightgray")))
+ '(company-scrollbar-bg
+   ((t :background "lightgray")))
+ )
 
-(require 'all-the-icons)
+;; jedi
+;; http://tkf.github.io/emacs-jedi/latest/
+(require 'jedi)
+(add-to-list 'ac-sources 'ac-source-jedi-direct)
 
-;; org mode
-(require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-(setq org-support-shift-select 'always)
+(defun readpp (filepath)
+  (with-temp-buffer
+    (insert-file-contents filepath)
+    (split-string (buffer-string) "\n" t)))
 
-;; neotree
-(require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-;; Fixes: https://github.com/jaypei/emacs-neotree/issues/262
-(eval-after-load "neotree"
-  '(add-to-list 'window-size-change-functions
-                (lambda (frame)
-                  (let ((neo-window (neo-global--get-window)))
-                    (unless (null neo-window)
-                      (setq neo-window-width (window-width neo-window)))))))
-(setq neo-window-fixed-size nil)
+(defun pythonizer ()
+  'jedi-setup
+  (setq jedi:server-args
+        '("--sys-path" "/home/valiant/Desktop/package1"))
+  )
 
-;; multiple cursors
-;; http://emacsrocks.com/e13.html
-(require 'multiple-cursors)
+(add-hook 'python-mode-hook 'pythonizer )
+(setq jedi:complete-on-dot t)
+;; M-x jedi:install-server RET
 
 ;; whitespace
-;; https://www.emacswiki.org/emacs/WhiteSpace
-(require 'whitespace)
 (setq whitespace-style '(face tabs empty lines-tail trailing))
 (global-whitespace-mode t)
 (setq r (whitespace-looking-back whitespace-empty-at-eob-regexp (+ 1 whitespace-point)))
@@ -159,60 +182,46 @@
 (setq whitespace-empty-at-eob-regexp nil)
 (setq whitespace-tab nil)
 
-;; fill column indicator
+;;fill-column-indicator
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
 (global-fci-mode 1)
 (setq fci-rule-column 79)
 (setq fci-rule-width 1)
-(setq fci-rule-color "white")
+(setq fci-rule-color "grey22")
 
-;; ensure that we use only rtags checking
-;; https://github.com/Andersbakken/rtags#optional-1
-(defun setup-flycheck-rtags ()
-  (interactive)
-  (flycheck-select-checker 'rtags)
-  ;; RTags creates more accurate overlays.
-  (setq-local flycheck-highlighting-mode nil)
-  (setq-local flycheck-check-syntax-automatically nil))
+(defvar-local company-fci-mode-on-p nil)
+(defun company-turn-off-fci (&rest ignore)
+  (when (boundp 'fci-mode)
+    (setq company-fci-mode-on-p fci-mode)
+    (when fci-mode (fci-mode -1))))
+(defun company-maybe-turn-on-fci (&rest ignore)
+  (when company-fci-mode-on-p (fci-mode 1)))
+(add-hook 'company-completion-started-hook 'company-turn-off-fci)
+(add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
+(add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
-;; rtags
-(when (require 'rtags nil :noerror)
-  ;; make sure you have company-mode installed
-  (require 'company)
-  (define-key c-mode-base-map (kbd "M-.")
-    (function rtags-find-symbol-at-point))
-  (define-key c-mode-base-map (kbd "M-,")
-    (function rtags-find-references-at-point))
-  ;; disable prelude's use of C-c r, as this is the rtags keyboard prefix
-  ;;;;(define-key prelude-mode-map (kbd "C-c r") nil)
-  ;; install standard rtags keybindings. Do M-. on the symbol below to
-  ;; jump to definition and see the keybindings.
-  (rtags-enable-standard-keybindings)
-  ;; comment this out if you don't have or don't use helm
-  (setq rtags-use-helm t)
-  ;; company completion setup
-  (setq rtags-autostart-diagnostics t)
-  (rtags-diagnostics)
-  (setq rtags-completions-enabled t)
-  (push 'company-rtags company-backends)
-  (global-company-mode)
-  (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
-  ;; use rtags flycheck mode -- clang warnings shown inline
-  (require 'flycheck-rtags)
-  ;; c-mode-common-hook is also called by c++-mode
-  (add-hook 'c-mode-common-hook #'setup-flycheck-rtags))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (helm spaceline-all-the-icons smart-mode-line-powerline-theme one-themes neotree multiple-cursors flycheck-rtags fill-column-indicator dired-k company autopair auto-complete))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; multiple cursors
+(require 'multiple-cursors)
+(global-set-key (kbd "C-c m c") 'mc/edit-lines)
+
+;; org mode
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-support-shift-select 'always)
+
+(require 'powerline)
+(powerline-default-theme)
+(setq powerline-arrow-shape 'arrow)
+(setq powerline-color1 "grey22")
+(setq powerline-color2 "grey40")
+
+;; initializations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(add-hook
+ 'after-init-hook
+ '(lambda ()
+    ;; package initializations
+    ))

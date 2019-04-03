@@ -1,4 +1,3 @@
-# some more ls aliases
 alias ll='ls -lF'
 alias la='ls -A'
 alias l='ls -CF'
@@ -57,6 +56,12 @@ function load_introot {
   load_profile
 }
 
+function load_gem {
+    [[ ! -f ~/.load_gem ]] && return
+    export GEM_HOME=${HOME}/gems
+    export PATH=${HOME}/gems/bin:$PATH
+}
+
 function get_git {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
 }
@@ -75,3 +80,9 @@ load_almasw
 export PATH=${HOME}/bin:${PATH}
 export EDITOR='emacs -nw'
 export PS1='$(rename_tmux_window)> '
+export PATH=${HOME}/bin:${PATH}
+export EDITOR=gemacs
+export PS1='$(rename_tmux_window)$ '
+
+# export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
+# ulimit -u 4096
