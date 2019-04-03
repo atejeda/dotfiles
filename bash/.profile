@@ -4,6 +4,8 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ef='gpg -c --cipher-algo AES256'
 alias oo='xdg-open'
+alias gemacs='emacs -nw -bg color-232'
+alias driver='gemacs ~/Desktop/alma/code/development/pipeline-driver/ADAPT/pipeline-driver/'
 
 function load_almasw {
   [[ ! -f ~/.load_alma ]] && return
@@ -37,10 +39,12 @@ function load_intlist {
   local INTLIST_ROOT=/alma/ACS-current/intlist
   local INTLIST_FILE=${INTLIST_ROOT}/intlist
   unset INTLIST
+  local LOCAL_INTLIST=""
   if [[ -f ${INTLIST_FILE} ]]; then
     for _intlist in $(cat ${INTLIST_FILE}); do
-      export INTLIST=${INTLIST}:${INTLIST_ROOT}/${_intlist}
+      LOCAL_INTLIST=${LOCAL_INTLIST}:${INTLIST_ROOT}/${_intlist}
     done
+    export INTLIST=${LOCAL_INTLIST}
   fi
 }
 
@@ -65,12 +69,9 @@ function rename_tmux_window {
 
 load_intlist
 load_almasw
-load_nvm
-load_conda
+#load_nvm
+#load_conda
 
 export PATH=${HOME}/bin:${PATH}
-export EDITOR=vim
-export PS1='$(rename_tmux_window)$ '
-
-# export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
-# ulimit -u 4096
+export EDITOR='emacs -nw'
+export PS1='$(rename_tmux_window)> '
