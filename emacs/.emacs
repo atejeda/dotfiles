@@ -244,49 +244,103 @@ There are two things you can do about this warning:
 ;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (defun load-python-environment ()
-  ;; pip install virtualenv
-  ;; M-x jedi:install-server
-
-  (require 'company-jedi)
-  (setq jedi:complete-on-dot t)
-  (autoload 'jedi:setup "jedi" nil t)
-  'jedi:setup
-  (add-to-list 'company-backends 'company-jedi)
+  (interactive)
+  ;;(python-mode)
   
-  ;; load custom paths
+  ;; almasw
+  ;; ~/.emacs.d/elpa/jedi-core-20181207.1
+  ;; pip install .
+  ;; /alma/ACS-2019FEB/Python/lib/python2.7/site-packages/jediepcserver.py
+  
+  (require 'company-jedi)
+  (add-to-list 'company-backends 'company-jedi)
+  (autoload 'jedi:setup "jedi" nil t)
+  (setq jedi:complete-on-dot t)
+  (setq jedi:setup-keys t)
+  
+  (setq entries '())
+  
+  ;; from .projectile
   (let ((profile-file (expand-file-name (concat default-directory ".projectile"))))
     (cond
      ((file-exists-p profile-file)
       (with-temp-buffer
         (insert-file-contents profile-file)
         (let ((paths (split-string (buffer-string) "\n" t)))
+          (dolist (path paths)
+            (setq path (expand-file-name path))
+            (message "Appended to jedi:server-args --sys.path %s" path)
+            (setq entries (append entries '("--sys-path") (list path)))
+            )
+          )
+        )
+      )
+     )
+    )
 
-          (setq entries '())
+  ;; from PYTHONPATH
+  (let ((paths (parse-colon-path (getenv "PYTHONPATH"))))
+    (when paths
+      (dolist (path paths)
+        (setq path (expand-file-name path))
+        (message "Appended to jedi:server-args --sys.path %s" path)
+        (setq entries (append entries '("--sys-path") (list path)))
+        )
+      )
+    )
 
-          (while paths
-            (let ((path (expand-file-name (car paths))))
-              ;;(message "Appended to jedi:server-args --sys.path %s" path)
-              (setq entries (append entries '("--sys-path") (list path))) ;; possibly wrong...
-              (setq paths (cdr paths))
-              ))
-          
-          ;;(setq jedi:server-args '("--log-traceback"))
-          ;(setq jedi:server-args '(
-          ;;                        "--sys-path" "/export/home/valhalla/atejeda/Desktop/experiment/packages/"
-          ;;                       ))
+  ;; almasw special case
+  (let ((python-root (getenv "PYTHON_ROOT")))
+    (when python-root
+      (setq python-native
+            (concat
+             (file-name-as-directory
+              (concat
+               (file-name-as-directory python-root)
+               "lib"))
+             "python2.7")
+            )
+      (setq entries (append entries '("--sys-path") (list python-native)))
+      (message "Appended to jedi:server-args --sys.path %s" python-native)
+      )
+    )
 
-          (setq jedi:server-args entries)
+  (let ((python-root (getenv "PYTHON_ROOT")))
+    (when python-root
+      (setq python-bin
+            (concat
+             (file-name-as-directory
+              (concat
+               (file-name-as-directory python-root)
+               "bin"))
+             "python")
+            )
+             
+      ;; TODO make this dynamic
+        (setq jedi:server-command
+              '("/alma/ACS-current/Python/bin/python"
+                "/alma/ACS-current/Python/lib/python2.7/site-packages/jediepcserver.py"))
+      )
+    )
+  
+  (setq jedi:server-args entries)
 
-          ;; (while sys-paths
-          ;;   (let ((sys-path (expand-file-name (car sys-paths))))
-          ;;     (message "Appended to jedi:server-args --sys.path %s" sys-path)
-          ;;     (setq jedi:server-args '("--sys-path" sys-path))
-          ;;     (setq sys-paths (cdr sys-paths))))
+  (local-set-key (kbd "C-s d") 'jedi:show-doc)
 
-          )))))
-
-  (setq jedi:setup-keys t)
   )
+
+
+(defun make-path (&rest relatives)
+  (interactive)
+  (let (absolute)
+    (dolist (relative (butlast relatives))
+      (setq absolute (concat absolute (file-name-as-directory relative))))
+    (setq absolute (concat absolute (car (last relatives))))
+    absolute
+    )
+  )
+
+(message (concat "message => " (make-path "this" "is" "a" "path")))
 
 (add-hook 'python-mode-hook 'load-python-environment)
 
@@ -298,3 +352,11 @@ There are two things you can do about this warning:
 ;;  '(package-selected-packages
 ;;    (quote
 ;;     (## whitespace-cleanup-mode py-autopep8 projectile powerline multiple-cursors jedi flycheck fill-column-indicator company-jedi))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (jedi whitespace-cleanup-mode projectile powerline multiple-cursors fill-column-indicator company-jedi))))
