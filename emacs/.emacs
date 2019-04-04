@@ -51,7 +51,7 @@
 
 (cond
  ((eq system-type 'gnu/linux)
-  (set-face-attribute 'default nil :family "Monospace" :height 80))
+  (set-face-attribute 'default nil :family "Monospace" :height 90))
  ((eq system-type 'darwin)
   (set-face-attribute 'default nil :family "Monaco" :height 90)))
 
@@ -68,12 +68,12 @@
 ;; parens
 (show-paren-mode 1)
 (setq show-paren-delay 0)
-(set-face-background 'show-paren-match-face "#aaaaaa")
-(set-face-attribute 'show-paren-match-face nil
-		    :weight 'bold :underline nil :overline nil :slant 'normal)
-(set-face-foreground 'show-paren-mismatch-face "red")
-(set-face-attribute 'show-paren-mismatch-face nil
-                    :weight 'bold :underline t :overline nil :slant 'normal)
+;;(set-face-background 'show-paren-match-face "#aaaaaa")
+;;(set-face-attribute 'show-paren-match-face nil
+;;		    :weight 'bold :underline nil :overline nil :slant 'normal)
+;;(set-face-foreground 'show-paren-mismatch-face "red")
+;;(set-face-attribute 'show-paren-mismatch-face nil
+;;                    :weight 'bold :underline t :overline nil :slant 'normal)
 
 ;; tabs and identation
 
@@ -102,16 +102,37 @@
 ;; packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;;(add-to-list 'load-path "~/.emacs.d")
+;; (require 'package)
+;; (package-initialize)
+;; ;; (add-to-list 'package-archives
+;; ;;              '("melpa" . "http://melpa.milkbox.net/packages/"))
+;; ;; (add-to-list 'package-archives
+;; ;;              '("elpa.gnu.org" . "https://elpa.gnu.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa.org" . "https://melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("stable.melpa.org" . "http://stable.melpa.org/packages/") t)
+
+
 (require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
-(add-to-list 'package-archives
-             '("elpa.gnu.org" . "https://elpa.gnu.org/packages/") t)
-(add-to-list 'package-archives
-             '("melpa.org" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("stable.melpa.org" . "http://stable.melpa.org/packages/") t)
+
 
 ;; packages configuration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -133,54 +154,48 @@
      nil
      :background (face-attribute 'company-preview-common :background))))
 (custom-set-faces
- '(company-preview
-   ((t (:foreground "darkgray" :underline t))))
- '(company-preview-common
-   ((t (:inherit company-preview))))
- '(company-tooltip
-   ((t (:background "lightgray" :foreground "black"))))
- '(company-tooltip-selection
-   ((t (:background "steelblue" :foreground "white"))))
- '(company-tooltip-common
-   ((((type x)) (:inherit company-tooltip :weight bold))
-    (t (:inherit company-tooltip))))
- '(company-tooltip-common-selection
-   ((((type x)) (:inherit company-tooltip-selection :weight bold))
-    (t (:inherit company-tooltip-selection))))
- '(company-scrollbar-fg
-   ((t :background "lightgray")))
- '(company-scrollbar-bg
-   ((t :background "lightgray")))
- )
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-preview ((t (:foreground "darkgray" :underline t))))
+ '(company-preview-common ((t (:inherit company-preview))))
+ '(company-scrollbar-bg ((t :background "lightgray")))
+ '(company-scrollbar-fg ((t :background "lightgray")))
+ '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
+ '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
+ '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
 
 ;; jedi
 ;; http://tkf.github.io/emacs-jedi/latest/
-(require 'jedi)
-(add-to-list 'ac-sources 'ac-source-jedi-direct)
+;; (require 'jedi)
+;; (add-to-list 'ac-sources 'ac-source-jedi-direct)
 
-(defun readpp (filepath)
-  (with-temp-buffer
-    (insert-file-contents filepath)
-    (split-string (buffer-string) "\n" t)))
+;; (defun readpp (filepath)
+;;   (with-temp-buffer
+;;     (insert-file-contents filepath)
+;;     (split-string (buffer-string) "\n" t)))
 
-(defun pythonizer ()
-  'jedi-setup
-  (setq jedi:server-args
-        '("--sys-path" "/home/valiant/Desktop/package1"))
-  )
+;; (defun pythonizer ()
+;;   ;;'jedi-setup
+;;   ;;(setq jedi:server-args
+;;   ;;      '("--sys-path" "/home/valiant/Desktop/package1"))
+;;   (message "Reverting `%s'..." (buffer-name))
+;;   )
 
-(add-hook 'python-mode-hook 'pythonizer )
-(setq jedi:complete-on-dot t)
+;;(add-hook 'python-mode-hook 'pythonizer )
+;;(setq jedi:complete-on-dot t)
 ;; M-x jedi:install-server RET
 
 ;; whitespace
-(setq whitespace-style '(face tabs empty lines-tail trailing))
-(global-whitespace-mode t)
-(setq r (whitespace-looking-back whitespace-empty-at-eob-regexp (+ 1 whitespace-point)))
-;;(setq whitespace-newline nil)
-(setq whitespace-empty-at-bob-regexp nil)
-(setq whitespace-empty-at-eob-regexp nil)
-(setq whitespace-tab nil)
+;; (setq whitespace-style '(face tabs empty lines-tail trailing))
+;; (global-whitespace-mode t)
+;; (setq r (whitespace-looking-back whitespace-empty-at-eob-regexp (+ 1 whitespace-point)))
+;; ;;(setq whitespace-newline nil)
+;; (setq whitespace-empty-at-bob-regexp nil)
+;; (setq whitespace-empty-at-eob-regexp nil)
+;; (setq whitespace-tab nil)
 
 ;;fill-column-indicator
 (require 'fill-column-indicator)
@@ -225,3 +240,61 @@
  '(lambda ()
     ;; package initializations
     ))
+
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(defun load-python-environment ()
+  ;; pip install virtualenv
+  ;; M-x jedi:install-server
+
+  (require 'company-jedi)
+  (setq jedi:complete-on-dot t)
+  (autoload 'jedi:setup "jedi" nil t)
+  'jedi:setup
+  (add-to-list 'company-backends 'company-jedi)
+  
+  ;; load custom paths
+  (let ((profile-file (expand-file-name (concat default-directory ".projectile"))))
+    (cond
+     ((file-exists-p profile-file)
+      (with-temp-buffer
+        (insert-file-contents profile-file)
+        (let ((paths (split-string (buffer-string) "\n" t)))
+
+          (setq entries '())
+
+          (while paths
+            (let ((path (expand-file-name (car paths))))
+              ;;(message "Appended to jedi:server-args --sys.path %s" path)
+              (setq entries (append entries '("--sys-path") (list path))) ;; possibly wrong...
+              (setq paths (cdr paths))
+              ))
+          
+          ;;(setq jedi:server-args '("--log-traceback"))
+          ;(setq jedi:server-args '(
+          ;;                        "--sys-path" "/export/home/valhalla/atejeda/Desktop/experiment/packages/"
+          ;;                       ))
+
+          (setq jedi:server-args entries)
+
+          ;; (while sys-paths
+          ;;   (let ((sys-path (expand-file-name (car sys-paths))))
+          ;;     (message "Appended to jedi:server-args --sys.path %s" sys-path)
+          ;;     (setq jedi:server-args '("--sys-path" sys-path))
+          ;;     (setq sys-paths (cdr sys-paths))))
+
+          )))))
+
+  (setq jedi:setup-keys t)
+  )
+
+(add-hook 'python-mode-hook 'load-python-environment)
+
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(package-selected-packages
+;;    (quote
+;;     (## whitespace-cleanup-mode py-autopep8 projectile powerline multiple-cursors jedi flycheck fill-column-indicator company-jedi))))
