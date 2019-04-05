@@ -243,31 +243,44 @@ There are two things you can do about this warning:
 
 ;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(defun build-path-from-list (&rest relatives)
-  (let (absolute)
-    (dolist (relative (butlast relatives))
-      (setq absolute (concat absolute (file-name-as-directory relative))))
-    (setq absolute (concat absolute (car (last relatives))))
-    absolute
-    )
-  )
-
-(defun load-python-environment ()
+(defun python-load-environment ()
   (interactive)
-  ;;(python-mode)
-  
-  ;; almasw
-  ;; ~/.emacs.d/elpa/jedi-core-20181207.1
-  ;; pip install .
-  ;; /alma/ACS-current/Python/lib/python2.7/site-packages/jediepcserver.py
+
+  (defun build-path-from-list (&rest relatives)
+    (let (absolute)
+      (dolist (relative (butlast relatives))
+        (setq absolute (concat absolute (file-name-as-directory relative))))
+      (setq absolute (concat absolute (car (last relatives))))
+      absolute
+      )
+    )
   
   (require 'company-jedi)
+  
   (add-to-list 'company-backends 'company-jedi)
-  (setq jedi:setup-keys t)
   (autoload 'jedi:setup "jedi" nil t)
+  
+  (setq jedi:setup-keys t)
   (setq jedi:complete-on-dot t)
-  (setq jedi:get-in-function-call-delay 0)
+  (setq jedi:get-in-function-call--d 0)
   (setq jedi:doc-mode 'rst-mode)
+  
+  (setq jedi-server-path (build-path-from-list user-emacs-directory "jedi-server"))
+  (setq jedi-server-path (expand-file-name jedi-server-path))
+  (setq jedi-server-script (build-path-from-list jedi-server-path "jediepcserver.py"))
+  (setq jedi-server-bin (build-path-from-list jedi-server-path "bin" "jediepcserver"))
+  
+  ;; install jedi server on custom location (if doesn't exists)
+  (unless (file-exists-p jedi-server-script)
+    (with-temp-buffer
+      (setq install-command (format "pip install --upgrade -t %s %s"
+                                    jedi-server-path
+                                    jedi:source-dir))
+      (shell-command install-command "*Messages*" "*Messages*")
+      (message "jedi server ... installing")
+      (message "jedi server ... installed")
+      )
+    )
   
   (setq python-sys-paths '())
 
@@ -290,40 +303,37 @@ There are two things you can do about this warning:
       )
     )
 
-  ;; almasw environment
-  (let ((almasw-instdir (getenv "ALMASW_INSTDIR")))
-    (when almasw-instdir
-      (let ((python-root (getenv "PYTHON_ROOT")))
-        (when python-root
-          (setq python-lib (build-path-from-list python-root "lib" "python2.7"))
-          (setq python-bin (build-path-from-list python-root "bin" "python"))
-          (setq python-sip (build-path-from-list python-lib "site-packages")) 
-          (setq python-ser (build-path-from-list python-sip "jediepcserver.py"))
-
-          ;; python lib
-          (setq python-sys-paths (append python-sys-paths '("--sys-path") (list python-lib)))
-          (message "Appended to jedi:server-args --sys.path %s" python-lib)
-
-          ;; pythonpath
-          (let ((pythonpath (parse-colon-path (getenv "PYTHONPATH"))))
-            (when pythonpath
-              (dolist (path pythonpath)
-                (setq path (expand-file-name path))
-                (message "Appended to jedi:server-args --sys.path %s" path)
-                (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
-                )
-              )
-            )
-          
-          ;; configure jedi to use custom python binary
-          (setq jedi:server-command (list python-bin python-ser)) 
-          )
+  ;; from pythonpath
+  (let ((pythonpath (parse-colon-path (getenv "PYTHONPATH"))))
+    (when pythonpath
+      (dolist (path pythonpath)
+        (setq path (expand-file-name path))
+        (message "Appended to jedi:server-args --sys.path %s" path)
+        (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
         )
       )
     )
 
-  ;; configure syspaths
+  ;; jedi-server
+  (message "Appended to jedi:server-args --sys.path %s" jedi-server-path)
+  (setq python-sys-paths (append python-sys-paths '("--sys-path") (list jedi-server-path)))
+  
+  ;; from python sys.path
+  (with-temp-buffer
+    (shell-command "python -c \"import sys; print(':'.join(sys.path)[1:])\"" t "*Messages*")
+    (setq sys-paths (parse-colon-path (buffer-string)))
+    (dolist (path sys-paths)
+      (message "Appended to jedi:server-args --sys.path %s" path)
+      (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+      )
+    )
+
+  ;; add paths
   (setq jedi:server-args python-sys-paths)
+
+  ;; configure server
+  (message "jedi server ... starting from %s" jedi-server-bin)
+  (setq jedi:server-command (list "python" jedi-server-bin))
 
   ;; key bindings
   (local-set-key (kbd "C-s d") 'jedi:show-doc)
@@ -331,4 +341,4 @@ There are two things you can do about this warning:
   (local-set-key (kbd "C-c .") 'jedi:goto-definition)
   )
 
-(add-hook 'python-mode-hook 'load-python-environment)
+(add-hook 'python-mode-hook 'python-load-environment)
