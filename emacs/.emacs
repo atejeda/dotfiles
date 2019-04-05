@@ -243,95 +243,7 @@ There are two things you can do about this warning:
 
 ;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(defun load-python-environment ()
-  (interactive)
-  ;;(python-mode)
-  
-  ;; almasw
-  ;; ~/.emacs.d/elpa/jedi-core-20181207.1
-  ;; pip install .
-  ;; /alma/ACS-2019FEB/Python/lib/python2.7/site-packages/jediepcserver.py
-  
-  (require 'company-jedi)
-  (add-to-list 'company-backends 'company-jedi)
-  (autoload 'jedi:setup "jedi" nil t)
-  (setq jedi:complete-on-dot t)
-  (setq jedi:setup-keys t)
-  
-  (setq entries '())
-  
-  ;; from .projectile
-  (let ((profile-file (expand-file-name (concat default-directory ".projectile"))))
-    (cond
-     ((file-exists-p profile-file)
-      (with-temp-buffer
-        (insert-file-contents profile-file)
-        (let ((paths (split-string (buffer-string) "\n" t)))
-          (dolist (path paths)
-            (setq path (expand-file-name path))
-            (message "Appended to jedi:server-args --sys.path %s" path)
-            (setq entries (append entries '("--sys-path") (list path)))
-            )
-          )
-        )
-      )
-     )
-    )
-
-  ;; from PYTHONPATH
-  (let ((paths (parse-colon-path (getenv "PYTHONPATH"))))
-    (when paths
-      (dolist (path paths)
-        (setq path (expand-file-name path))
-        (message "Appended to jedi:server-args --sys.path %s" path)
-        (setq entries (append entries '("--sys-path") (list path)))
-        )
-      )
-    )
-
-  ;; almasw special case
-  (let ((python-root (getenv "PYTHON_ROOT")))
-    (when python-root
-      (setq python-native
-            (concat
-             (file-name-as-directory
-              (concat
-               (file-name-as-directory python-root)
-               "lib"))
-             "python2.7")
-            )
-      (setq entries (append entries '("--sys-path") (list python-native)))
-      (message "Appended to jedi:server-args --sys.path %s" python-native)
-      )
-    )
-
-  (let ((python-root (getenv "PYTHON_ROOT")))
-    (when python-root
-      (setq python-bin
-            (concat
-             (file-name-as-directory
-              (concat
-               (file-name-as-directory python-root)
-               "bin"))
-             "python")
-            )
-             
-      ;; TODO make this dynamic
-        (setq jedi:server-command
-              '("/alma/ACS-current/Python/bin/python"
-                "/alma/ACS-current/Python/lib/python2.7/site-packages/jediepcserver.py"))
-      )
-    )
-  
-  (setq jedi:server-args entries)
-
-  (local-set-key (kbd "C-s d") 'jedi:show-doc)
-
-  )
-
-
-(defun make-path (&rest relatives)
-  (interactive)
+(defun build-path-from-list (&rest relatives)
   (let (absolute)
     (dolist (relative (butlast relatives))
       (setq absolute (concat absolute (file-name-as-directory relative))))
@@ -340,23 +252,83 @@ There are two things you can do about this warning:
     )
   )
 
-(message (concat "message => " (make-path "this" "is" "a" "path")))
+(defun load-python-environment ()
+  (interactive)
+  ;;(python-mode)
+  
+  ;; almasw
+  ;; ~/.emacs.d/elpa/jedi-core-20181207.1
+  ;; pip install .
+  ;; /alma/ACS-current/Python/lib/python2.7/site-packages/jediepcserver.py
+  
+  (require 'company-jedi)
+  (add-to-list 'company-backends 'company-jedi)
+  (setq jedi:setup-keys t)
+  (autoload 'jedi:setup "jedi" nil t)
+  (setq jedi:complete-on-dot t)
+  (setq jedi:get-in-function-call-delay 0)
+  (setq jedi:doc-mode 'rst-mode)
+  
+  (setq python-sys-paths '())
+
+  ;; from .projectile, custom paths takes precedence
+  (setq projectile-file-path (locate-dominating-file default-directory ".projectile"))
+  (when projectile-file-path
+    (with-temp-buffer
+      (setq projectile-file-path (expand-file-name projectile-file-path))
+      (cd projectile-file-path)
+      (setq projectile-file (build-path-from-list projectile-file-path ".projectile"))
+      (setq projectile-file (expand-file-name projectile-file))
+      (insert-file-contents projectile-file)
+      (let ((paths (split-string (buffer-string) "\n" t)))
+        (dolist (path paths)
+          (setq path (expand-file-name path))
+          (message "Appended to jedi:server-args --sys.path %s" path)
+          (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+          )
+        )         
+      )
+    )
+
+  ;; almasw environment
+  (let ((almasw-instdir (getenv "ALMASW_INSTDIR")))
+    (when almasw-instdir
+      (let ((python-root (getenv "PYTHON_ROOT")))
+        (when python-root
+          (setq python-lib (build-path-from-list python-root "lib" "python2.7"))
+          (setq python-bin (build-path-from-list python-root "bin" "python"))
+          (setq python-sip (build-path-from-list python-lib "site-packages")) 
+          (setq python-ser (build-path-from-list python-sip "jediepcserver.py"))
+
+          ;; python lib
+          (setq python-sys-paths (append python-sys-paths '("--sys-path") (list python-lib)))
+          (message "Appended to jedi:server-args --sys.path %s" python-lib)
+
+          ;; pythonpath
+          (let ((pythonpath (parse-colon-path (getenv "PYTHONPATH"))))
+            (when pythonpath
+              (dolist (path pythonpath)
+                (setq path (expand-file-name path))
+                (message "Appended to jedi:server-args --sys.path %s" path)
+                (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+                )
+              )
+            )
+          
+          ;; configure jedi to use custom python binary
+          (setq jedi:server-command (list python-bin python-ser)) 
+          )
+        )
+      )
+    )
+
+  ;; configure syspaths
+  (setq jedi:server-args python-sys-paths)
+
+  ;; key bindings
+  (local-set-key (kbd "C-s d") 'jedi:show-doc)
+  (local-set-key (kbd "C-c t") 'jedi:complete)
+  (local-set-key (kbd "C-c .") 'jedi:goto-definition)
+  )
 
 (add-hook 'python-mode-hook 'load-python-environment)
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(package-selected-packages
-;;    (quote
-;;     (## whitespace-cleanup-mode py-autopep8 projectile powerline multiple-cursors jedi flycheck fill-column-indicator company-jedi))))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (jedi whitespace-cleanup-mode projectile powerline multiple-cursors fill-column-indicator company-jedi))))
