@@ -296,7 +296,7 @@ There are two things you can do about this warning:
       (let ((paths (split-string (buffer-string) "\n" t)))
         (dolist (path paths)
           (setq path (expand-file-name path))
-          (message "Appended to jedi:server-args --sys.path %s" path)
+          (message "Appended projectile file to jedi:server-args --sys.path %s" path)
           (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
           )
         )         
@@ -308,14 +308,14 @@ There are two things you can do about this warning:
     (when pythonpath
       (dolist (path pythonpath)
         (setq path (expand-file-name path))
-        (message "Appended to jedi:server-args --sys.path %s" path)
+        (message "Appended from pythonpath to jedi:server-args --sys.path %s" path)
         (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
         )
       )
     )
 
   ;; jedi-server
-  (message "Appended to jedi:server-args --sys.path %s" jedi-server-path)
+  (message "Appended from jedi-server to jedi:server-args --sys.path %s" jedi-server-path)
   (setq python-sys-paths (append python-sys-paths '("--sys-path") (list jedi-server-path)))
   
   ;; from python sys.path
@@ -323,7 +323,7 @@ There are two things you can do about this warning:
     (shell-command "python -c \"import sys; print(':'.join(sys.path)[1:])\"" t "*Messages*")
     (setq sys-paths (parse-colon-path (buffer-string)))
     (dolist (path sys-paths)
-      (message "Appended to jedi:server-args --sys.path %s" path)
+      (message "Appended from python sys.path to jedi:server-args --sys.path %s" path)
       (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
       )
     )
