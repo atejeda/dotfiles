@@ -227,11 +227,29 @@ There are two things you can do about this warning:
 (setq org-log-done t)
 (setq org-support-shift-select 'always)
 
+;; powerline
 (require 'powerline)
 (powerline-default-theme)
 (setq powerline-arrow-shape 'arrow)
 (setq powerline-color1 "grey22")
 (setq powerline-color2 "grey40")
+
+;; neotree
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;; Fixes: https://github.com/jaypei/emacs-neotree/issues/262
+(eval-after-load "neotree"
+  '(add-to-list 'window-size-change-functions
+                (lambda (frame)
+                  (let ((neo-window (neo-global--get-window)))
+                    (unless (null neo-window)
+                      (setq neo-window-width (window-width neo-window)))))))
+(setq neo-window-fixed-size nil)
+
+;; flycheck
+;;(package-install 'flycheck)
+;;(global-flycheck-mode)
 
 ;; initializations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -281,6 +299,11 @@ There are two things you can do about this warning:
       (message "jedi server ... installed")
       )
     )
+
+  ;; update pythonpath
+  (setenv "PYTHONPATH"
+          (concat jedi-server-path
+                  (concat path-separator (getenv "PYTHONPATH"))))
   
   (setq python-sys-paths '())
 
@@ -299,7 +322,7 @@ There are two things you can do about this warning:
           (message "Appended projectile file to jedi:server-args --sys.path %s" path)
           (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
           )
-        )         
+        )
       )
     )
 
@@ -314,10 +337,6 @@ There are two things you can do about this warning:
       )
     )
 
-  ;; jedi-server
-  (message "Appended from jedi-server to jedi:server-args --sys.path %s" jedi-server-path)
-  (setq python-sys-paths (append python-sys-paths '("--sys-path") (list jedi-server-path)))
-  
   ;; from python sys.path
   (with-temp-buffer
     (shell-command "python -c \"import sys; print(':'.join(sys.path)[1:])\"" t "*Messages*")
@@ -327,6 +346,10 @@ There are two things you can do about this warning:
       (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
       )
     )
+
+  ;; jedi-server
+  (message "Appended from jedi-server to jedi:server-args --sys.path %s" jedi-server-path)
+  (setq python-sys-paths (append python-sys-paths '("--sys-path") (list jedi-server-path)))
 
   ;; add paths
   (setq jedi:server-args python-sys-paths)
