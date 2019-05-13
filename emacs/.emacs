@@ -219,6 +219,7 @@ There are two things you can do about this warning:
 ;; multiple cursors
 (require 'multiple-cursors)
 (global-set-key (kbd "C-c m c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-word-like-this)
 
 ;; org mode
 (require 'org)
@@ -251,6 +252,21 @@ There are two things you can do about this warning:
 ;;(package-install 'flycheck)
 ;;(global-flycheck-mode)
 
+;; ido mode
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+
+;; expand-region
+(require 'expand-region)
+(global-set-key (kbd "C-]") 'er/expand-region)
+;;(global-set-key (kbd "C-") 'er/contract-region)
+
+;; ace-jump-mode
+(require 'ace-jump-mode)
+(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+
 ;; initializations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (add-hook
@@ -258,6 +274,14 @@ There are two things you can do about this warning:
  '(lambda ()
     ;; package initializations
     ))
+
+;; global keysets
+(global-unset-key (kbd "C-z"))
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; autload
+(require 'autopair)
+(autopair-global-mode) 
 
 ;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -283,10 +307,14 @@ There are two things you can do about this warning:
   (setq jedi:get-in-function-call--d 0)
   (setq jedi:doc-mode 'rst-mode)
   
-  (setq jedi-server-path (build-path-from-list user-emacs-directory "jedi-server"))
-  (setq jedi-server-path (expand-file-name jedi-server-path))
-  (setq jedi-server-script (build-path-from-list jedi-server-path "jediepcserver.py"))
-  (setq jedi-server-bin (build-path-from-list jedi-server-path "bin" "jediepcserver"))
+  (setq jedi-server-path
+        (build-path-from-list user-emacs-directory "jedi-server"))
+  (setq jedi-server-path
+        (expand-file-name jedi-server-path))
+  (setq jedi-server-script
+        (build-path-from-list jedi-server-path "jediepcserver.py"))
+  (setq jedi-server-bin
+        (build-path-from-list jedi-server-path "bin" "jediepcserver"))
   
   ;; install jedi server on custom location (if doesn't exists)
   (unless (file-exists-p jedi-server-script)
@@ -306,7 +334,7 @@ There are two things you can do about this warning:
                   (concat path-separator (getenv "PYTHONPATH"))))
   
   (setq python-sys-paths '())
-
+  
   ;; from .projectile, custom paths takes precedence
   (setq projectile-file-path (locate-dominating-file default-directory ".projectile"))
   (when projectile-file-path
@@ -320,7 +348,8 @@ There are two things you can do about this warning:
         (dolist (path paths)
           (setq path (expand-file-name path))
           (message "Appended projectile file to jedi:server-args --sys.path %s" path)
-          (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+          (setq python-sys-paths
+                (append python-sys-paths '("--sys-path") (list path)))
           )
         )
       )
@@ -332,24 +361,27 @@ There are two things you can do about this warning:
       (dolist (path pythonpath)
         (setq path (expand-file-name path))
         (message "Appended from pythonpath to jedi:server-args --sys.path %s" path)
-        (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+        (setq python-sys-paths
+              (append python-sys-paths '("--sys-path") (list path)))
         )
       )
     )
-
+  
   ;; from python sys.path
   (with-temp-buffer
     (shell-command "python -c \"import sys; print(':'.join(sys.path)[1:])\"" t "*Messages*")
     (setq sys-paths (parse-colon-path (buffer-string)))
     (dolist (path sys-paths)
       (message "Appended from python sys.path to jedi:server-args --sys.path %s" path)
-      (setq python-sys-paths (append python-sys-paths '("--sys-path") (list path)))
+      (setq python-sys-paths
+            (append python-sys-paths '("--sys-path") (list path)))
       )
     )
-
+  
   ;; jedi-server
   (message "Appended from jedi-server to jedi:server-args --sys.path %s" jedi-server-path)
-  (setq python-sys-paths (append python-sys-paths '("--sys-path") (list jedi-server-path)))
+  (setq python-sys-paths
+        (append python-sys-paths '("--sys-path") (list jedi-server-path)))
 
   ;; add paths
   (setq jedi:server-args python-sys-paths)
@@ -359,9 +391,18 @@ There are two things you can do about this warning:
   (setq jedi:server-command (list "python" jedi-server-bin))
 
   ;; key bindings
-  (local-set-key (kbd "C-s d") 'jedi:show-doc)
+  (local-set-key (kbd "C-c d") 'jedi:show-doc)
   (local-set-key (kbd "C-c t") 'jedi:complete)
   (local-set-key (kbd "C-c .") 'jedi:goto-definition)
   )
 
 (add-hook 'python-mode-hook 'python-load-environment)
+
+(defun load-driver ()
+  (interactive)
+  (setq pipeline-driver "/export/home/valhalla/atejeda/Desktop/alma/code/development/pipeline-driver/ADAPT/pipeline-driver")
+  (cd pipeline-driver)
+  (neotree-show)
+  (neotree-change-root pipeline-driver)
+  (neotree-toggle)
+  )
