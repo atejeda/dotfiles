@@ -53,7 +53,7 @@
  ((eq system-type 'gnu/linux)
   (set-face-attribute 'default nil :family "Monospace" :height 90))
  ((eq system-type 'darwin)
-  (set-face-attribute 'default nil :family "Monaco" :height 90)))
+  (set-face-attribute 'default nil :family "Monaco" :height 100)))
 
 ;; editor ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -253,9 +253,9 @@ There are two things you can do about this warning:
 ;;(global-flycheck-mode)
 
 ;; ido mode
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
+;;(setq ido-enable-flex-matching t)
+;;(setq ido-everywhere t)
+;;(ido-mode 1)
 
 ;; expand-region
 (require 'expand-region)
@@ -396,7 +396,7 @@ There are two things you can do about this warning:
   (local-set-key (kbd "C-c .") 'jedi:goto-definition)
   )
 
-(add-hook 'python-mode-hook 'python-load-environment)
+;;(add-hook 'python-mode-hook 'python-load-environment)
 
 (defun load-driver ()
   (interactive)

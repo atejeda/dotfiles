@@ -15,6 +15,7 @@ execute pathogen#infect()
 
 syntax on
 colorscheme atom-dark-256 "default
+" colorscheme default
 
 filetype plugin indent on
 
@@ -49,8 +50,3 @@ set laststatus=2
 set number
 set splitright
 set splitbelow
-
-
-
-
-
