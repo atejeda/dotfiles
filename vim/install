@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+CURRENT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+mkdir -p ~/.vim
+
+rm -rf ~/.vim/colors
+mkdir -p ~/.vim/colors
+
+git clone https://github.com/flazz/vim-colorschemes.git /tmp/vim-colorschemes
+rsync -avp /tmp/vim-colorschemes/colors/ ~/.vim/colors/
+
+git clone https://github.com/gosukiwi/vim-atom-dark /tmp/vim-atom-dark
+rsync -avp /tmp/vim-atom-dark/colors/ ~/.vim/colors/
+
+ln -sf ${CURRENT}/.vimrc ~/

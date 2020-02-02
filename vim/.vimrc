@@ -1,21 +1,24 @@
-" https://github.com/atejeda/dotfiles
 
-" plugins:
-"   https://github.com/tpope/vim-fugitive
-"   https://github.com/kien/ctrlp.vim
-"   https://github.com/scrooloose/nerdtree
-"   https://github.com/bling/vim-airline
-"   https://github.com/scrooloose/nerdcommenter
-"   https://github.com/Lokaltog/vim-easymotion
-"   https://github.com/davidhalter/jedi-vim
-"   https://github.com/scrooloose/syntastic
-"   https://github.com/editorconfig/editorconfig-vim
-"
-execute pathogen#infect()
+" vundle setup
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'kien/ctrlp.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-airline/vim-airline'
+Plugin 'scrooloose/syntastic'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'felixhummel/setcolors.vim'
+call vundle#end()
+
+filetype plugin indent on
 
 syntax on
 colorscheme atom-dark-256 "default
-" colorscheme default
 
 filetype plugin indent on
 
