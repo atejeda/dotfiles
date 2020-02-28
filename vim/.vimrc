@@ -1,4 +1,3 @@
-
 " vundle setup
 set nocompatible
 filetype off
@@ -13,20 +12,21 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'scrooloose/syntastic'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'felixhummel/setcolors.vim'
+Plugin 'Valloric/YouCompleteMe'
 call vundle#end()
 
 filetype plugin indent on
 
 syntax on
-colorscheme atom-dark-256 "default
+colorscheme nord "default
 
 filetype plugin indent on
 
 autocmd FileType make setlocal noexpandtab
 autocmd GUIEnter * set visualbell t_vb=
 
-set tw=80
-set cc=+1
+"set tw=80
+"set cc=+1
 set encoding=utf-8
 set fileencoding=utf-8
 set t_Co=256
@@ -53,3 +53,11 @@ set laststatus=2
 set number
 set splitright
 set splitbelow
+
+" relartive numbers
+:set number relativenumber
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+:augroup END

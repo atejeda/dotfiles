@@ -3,6 +3,8 @@ CURRENT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 mkdir -p ~/.vim
 
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
 rm -rf ~/.vim/colors
 mkdir -p ~/.vim/colors
 
