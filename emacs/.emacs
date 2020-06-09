@@ -3,10 +3,15 @@
 ;; doom-themes
 ;; multiple-cursors
 ;; autopair
+;; all-the-icons
+;; powerline
+;; neotree
+;; flycheck
+;; company
 ;; M-x all-the-icons-install-fonts
 ;; jedi-direxes
 ;; go-mode
-;; compnay-go
+;; company-go
 ;; go-flycheck
 ;; fill-column-indicator
 
@@ -107,15 +112,15 @@
 
 ;; go
 ;; https://github.com/nsf/gocode
-(require 'company)
-(require 'company-go)
-(add-hook 'go-mode-hook (lambda ()
-                          (setq-default)
-                          (setq tab-width 4)
-                          (setq standard-indent 4)
-                          (setq indent-tabs-mode nil)
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (company-mode)))
+;;(require 'company)
+;;(require 'company-go)
+;;(add-hook 'go-mode-hook (lambda ()
+;;                          (setq-default)
+;;                          (setq tab-width 4)
+;;                         (setq standard-indent 4)
+;;                          (setq indent-tabs-mode nil)
+;;                          (set (make-local-variable 'company-backends) '(company-go))
+;;                          (company-mode)))
 
 ;; flycheck
 (require 'flycheck)
