@@ -13,12 +13,15 @@ Plugin 'scrooloose/syntastic'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'felixhummel/setcolors.vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'dart-lang/dart-vim-plugin'
+Plugin 'thosakwe/vim-flutter'
+Plugin 'neoclide/coc.nvim'
 call vundle#end()
 
 filetype plugin indent on
 
 syntax on
-colorscheme nord "default
+colorscheme nord "default / with iterm nord
 
 filetype plugin indent on
 
