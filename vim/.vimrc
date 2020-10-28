@@ -1,5 +1,10 @@
 " https://github.com/atejeda/dotfiles
 
+" install nvm
+" instal yarn
+":VundleInstall
+":call coc#util:install()
+
 " plugins:
 "   https://github.com/tpope/vim-fugitive
 "   https://github.com/kien/ctrlp.vim
