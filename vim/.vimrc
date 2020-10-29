@@ -1,9 +1,13 @@
 " https://github.com/atejeda/dotfiles
 
 " install nvm
+" # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
+
 " instal yarn
-":VundleInstall
-":call coc#util:install()
+" # curl -o- -L https://yarnpkg.com/install.sh | bash
+
+" :VundleInstall
+" :call coc#util:install()
 
 " plugins:
 "   https://github.com/tpope/vim-fugitive
