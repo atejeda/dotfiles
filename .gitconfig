@@ -1,6 +1,5 @@
 [user]
     name = atejeda
-    email = alexis.tejeda@gmail.com
 [credential]
     helper = cache --timeout=3600
 [push]
@@ -14,5 +13,9 @@
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
     type = cat-file -t
     dump = cat-file -p
+    conflict = diff --name-only --diff-filter=U 
+    files = diff-tree --no-commit-id --name-only -r 
+[gpg]
+    program = gpg
 [core]
-	editor = emacs
+    editor = vim

@@ -12,10 +12,10 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'scrooloose/syntastic'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'felixhummel/setcolors.vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'dart-lang/dart-vim-plugin'
-Plugin 'thosakwe/vim-flutter'
-Plugin 'neoclide/coc.nvim'
+"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'dart-lang/dart-vim-plugin'
+"Plugin 'thosakwe/vim-flutter'
+"Plugin 'neoclide/coc.nvim'
 call vundle#end()
 
 filetype plugin indent on
@@ -58,9 +58,9 @@ set splitright
 set splitbelow
 
 " relartive numbers
-:set number relativenumber
-:augroup numbertoggle
-:  autocmd!
-:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-:augroup END
+":set number relativenumber
+":augroup numbertoggle
+":  autocmd!
+":  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+":  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+":augroup END
