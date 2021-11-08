@@ -47,7 +47,9 @@
   (set-face-attribute 'default nil :family "Monaco" :height 100)))
 ;; (set-face-attribute 'default nil :height 100)
 
-(set-background-color "black")
+;; (set-background-color "black")
+(set-background-color "#111111")
+(set-foreground-color "#d8dee8")
 
 ;; bindings
 (global-set-key "\C-l" 'goto-line)
