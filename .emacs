@@ -1,4 +1,5 @@
-;; packages ...
+
+;; xpackages ...
 ;; doom
 ;; doom-themes
 ;; multiple-cursors
@@ -42,14 +43,17 @@
 ;; font
 (cond
  ((eq system-type 'gnu/linux)
-  (set-face-attribute 'default nil :family "Monospace" :height 90))
+  (set-face-attribute 'default nil :family "UbuntuMono" :height 110))
  ((eq system-type 'darwin)
   (set-face-attribute 'default nil :family "Monaco" :height 100)))
 ;; (set-face-attribute 'default nil :height 100)
 
 ;; (set-background-color "black")
-(set-background-color "#111111")
+(set-background-color "#121212")
 (set-foreground-color "#d8dee8")
+
+(set-background-color "#1c2023")
+(set-foreground-color "#c7ccd1")
 
 ;; bindings
 (global-set-key "\C-l" 'goto-line)
@@ -104,8 +108,8 @@
 (setq neo-window-fixed-size nil)
 
 ;; autopair
-(require 'autopair)
-(autopair-global-mode) 
+;;(require 'autopair)
+;;(autopair-global-mode) 
 
 ;; jedi
 (add-hook 'python-mode-hook 'jedi:setup)
