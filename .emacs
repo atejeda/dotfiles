@@ -1,4 +1,5 @@
 
+
 ;; xpackages ...
 ;; doom
 ;; doom-themes
@@ -43,14 +44,15 @@
 ;; font
 (cond
  ((eq system-type 'gnu/linux)
-  (set-face-attribute 'default nil :family "UbuntuMono" :height 110))
+  ;; Courier New : 120, UbuntuMono : 120, Monospace : 100, Hack 100
+  (set-face-attribute 'default nil :family "Hack" :height 100))
  ((eq system-type 'darwin)
   (set-face-attribute 'default nil :family "Monaco" :height 100)))
 ;; (set-face-attribute 'default nil :height 100)
 
 ;; (set-background-color "black")
-(set-background-color "#121212")
-(set-foreground-color "#d8dee8")
+;;(set-background-color "#121212")
+;;(set-foreground-color "#d8dee8")
 
 (set-background-color "#1c2023")
 (set-foreground-color "#c7ccd1")
@@ -112,25 +114,13 @@
 ;;(autopair-global-mode) 
 
 ;; jedi
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot t)
-
-;; go
-;; https://github.com/nsf/gocode
-;;(require 'company)
-;;(require 'company-go)
-;;(add-hook 'go-mode-hook (lambda ()
-;;                          (setq-default)
-;;                          (setq tab-width 4)
-;;                         (setq standard-indent 4)
-;;                          (setq indent-tabs-mode nil)
-;;                          (set (make-local-variable 'company-backends) '(company-go))
-;;                          (company-mode)))
+;;(add-hook 'python-mode-hook 'jedi:setup)
+;;(setq jedi:setup-keys t)
+;;(setq jedi:complete-on-dot t)
 
 ;; flycheck
-(require 'flycheck)
-(global-flycheck-mode)
+;;(require 'flycheck)
+;;(global-flycheck-mode)
 
 ;; https://www.emacswiki.org/emacs/FillColumnIndicator
 (require 'fill-column-indicator)
