@@ -1,29 +1,25 @@
 
 
-;; xpackages ...
-;; doom
-;; doom-themes
-;; multiple-cursors
-;; autopair
-;; all-the-icons
-;; powerline
-;; neotree
-;; flycheck
-;; company
-;; M-x all-the-icons-install-fonts
-;; jedi-direxes
-;; go-mode
-;; company-go
-;; go-flycheck
-;; fill-column-indicator
+;; melpa and package stuff
 
-;; melpa stuff
 (require 'package)
-(add-to-list 'package-archives
-             (cons "mel pa" "https://melpa.org/packages/") t)
+(add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
 
+(setq package-selected-packages '(
+  doom-themes
+  multiple-cursors
+  all-the-icons
+  powerline
+  neotree
+  fill-column-indicator))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
 ;; look and feel
+
 (display-time)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -34,30 +30,10 @@
 (setq ring-bell-function 'ignore)
 (savehist-mode 1)
 (global-linum-mode 1)
-;;(global-display-line-numbers-mode)
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
-;; doom-themes
-(require 'doom-themes)
-(load-theme 'doom-one t)
-
-;; font
-(cond
- ((eq system-type 'gnu/linux)
-  ;; Courier New : 120, UbuntuMono : 120, Monospace : 100, Hack 100
-  (set-face-attribute 'default nil :family "Hack" :height 100))
- ((eq system-type 'darwin)
-  (set-face-attribute 'default nil :family "Monaco" :height 100)))
-;; (set-face-attribute 'default nil :height 100)
-
-;; (set-background-color "black")
-;;(set-background-color "#121212")
-;;(set-foreground-color "#d8dee8")
-
-(set-background-color "#1c2023")
-(set-foreground-color "#c7ccd1")
-
 ;; bindings
+
 (global-set-key "\C-l" 'goto-line)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
 (global-set-key (kbd "C-x <down>") 'windmove-down)
@@ -66,10 +42,12 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; global keysets
+
 (global-unset-key (kbd "C-z"))
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; parens
+;; paren
+
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
@@ -85,18 +63,19 @@
 (setq next-line-add-newlines nil)
 
 ;; multiple cursors
+
 (require 'multiple-cursors)
 (global-set-key (kbd "C-c m c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-word-like-this)
 
 ;; powerline
+
 (require 'powerline)
 (powerline-default-theme)
 (setq powerline-arrow-shape 'arrow)
-;; (setq powerline-color1 "grey22")
-;; (setq powerline-color2 "grey40")
 
 ;; neotree
+
 (require 'neotree)
 (global-set-key [f8] 'neotree-toggle)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
@@ -109,20 +88,8 @@
                       (setq neo-window-width (window-width neo-window)))))))
 (setq neo-window-fixed-size nil)
 
-;; autopair
-;;(require 'autopair)
-;;(autopair-global-mode) 
+;; FillColumnIndicator
 
-;; jedi
-;;(add-hook 'python-mode-hook 'jedi:setup)
-;;(setq jedi:setup-keys t)
-;;(setq jedi:complete-on-dot t)
-
-;; flycheck
-;;(require 'flycheck)
-;;(global-flycheck-mode)
-
-;; https://www.emacswiki.org/emacs/FillColumnIndicator
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
 (global-fci-mode 1)
@@ -135,4 +102,63 @@
 (setq whitespace-style '(face lines-tail))
 (global-whitespace-mode 1)
 
-;; https://seagle0128.github.io/doom-modeline/
+;; def aliases and def commands
+
+(defalias 'select-all 'mark-whole-buffer)
+
+(defun dev-mode ()
+  (interactive)
+  (save-excursion
+    (require 'doom-themes)
+    (load-theme 'doom-one t)
+    (text-scale-set 0)
+    (cond
+     ((eq system-type 'gnu/linux)
+      ;; Courier New : 120, UbuntuMono : 120, Monospace : 100, Hack 100
+      (set-face-attribute 'default nil :family "Hack" :height 100)
+      (set-background-color "#1c2023")
+      (set-foreground-color "#c7ccd1"))
+     ((eq system-type 'darwin)
+      (set-face-attribute 'default nil :family "Courier New" :height 140)
+      (set-background-color "#121212")
+      (set-foreground-color "#d8dee8")))))
+
+(defun retro-mode ()
+  (interactive)
+  (save-excursion
+    (require 'doom-themes)
+    (load-theme 'doom-one-light t)
+    ;;(set-face-font
+    ;;  'default "-adobe-courier-medium-r-normal--17-*-100-100-m-100-iso8859-9")
+    (set-face-font
+      'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
+    (set-background-color "#0000FF")
+    (set-foreground-color "#FFFFFF")))
+;;(global-set-key (kbd "C-c r m") 'retro-mode)
+
+(defun presentation-mode ()
+  (interactive)
+  (save-excursion
+    (dev-mode)
+    (require 'doom-themes)
+    (load-theme 'doom-one-light t)
+    ;;(set-background-color "#FFFFFF")
+    ;;(set-foreground-color "#000000")
+    (text-scale-set 3)))
+
+(defun headache-mode ()
+  (interactive)
+  (save-excursion
+    (dev-mode)
+    (text-scale-set 1)))
+
+(dev-mode)
+
+;;(set-face-font
+;;  'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
+
+;;(x-select-font nil t)
+;;(dolist (font (x-list-fonts "*")) 
+;;  (insert (format "%s\n" font)))
+
+;; emacs tabs
