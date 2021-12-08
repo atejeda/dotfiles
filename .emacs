@@ -12,7 +12,11 @@
   all-the-icons
   powerline
   neotree
-  fill-column-indicator))
+  fill-column-indicator
+  bazel
+  groovy-mode
+  yaml
+  yaml-mode))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -154,6 +158,20 @@
 
 (dev-mode)
 
+;; orgmode-html stuff
+
+;; questions/14684263/how-to-org-mode-image-absolute-path-of-export-html
+;; questions/9807/org-mode-dont-change-relative-urls
+(defun wvxvw/export-rel-url (path desc format)
+  (cl-case format
+    (html (format "<a href=\"%s\">%s</a>" path (or desc path)))
+    (latex (format "\\href{%s}{%s}" path (or desc path)))
+    (otherwise path)))
+
+(eval-after-load "org"
+  '(org-link-set-parameters "rel" :follow #'browse-url :export #'wvxvw/export-rel-url))
+
+
 ;;(set-face-font
 ;;  'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
 
@@ -162,3 +180,16 @@
 ;;  (insert (format "%s\n" font)))
 
 ;; emacs tabs
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(yaml-mode yaml groovy-mode bazel doom-themes multiple-cursors all-the-icons powerline neotree fill-column-indicator)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
