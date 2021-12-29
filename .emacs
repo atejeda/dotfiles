@@ -17,6 +17,7 @@
   groovy-mode
   yaml
   yaml-mode
+  haskell-mode
   elfeed
   json-mode))
 
@@ -173,6 +174,20 @@
 (eval-after-load "org"
   '(org-link-set-parameters "rel" :follow #'browse-url :export #'wvxvw/export-rel-url))
 
+;; org mode disable autoidentation (tree identation)
+(setq org-adapt-identation nil)
+;; prevent to insert tabs/spaces after src lines and titles
+(setq org-src-preserve-indentation t)
+
+;; from this point, garbage
+
+;;(set-face-font
+;;  'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
+;;(x-select-font nil t)
+;;(dolist (font (x-list-fonts "*")) 
+;;  (insert (format "%s\n" font)))
+;; (put 'scroll-left 'disabled nil)
+
 (setq org-src-tab-acts-natively nil)
 
 ;; rss feeds
@@ -182,16 +197,3 @@
                      ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
                      ("https://linuxnewbieguide.org/feed/" tech linux))))
 ;;(setq browse-url-browser-function 'eww-browse-url)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(json-mode doom-themes multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode elfeed)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
