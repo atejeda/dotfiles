@@ -16,7 +16,9 @@
   bazel
   groovy-mode
   yaml
-  yaml-mode))
+  yaml-mode
+  elfeed
+  json-mode))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -171,22 +173,22 @@
 (eval-after-load "org"
   '(org-link-set-parameters "rel" :follow #'browse-url :export #'wvxvw/export-rel-url))
 
+(setq org-src-tab-acts-natively nil)
 
-;;(set-face-font
-;;  'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
+;; rss feeds
 
-;;(x-select-font nil t)
-;;(dolist (font (x-list-fonts "*")) 
-;;  (insert (format "%s\n" font)))
-
-;; emacs tabs
+(setq elfeed-feeds (quote
+                    (("https://news.ycombinator.com/rss" tech hackernews)
+                     ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
+                     ("https://linuxnewbieguide.org/feed/" tech linux))))
+;;(setq browse-url-browser-function 'eww-browse-url)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yaml-mode yaml groovy-mode bazel doom-themes multiple-cursors all-the-icons powerline neotree fill-column-indicator)))
+   '(json-mode doom-themes multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode elfeed)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
