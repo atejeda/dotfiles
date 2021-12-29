@@ -17,7 +17,9 @@
   groovy-mode
   yaml
   yaml-mode
-  haskell-mode))
+  haskell-mode
+  elfeed
+  json-mode))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -185,16 +187,13 @@
 ;;(dolist (font (x-list-fonts "*")) 
 ;;  (insert (format "%s\n" font)))
 ;; (put 'scroll-left 'disabled nil)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(haskell-mode doom-themes multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(setq org-src-tab-acts-natively nil)
+
+;; rss feeds
+
+(setq elfeed-feeds (quote
+                    (("https://news.ycombinator.com/rss" tech hackernews)
+                     ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
+                     ("https://linuxnewbieguide.org/feed/" tech linux))))
+;;(setq browse-url-browser-function 'eww-browse-url)
