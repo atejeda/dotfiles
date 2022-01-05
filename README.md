@@ -6,5 +6,5 @@ It use stow to install the dotfiles.
 
 ```
 pacman -Syy stow
-stow .
+dotfiles/install.sh
 ```
