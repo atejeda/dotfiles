@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-CURRENT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-ln -sf ${CURRENT}/.tmux.conf ~/
-ln -sf ${CURRENT}/.sensible.tmux ~/
