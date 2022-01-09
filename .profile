@@ -50,6 +50,10 @@ _google_cloud_completion="$_google_cloud_sdk/completion.bash.inc"
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
+# rust / cargo
+
+export PATH=$HOME/.cargo/bin:$PATH
+
 # path stuff
 
 export PATH=$HOME/.local/bin:$PATH
