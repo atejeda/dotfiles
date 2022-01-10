@@ -47,8 +47,9 @@ _google_cloud_completion="$_google_cloud_sdk/completion.bash.inc"
 
 # rubygems
 
-export GEM_HOME="$HOME/gems"
-export PATH="$HOME/gems/bin:$PATH"
+export GEM_HOME=$HOME/gems
+export PATH=$HOME/gems/bin:$PATH
+export PATH=$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH
 
 # rust / cargo
 
