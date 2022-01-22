@@ -7,8 +7,10 @@
 (package-initialize)
 
 (setq package-selected-packages '(
+  use-package
   doom-themes
-  multiple-cursors
+  lsp-mode
+  multiple-cursors 
   all-the-icons
   powerline
   neotree
@@ -19,11 +21,21 @@
   yaml-mode
   haskell-mode
   elfeed
-  json-mode))
+  json-mode
+  rainbow-delimiters
+  which-key
+  ivy
+  ivy-rich
+  counsel
+  treemacs))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
+
+;; use-package
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
 
 ;; look and feel
 
@@ -37,6 +49,7 @@
 (setq ring-bell-function 'ignore)
 (savehist-mode 1)
 (global-linum-mode 1)
+(global-hl-line-mode 1)
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
 ;; bindings
@@ -59,6 +72,7 @@
 (setq show-paren-delay 0)
 
 ;; tabs and identation
+
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
 (setq-default py-indent-offset 4)
@@ -83,19 +97,45 @@
 
 ;; neotree
 
-(require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-;; Fixes: https://github.com/jaypei/emacs-neotree/issues/262
-(eval-after-load "neotree"
-  '(add-to-list 'window-size-change-functions
-                (lambda (frame)
-                  (let ((neo-window (neo-global--get-window)))
-                    (unless (null neo-window)
-                      (setq neo-window-width (window-width neo-window)))))))
-(setq neo-window-fixed-size nil)
+;;(require 'neotree)
+;; (global-set-key [f8] 'neotree-toggle)
+;; (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;; ;; Fixes: https://github.com/jaypei/emacs-neotree/issues/262
+;; (eval-after-load "neotree"
+;;   '(add-to-list 'window-size-change-functions
+;;                 (lambda (frame)
+;;                   (let ((neo-window (neo-global--get-window)))
+;;                     (unless (null neo-window)
+;;                       (setq neo-window-width (window-width neo-window)))))))
+;;(setq neo-window-fixed-size nil)
 
-;; FillColumnIndicator
+;; treemacs
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  :config
+  (progn
+    (setq
+     treemacs-no-png-images t))
+  (treemacs-resize-icons 14)
+  (dolist (face '(treemacs-root-face
+                  treemacs-git-unmodified-face
+                  treemacs-git-modified-face
+                  treemacs-git-renamed-face
+                  treemacs-git-ignored-face
+                  treemacs-git-untracked-face
+                  treemacs-git-added-face
+                  treemacs-git-conflict-face
+                  treemacs-directory-face
+                  treemacs-directory-collapsed-face
+                  treemacs-file-face
+                  treemacs-tags-face))
+    (set-face-attribute face nil :family "Courier New" :height 140))
+  )
+
+;; Fillcolumnindicator
 
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
@@ -159,6 +199,14 @@
     (dev-mode)
     (text-scale-set 1)))
 
+(defun presentation-mode ()
+  (interactive)
+  (save-excursion
+    (dev-mode)
+    (require 'doom-themes)
+    (load-theme 'doom-one-light t)
+    (text-scale-set 3)))
+
 (dev-mode)
 
 ;; orgmode-html stuff
@@ -176,18 +224,11 @@
 
 ;; org mode disable autoidentation (tree identation)
 (setq org-adapt-identation nil)
+
 ;; prevent to insert tabs/spaces after src lines and titles
 (setq org-src-preserve-indentation t)
 
-;; from this point, garbage
-
-;;(set-face-font
-;;  'default "-adobe-courier-medium-r-normal--14-*-75-75-m-90-iso8859-9")
-;;(x-select-font nil t)
-;;(dolist (font (x-list-fonts "*")) 
-;;  (insert (format "%s\n" font)))
-;; (put 'scroll-left 'disabled nil)
-
+;; ??
 (setq org-src-tab-acts-natively nil)
 
 ;; rss feeds
@@ -197,3 +238,49 @@
                      ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
                      ("https://linuxnewbieguide.org/feed/" tech linux))))
 ;;(setq browse-url-browser-function 'eww-browse-url)
+
+;; rainbow delimiters
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+;; which key, C-h
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+;; ivy-rich
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+;; counsel
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minubuffer-history))
+  :config
+  ;; avoid start search with ^
+  (setq ivy-initial-inputs-alist nil))
+
+;; lsp-mode
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (lsp-enable-which-key-integration t))
+
+;; lsp-rust configuration
+;; https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+;; rustup update
+;; rustup component add rls rust-analysis rust-src
+
+;; C-x C-e : to evaluate regions
+;; C-h f : it can describe a function
+
+;; eof
+
