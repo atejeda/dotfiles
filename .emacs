@@ -27,7 +27,13 @@
   ivy
   ivy-rich
   counsel
-  treemacs))
+  treemacs
+  visual-fill
+  visutal-fill-column))
+
+;; '' install orgmode, orginit file.
+;; compnay mode, ivy... rust...ooooo
+;; evil mode
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -135,7 +141,7 @@
     (set-face-attribute face nil :family "Courier New" :height 140))
   )
 
-;; Fillcolumnindicator
+;; fill column indicator
 
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
@@ -209,27 +215,55 @@
 
 (dev-mode)
 
-;; orgmode-html stuff
+;; ;; orgmode-html stuff
 
-;; questions/14684263/how-to-org-mode-image-absolute-path-of-export-html
-;; questions/9807/org-mode-dont-change-relative-urls
-(defun wvxvw/export-rel-url (path desc format)
-  (cl-case format
-    (html (format "<a href=\"%s\">%s</a>" path (or desc path)))
-    (latex (format "\\href{%s}{%s}" path (or desc path)))
-    (otherwise path)))
+;; ;; questions/14684263/how-to-org-mode-image-absolute-path-of-export-html
+;; ;; questions/9807/org-mode-dont-change-relative-urls
+;; (defun wvxvw/export-rel-url (path desc format)
+;;   (cl-case format
+;;     (html (format "<a href=\"%s\">%s</a>" path (or desc path)))
+;;     (latex (format "\\href{%s}{%s}" path (or desc path)))
+;;     (otherwise path)))
 
-(eval-after-load "org"
-  '(org-link-set-parameters "rel" :follow #'browse-url :export #'wvxvw/export-rel-url))
+;; (eval-after-load "org"
+;;   '(org-link-set-parameters "rel" :follow #'browse-url :export #'wvxvw/export-rel-url))
 
-;; org mode disable autoidentation (tree identation)
-(setq org-adapt-identation nil)
+;; ;; org mode disable autoidentation (tree identation)
+;; (setq org-adapt-identation nil)
 
-;; prevent to insert tabs/spaces after src lines and titles
-(setq org-src-preserve-indentation t)
+;; ;; prevent to insert tabs/spaces after src lines and titles
+;; (setq org-src-preserve-indentation t)
 
-;; ??
-(setq org-src-tab-acts-natively nil)
+;; ;; ??
+;; (setq org-src-tab-acts-natively nil)
+
+;; orgmode
+
+(defun custom/org-mode-visual-fill ()
+  (setq visual-fill-column-width 80
+        visual-fill-column-center-text t
+        fci-mode 0
+        )
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :defer t
+  :hook
+  (org-mode . custom/org-mode-visual-fill))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
+
+(setq org-confirm-babel-evaluate nil)
+
+;; structured templates for org-mode
+
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 ;; rss feeds
 
@@ -272,7 +306,16 @@
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
-  (lsp-enable-which-key-integration t))
+  (lsp-enable-which-key-integration t)
+  :hook (rust-mode . lsp))
+
+(setq lsp-prefer-capf t)
+(setq lsp-completion-provider :capf)
+(setq lsp-completion-enable t)
+
+;; rust
+(use-package rust-mode
+  :ensure t)
 
 ;; lsp-rust configuration
 ;; https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
@@ -280,7 +323,29 @@
 ;; rustup component add rls rust-analysis rust-src
 
 ;; C-x C-e : to evaluate regions
+;; C-c C-c : in org mode, C-s ', C-s C-s
 ;; C-h f : it can describe a function
+
+;; C-c - : org mode mini editor
+
+
+
+
+
 
 ;; eof
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(visual-fill-mode visual-fill-column visual-fill use-package orgmode doom-themes lsp-mode multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode haskell-mode elfeed json-mode rainbow-delimiters which-key ivy ivy-rich counsel treemacs)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(put 'erase-buffer 'disabled nil)
