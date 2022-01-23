@@ -4,8 +4,9 @@
 * Emacs dotfile
 
 /C-c C-v t/ to regenerate the emacs dotfile.
+
 #+begin_src emacs-lisp
-;; generated from emacs.org
+;; generated from emacs.org file
 #+end_src
 
 ** Package Configuration
@@ -375,6 +376,18 @@ This is a feed reader within emacs:
 It is possible to change the default browser, e.g.:
 
 /(setq browse-url-browser-function 'eww-browse-url)/
+
+
+*** Hooks
+
+It disable the fci-mode and linum-mode for org files.
+
+#+begin_src emacs-lisp
+
+(add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
+(add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
+
+#+end_src
 
 
 ** Ivy

@@ -1,4 +1,4 @@
-;; generated from emacs.org
+;; generated from emacs.org file
 
 (require 'package)
 (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
@@ -198,6 +198,9 @@
   (("https://news.ycombinator.com/rss" tech hackernews)
    ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
    ("https://linuxnewbieguide.org/feed/" tech linux))))
+
+(add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
+(add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
 
 (use-package ivy-rich
   :init
