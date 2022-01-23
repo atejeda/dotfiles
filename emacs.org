@@ -1,5 +1,5 @@
 #+title emacs configuration
-#+property: header-args emacs-lisp :tangle ./init.el
+#+property: header-args emacs-lisp :tangle ./.emacs
 
 * Emacs dotfile
 
@@ -353,15 +353,13 @@ Tangle configuration:
       (org-babel-table))))
 
 (add-hook 'org-mode-hook
-          (lambda ()
-            (add-hook 'after-save-hook #'custom/org-babel-tangle-config))
+  (lambda ()
+  (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
 
 #+end_src
 
 
 *** Mini editor
-
-
 
 ** Elfeed
 
