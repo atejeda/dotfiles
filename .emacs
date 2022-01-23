@@ -29,7 +29,7 @@
   counsel
   treemacs
   visual-fill
-  visutal-fill-column))
+  visual-fill-column))
 
 ;; '' install orgmode, orginit file.
 ;; compnay mode, ivy... rust...ooooo
