@@ -359,8 +359,6 @@ Tangle configuration:
 #+end_src
 
 
-*** Mini editor
-
 ** Elfeed
 
 This is a feed reader within emacs:
