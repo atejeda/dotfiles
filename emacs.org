@@ -6,7 +6,8 @@
 
 [[./emacs.org.jpg]]
 
-Use =org-toggle-inline-image= (~C-c C-x C-v~).
+Use =org-toggle-inline-image= (~C-c C-x C-v~), add to the config
+=org-display-inline-images=.
 
 ~C-c C-v t~ to regenerate the emacs dotfile.
 
@@ -84,7 +85,7 @@ Use ensure to ensure package installation when use-requiered is used.
   (setq ring-bell-function 'ignore)
   (savehist-mode 1)
   (global-linum-mode 1)
-  (global-hl-line-mode 1)
+  ;;(global-hl-line-mode 1)
   (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 #+end_src
 
@@ -94,6 +95,22 @@ Use ensure to ensure package installation when use-requiered is used.
   (require 'powerline)
   (powerline-default-theme)
   (setq powerline-arrow-shape 'arrow)
+#+end_src
+
+*Line Highlighting*:
+
+Emacs modes inherits from super modes or base modes, e.g.:
+
+- lisp-mode inherits from prog-mode.
+- prog-mode inherits from fundamental-mode
+- text-mode inherits from fundamental-mode.
+
+We only enable the hl on prog modes, org-mode and text-mode.
+
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
 
 
@@ -142,8 +159,32 @@ Presentation mode theme:
     :config
     (dashboard-setup-startup-hook))
 
-  (add-hook 'dashboard-mode-hook (lambda () ( fci-mode 0 )))
-  (add-hook 'dashboard-mode-hook (lambda () ( linum-mode 0 )))
+  (defun custom/dashboard-mode-hooks ()
+    (fci-mode 0)
+    (linum-mode 0)
+    (hl-line-mode 0))
+  (add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
+#+end_src
+
+** Term
+
+A =termmode= is being used to run term with =/bin/bash=.
+
+- ~C-c o~, emulates ~C-x o~
+- ~C-c C-j~, term-line-mode
+- ~C-c C-k~, go back to char mode
+- ~C-c C-c~, emulates a ctrl+c sent to the terminal
+  
+#+begin_src emacs-lisp
+  (defun termmode ()
+    (interactive)
+    (term "/bin/bash"))
+
+  (defun custom/term-mode-hooks ()
+    (fci-mode 0)
+    (linum-mode 0)
+    (hl-line-mode 0))
+  (add-hook 'term-mode-hook 'custom/term-mode-hooks)
 #+end_src
 
 
@@ -247,7 +288,6 @@ Paren mode:
 #+end_src
 
 
-
 ** Orgmode
 
 /C- '/ can be used to edit source code block, same keybinding can be used to
@@ -262,8 +302,7 @@ at the center of the buffer.
   (defun custom/org-mode-visual-fill ()
     (setq visual-fill-column-width 80
           visual-fill-column-center-text t
-          fci-mode 0
-          )
+          fci-mode 0)
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
@@ -350,13 +389,17 @@ Auto-Tangle:
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
+
 *** Hooks
 
 It disable the fci-mode and linum-mode for org files.
 
 #+begin_src emacs-lisp
-  (add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
-  (add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
+  (defun custom/org-mode-hooks ()
+    (fci-mode 0)
+    (linum-mode 0)
+    (org-display-inline-images))
+  (add-hook 'org-mode-hook 'custom/org-mode-hooks)
 #+end_src
 
 

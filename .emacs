@@ -48,12 +48,16 @@
 (setq ring-bell-function 'ignore)
 (savehist-mode 1)
 (global-linum-mode 1)
-(global-hl-line-mode 1)
+;;(global-hl-line-mode 1)
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
 (require 'powerline)
 (powerline-default-theme)
 (setq powerline-arrow-shape 'arrow)
+
+(add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 (defun dev-mode ()
   (interactive)
@@ -86,8 +90,21 @@
   :config
   (dashboard-setup-startup-hook))
 
-(add-hook 'dashboard-mode-hook (lambda () ( fci-mode 0 )))
-(add-hook 'dashboard-mode-hook (lambda () ( linum-mode 0 )))
+(defun custom/dashboard-mode-hooks ()
+  (fci-mode 0)
+  (linum-mode 0)
+  (hl-line-mode 0))
+(add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
+
+(defun termmode ()
+  (interactive)
+  (term "/bin/bash"))
+
+(defun custom/term-mode-hooks ()
+  (fci-mode 0)
+  (linum-mode 0)
+  (hl-line-mode 0))
+(add-hook 'term-mode-hook 'custom/term-mode-hooks)
 
 (global-set-key "\C-l" 'goto-line)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
@@ -159,8 +176,7 @@
 (defun custom/org-mode-visual-fill ()
   (setq visual-fill-column-width 80
         visual-fill-column-center-text t
-        fci-mode 0
-        )
+        fci-mode 0)
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
@@ -211,8 +227,11 @@
   :defer t
   :hook (org-mode . org-auto-tangle-mode))
 
-(add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
-(add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
+(defun custom/org-mode-hooks ()
+  (fci-mode 0)
+  (linum-mode 0)
+  (org-display-inline-images))
+(add-hook 'org-mode-hook 'custom/org-mode-hooks)
 
 (setq elfeed-feeds (quote
   (("https://news.ycombinator.com/rss" tech hackernews)
