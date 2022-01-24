@@ -4,9 +4,14 @@
 
 * Emacs dotfile
 
-/C-c C-v t/ to regenerate the emacs dotfile.
+[[./emacs.org.jpg]]
 
-Use /:tangle no/ on each code to avoid include the source block on the file.
+Use =org-toggle-inline-image= (~C-c C-x C-v~).
+
+~C-c C-v t~ to regenerate the emacs dotfile.
+
+Use ~:tangle no~ in each block to avoid include the source code block in the
+final file generated.
 
 #+begin_src emacs-lisp
   ;; generated from emacs.org file
