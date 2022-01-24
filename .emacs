@@ -1,5 +1,7 @@
 ;; generated from emacs.org file
 
+(setq gc-cons-threshold (* 50 1000 1000))
+
 (require 'package)
 (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
@@ -29,7 +31,14 @@
   visual-fill
   visual-fill-column
   dashboard
-  org-auto-tangle))
+  org-auto-tangle
+  evil
+  undo-fu
+  evil-collection
+  swiper
+  smooth-scrolling
+  no-littering
+  doom-modeline))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -49,11 +58,15 @@
 (savehist-mode 1)
 (global-linum-mode 1)
 ;;(global-hl-line-mode 1)
+(set-fringe-mode 10)
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
 (require 'powerline)
 (powerline-default-theme)
 (setq powerline-arrow-shape 'arrow)
+
+(use-package all-the-icons
+  :if (display-graphic-p))
 
 (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
 (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
@@ -84,6 +97,9 @@
     (load-theme 'doom-one-light t)
     (text-scale-set 3)))
 ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
+
+(require 'smooth-scrolling)
+(smooth-scrolling-mode 1)
 
 (use-package dashboard
   :ensure t
@@ -129,7 +145,8 @@
 (setq next-line-add-newlines nil)
 
 (require 'fill-column-indicator)
-(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(define-globalized-minor-mode global-fci-mode fci-mode (
+  lambda () (fci-mode 1)))
 (global-fci-mode 1)
 (setq fci-rule-column 79)
 (setq fci-rule-width 1)
@@ -172,6 +189,12 @@
                   treemacs-file-face
                   treemacs-tags-face))
     (set-face-attribute face nil :family "Courier New" :height 140)))
+
+(setq user-emacs-directory "~/.cache/emacs")
+(use-package no-littering)
+
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
 (defun custom/org-mode-visual-fill ()
   (setq visual-fill-column-width 80
@@ -238,6 +261,24 @@
    ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
    ("https://linuxnewbieguide.org/feed/" tech linux))))
 
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
+
 (use-package ivy-rich
   :init
   (ivy-rich-mode 1))
@@ -251,7 +292,7 @@
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file)
+         ;;("C-x C-f" . counsel-find-file)
          :map minibuffer-local-map
          ("C-r" . 'counsel-minubuffer-history))
   :config
@@ -274,6 +315,7 @@
   :ensure t)
 
 (dev-mode)
+(setq gc-cons-threshold (* 2 1000 1000))
 
 ;; eof
 ;; below this line, there's pure garbage

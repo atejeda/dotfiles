@@ -6,17 +6,29 @@
 
 [[./emacs.org.jpg]]
 
-Use =org-toggle-inline-image= (~C-c C-x C-v~), add to the config
-=org-display-inline-images=.
+- use ~C-c C-x C-v~ =org-toggle-inline-image=.
+  
+- use ~C-c C-v t~ to regenerate the emacs dotfile.
 
-~C-c C-v t~ to regenerate the emacs dotfile.
+- use ~M-q~ to trigger the ~adaptive-fill-mode~.
 
-Use ~:tangle no~ in each block to avoid include the source code block in the
-final file generated.
+- use ~C-c C-c~ to execute the code in a lisp code block.
+
+- append ~:tangle no~ to avoid write the source code block to the generate file.
 
 #+begin_src emacs-lisp
   ;; generated from emacs.org file
 #+end_src
+
+** Performance
+
+- Make gc pauses faster by decreasing the threshold.
+- The default is 800 kilobytes. Measured in bytes.
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 50 1000 1000))
+#+end_src
+
 
 ** Package Configuration
 
@@ -56,12 +68,18 @@ List of packages needed by this configuration.
     visual-fill
     visual-fill-column
     dashboard
-    org-auto-tangle))
+    org-auto-tangle
+    evil
+    undo-fu
+    evil-collection
+    swiper
+    smooth-scrolling
+    no-littering
+    doom-modeline))
 
   (when (cl-find-if-not #'package-installed-p package-selected-packages)
     (package-refresh-contents)
     (mapc #'package-install package-selected-packages))
-
 #+end_src
 
 Use ensure to ensure package installation when use-requiered is used.
@@ -86,16 +104,36 @@ Use ensure to ensure package installation when use-requiered is used.
   (savehist-mode 1)
   (global-linum-mode 1)
   ;;(global-hl-line-mode 1)
+  (set-fringe-mode 10)
   (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 #+end_src
 
-*Powerline*:
+*Powerline* (/disabled/):
 
 #+begin_src emacs-lisp
   (require 'powerline)
   (powerline-default-theme)
   (setq powerline-arrow-shape 'arrow)
 #+end_src
+
+*all-the-icons*:
+
+Install the fonts: ~M-x all-the-icons-install-fonts~
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+#+end_src
+
+*Modeline* (/disabled/):
+
+#+begin_src emacs-lisp :tangle no
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 25)))
+#+end_src
+
+#+RESULTS:
 
 *Line Highlighting*:
 
@@ -105,7 +143,7 @@ Emacs modes inherits from super modes or base modes, e.g.:
 - prog-mode inherits from fundamental-mode
 - text-mode inherits from fundamental-mode.
 
-We only enable the hl on prog modes, org-mode and text-mode.
+Lets enable the hl on prog modes, org-mode and text-mode.
 
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
@@ -116,6 +154,8 @@ We only enable the hl on prog modes, org-mode and text-mode.
 
 *** Theme
 
+Interactive selection: ~M-x counsel-load-theme~
+    
 Development mode theme:
     
 #+begin_src emacs-lisp
@@ -151,6 +191,32 @@ Presentation mode theme:
 #+end_src
 
 
+** Behavior
+
+Smooth scrolling, from https://www.emacswiki.org/emacs/SmoothScrolling:
+
+scroll one line at a time (less "jumpy" than defaults)
+    
+- ~(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))~ ;; one line at a time
+- ~(setq mouse-wheel-progressive-speed nil)~ ;; don't accelerate scrolling  
+- ~(setq mouse-wheel-follow-mouse 't)~ ;; scroll window under mouse  
+- ~(setq scroll-step 1)~ ;; keyboard scroll one line at a time
+
+#+begin_src emacs-lisp :tangle no
+    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) 
+    (setq mouse-wheel-progressive-speed nil)
+    (setq mouse-wheel-follow-mouse 't)
+    (setq scroll-step 1)
+#+end_src
+
+Previous block is disabled from tangle, there's a package to deal with this:
+
+#+begin_src emacs-lisp
+  (require 'smooth-scrolling)
+  (smooth-scrolling-mode 1)
+#+end_src
+
+
 ** Dashboard
 
 #+begin_src emacs-lisp
@@ -165,6 +231,7 @@ Presentation mode theme:
     (hl-line-mode 0))
   (add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
 #+end_src
+
 
 ** Term
 
@@ -226,7 +293,8 @@ It draws a line at char 80, it marks with red any char after char 80.
 
 #+begin_src emacs-lisp
   (require 'fill-column-indicator)
-  (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+  (define-globalized-minor-mode global-fci-mode fci-mode (
+    lambda () (fci-mode 1)))
   (global-fci-mode 1)
   (setq fci-rule-column 79)
   (setq fci-rule-width 1)
@@ -245,7 +313,7 @@ It draws a line at char 80, it marks with red any char after char 80.
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-Paren mode:
+*Paren mode*:
 
 #+begin_src emacs-lisp
   (show-paren-mode 1)
@@ -285,6 +353,42 @@ Paren mode:
                     treemacs-file-face
                     treemacs-tags-face))
       (set-face-attribute face nil :family "Courier New" :height 140)))
+#+end_src
+
+*No Littering*:
+
+Keep emacs folder and project folders clean:
+
+#+begin_src emacs-lisp
+  (setq user-emacs-directory "~/.cache/emacs")
+  (use-package no-littering)
+
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+#+end_src
+
+
+** Evil Mode
+
+Check the undo-fu package for vim style undo.
+
+#+begin_src emacs-lisp :tangle no
+  (use-package undo-fu)
+
+  (use-package evil
+    :demand t
+    :bind (("<escape>" . keyboard-escape-quit))
+    :init
+    (setq evil-want-keybinding nil)
+    (setq evil-undo-system 'undo-fu)
+    :config
+    (evil-mode 1))
+
+  (use-package evil-collection
+    :after evil
+    :config
+    (setq evil-want-integration t)
+    (evil-collection-init))
 #+end_src
 
 
@@ -340,7 +444,7 @@ Babel configuration:
 #+end_src
 
 Structured templates, these are generated on the editor by typing, e.g:
-/<el + tab/
+=<el + tab=.
 
 #+begin_src emacs-lisp
   (require 'org-tempo)
@@ -365,6 +469,9 @@ Add src lang modes to org, use this as, e.g.: /#+begin_src conf-unix/
 #+end_src
 
 Tangle configuration:
+
+- use ~:tangle no~ in each block to avoid include the source code block in the
+final file generated.
 
 #+begin_src emacs-lisp
   (defun custom/org-babel-tangle-config()
@@ -422,6 +529,27 @@ It is possible to change the default browser, e.g.:
 ** Ivy
 
 #+begin_src emacs-lisp
+  (use-package ivy
+    :diminish
+    :bind (("C-s" . swiper)
+           :map ivy-minibuffer-map
+           ("TAB" . ivy-alt-done)
+           ("C-l" . ivy-alt-done)
+           ("C-j" . ivy-next-line)
+           ("C-k" . ivy-previous-line)
+           :map ivy-switch-buffer-map
+           ("C-k" . ivy-previous-line)
+           ("C-l" . ivy-done)
+           ("C-d" . ivy-switch-buffer-kill)
+           :map ivy-reverse-i-search-map
+           ("C-k" . ivy-previous-line)
+           ("C-d" . ivy-reverse-i-search-kill))
+    :config
+    (ivy-mode 1))
+#+end_src
+
+
+#+begin_src emacs-lisp
   (use-package ivy-rich
     :init
     (ivy-rich-mode 1))
@@ -448,7 +576,7 @@ This is triggered with /C-h {v,f}/, v stands for variable, f for functions, etc.
   (use-package counsel
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-ibuffer)
-           ("C-x C-f" . counsel-find-file)
+           ;;("C-x C-f" . counsel-find-file)
            :map minibuffer-local-map
            ("C-r" . 'counsel-minubuffer-history))
     :config
@@ -491,9 +619,9 @@ LSP rust configuration: https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
 
 ** Final section and comments
 
-
 #+begin_src emacs-lisp
   (dev-mode)
+  (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -503,12 +631,36 @@ LSP rust configuration: https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
 
 
 ** Emacs Notes
+ 
+- *company*, company "just" does code/text autocompletion and a few
+  related things like docstring lookup
+  
+- *ivy*, ivy is a framework for interactively picking something out
+  of a lists in a nicer way (here using ivy as a better M-x)
+  
+- *swiper*,swiper is another application of ivy, using ivy as a
+  better C-s
 
-*** Improving start time (no daemon)
+Configuration TODO:
 
-// 
+- swiper, done
+- evilmode
+- plantuml
+- when opening new windows (keep configurations), check dameon mode video.
+- command-log-mode
+
+Useful keybindings:
 
 #+begin_src text :tangle no
-  this is a text with :tangle no
+  M-; toggle code comments
+  M-x M-p to traverse M-x history (with ivy-counsel)
 #+end_src
 
+Review doc:
+
+- Magit + Rebase
+
+
+*Sources*
+
+- r/emacs/comments/6x7ph2/is_company_different_from_helm_and_ivy/
