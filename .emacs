@@ -27,7 +27,9 @@
   counsel
   treemacs
   visual-fill
-  visual-fill-column))
+  visual-fill-column
+  dashboard
+  org-auto-tangle))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -78,6 +80,14 @@
     (load-theme 'doom-one-light t)
     (text-scale-set 3)))
 ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
+
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(add-hook 'dashboard-mode-hook (lambda () ( fci-mode 0 )))
+(add-hook 'dashboard-mode-hook (lambda () ( linum-mode 0 )))
 
 (global-set-key "\C-l" 'goto-line)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
@@ -158,10 +168,10 @@
   :hook
   (org-mode . custom/org-mode-visual-fill))
 
-(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "")
-                                       ("#+END_SRC" . "-")
-                                       ("#+begin_src" . "")
-                                       ("#+end_src" . "-")))
+(setq-default prettify-symbols-alist '(("#+begin_src" . "")
+                                       ("#+begin_src emacs-lisp" . "")
+                                       ("#+begin_src text :tangle no" . "")
+                                       ("#+end_src" . "")))
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
@@ -178,6 +188,7 @@
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no"))
 
 (setq org-confirm-babel-evaluate nil)
 
@@ -194,13 +205,19 @@
   (lambda ()
   (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
 
+;;(require 'org-auto-tangle)
+;;(add-hook 'org-mode-hook 'org-auto-tangle-mode)
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode))
+
+(add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
+(add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
+
 (setq elfeed-feeds (quote
   (("https://news.ycombinator.com/rss" tech hackernews)
    ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
    ("https://linuxnewbieguide.org/feed/" tech linux))))
-
-(add-hook 'org-mode-hook (lambda () ( fci-mode 0 )))
-(add-hook 'org-mode-hook (lambda () ( linum-mode 0 )))
 
 (use-package ivy-rich
   :init
