@@ -38,7 +38,8 @@
   swiper
   smooth-scrolling
   no-littering
-  doom-modeline))
+  doom-modeline
+  nix-haskell-mode))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
