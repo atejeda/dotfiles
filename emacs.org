@@ -1,3 +1,4 @@
+
 #+title emacs configuration
 #+property: header-args emacs-lisp :tangle ./.emacs
 #+auto_tangle: t
@@ -76,12 +77,15 @@ List of packages needed by this configuration.
     smooth-scrolling
     no-littering
     doom-modeline
-    nix-haskell-mode))
+    nix-haskell-mode
+    projectile))
 
   (when (cl-find-if-not #'package-installed-p package-selected-packages)
     (package-refresh-contents)
     (mapc #'package-install package-selected-packages))
 #+end_src
+
+#+RESULTS:
 
 Use ensure to ensure package installation when use-requiered is used.
 
@@ -549,6 +553,11 @@ It is possible to change the default browser, e.g.:
     (ivy-mode 1))
 #+end_src
 
+Avoid to execute the selection with TAB, this will show only the "match".
+
+#+begin_src emacs-lisp
+  (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+#+end_src
 
 #+begin_src emacs-lisp
   (use-package ivy-rich
@@ -603,18 +612,52 @@ This is triggered with /C-h {v,f}/, v stands for variable, f for functions, etc.
 #+end_src
 
 
+** Projectile
+
+Key binding is set to ~C-c p~, there's a bunch of comands to run.
+   
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    (when (file-directory-p "~/projects/")
+      (setq projectile-project-search-path '("~/projects/")))
+    (setq projectile-switch-project-action #'projectile-dired))
+#+end_src
+
+
 ** Language specific configuration
 
 *** Rust
 
-LSP rust configuration: https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+Configuration and hooks, check more for:
 
-- rustup update
-- rustup component add rls rust-analysis rust-src
+- configuration options at https://github.com/rust-lang/rust-mode
+- lsp mode at https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+
+LSP rust configuration requirements:
+
+#+begin_src text :tangle no
+  rustup update
+  rustup component add rls rust-analysis rust-src
+#+end_src
 
 #+begin_src emacs-lisp
   (use-package rust-mode
     :ensure t)
+#+end_src
+
+Use ~C-c C-c~ to execute =cargo run=.
+
+#+begin_src emacs-lisp 
+  (defun custom/rust-mode-hooks ()
+    (setq indent-tabs-mode nil)
+    (define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+    (#'lsp))
+  (add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
 #+end_src
 
 
@@ -649,6 +692,13 @@ Configuration TODO:
 - plantuml
 - when opening new windows (keep configurations), check dameon mode video.
 - command-log-mode
+- projectile
+- treemacs C-c C-p a to add, d to delete, etc..
+- defun vs progn
+- avoid #+results when installing packages
+- learn how to use use-package
+- dsp, gdb
+- rust, gdb
 
 Useful keybindings:
 
@@ -660,7 +710,6 @@ Useful keybindings:
 Review doc:
 
 - Magit + Rebase
-
 
 *Sources*
 

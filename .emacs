@@ -39,7 +39,8 @@
   smooth-scrolling
   no-littering
   doom-modeline
-  nix-haskell-mode))
+  nix-haskell-mode
+  projectile))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -280,6 +281,8 @@
   :config
   (ivy-mode 1))
 
+(ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+
 (use-package ivy-rich
   :init
   (ivy-rich-mode 1))
@@ -312,8 +315,24 @@
 (setq lsp-completion-provider :capf)
 (setq lsp-completion-enable t)
 
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/projects/")
+    (setq projectile-project-search-path '("~/projects/")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
 (use-package rust-mode
   :ensure t)
+
+(defun custom/rust-mode-hooks ()
+  (setq indent-tabs-mode nil)
+  (define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+  (#'lsp))
+(add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
 
 (dev-mode)
 (setq gc-cons-threshold (* 2 1000 1000))
