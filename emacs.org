@@ -248,15 +248,13 @@ A =termmode= is being used to run term with =/bin/bash=.
 - ~C-c C-c~, emulates a ctrl+c sent to the terminal
   
 #+begin_src emacs-lisp
-  (defun termmode ()
-    (interactive)
-    (term "/bin/bash"))
-
-  (defun custom/term-mode-hooks ()
+  (use-package term
+    :commands term
+    :config
+    (setq explicit-shell-file-name "/bin/bash")
     (fci-mode 0)
     (linum-mode 0)
     (hl-line-mode 0))
-  (add-hook 'term-mode-hook 'custom/term-mode-hooks)
 #+end_src
 
 
@@ -528,8 +526,7 @@ This is a feed reader within emacs:
 
 It is possible to change the default browser, e.g.:
 
-/(setq browse-url-browser-function 'eww-browse-url)/
-
+~(setq browse-url-browser-function 'eww-browse-url)~
 
 ** Ivy
 
@@ -538,7 +535,6 @@ It is possible to change the default browser, e.g.:
     :diminish
     :bind (("C-s" . swiper)
            :map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)
            ("C-l" . ivy-alt-done)
            ("C-j" . ivy-next-line)
            ("C-k" . ivy-previous-line)
@@ -550,9 +546,20 @@ It is possible to change the default browser, e.g.:
            ("C-k" . ivy-previous-line)
            ("C-d" . ivy-reverse-i-search-kill))
     :config
-    (ivy-mode 1)
-    ;; partial tab, only complete, not execute selection
-    (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial))
+    (ivy-mode 1))
+#+end_src
+
+Alt only to complete and not to openfile, exec command, etc, refer to
+https://github.com/abo-abo/swiper/issues/86.
+
+For enable/disable ^ for counsel-M-x, refer to
+/questions/38841/counsel-m-x-always-shows.
+
+#+begin_src emacs-lisp
+  (defun custom/ivy-tab-hooks ()
+    (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
+  (add-hook 'ivy-mode-hook 'custom/ivy-tab-hooks)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -561,6 +568,31 @@ It is possible to change the default browser, e.g.:
     (ivy-rich-mode 1))
 #+end_src
 
+*Counsel*:
+
+#+begin_src emacs-lisp
+  (use-package counsel
+    :bind (("M-x" . counsel-M-x)
+           ("C-x b" . counsel-ibuffer)
+           ;;("C-x C-f" . counsel-find-file)
+           :map minibuffer-local-map
+           ("C-r" . 'counsel-minubuffer-history)))
+#+end_src
+
+To not start the search with ^, set the varible ivy-initial-inputs-alist to nil.
+
+Append this to the config section of the =(use-package counsel...=.
+
+#+begin_src text :tangle no
+    ;;:config
+    ;; avoid start search with ^
+    ;; (setq ivy-initial-inputs-alist nil))
+#+end_src
+
+What about these?
+
+~(setq ivy-use-virtual-buffers t)~
+~(setq enable-recursive-minibuffers t)~
 
 ** Visual aids
 
@@ -574,20 +606,6 @@ This is triggered with /C-h {v,f}/, v stands for variable, f for functions, etc.
     :diminish which-key-mode
     :config
     (setq which-key-idle-delay 1))
-#+end_src
-
-*Counsel*:
-
-#+begin_src emacs-lisp
-  (use-package counsel
-    :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-ibuffer)
-           ;;("C-x C-f" . counsel-find-file)
-           :map minibuffer-local-map
-           ("C-r" . 'counsel-minubuffer-history))
-    :config
-    ;; avoid start search with ^
-    (setq ivy-initial-inputs-alist nil))
 #+end_src
 
 
@@ -695,6 +713,9 @@ Configuration TODO:
 - learn how to use use-package
 - dsp, gdb
 - rust, gdb
+- eval-after-load v/s hooks /2736087/eval-after-load-vs-mode-hook
+- (after! ivy ...) ?
+- emacs/lisp alist
 
 Useful keybindings:
 

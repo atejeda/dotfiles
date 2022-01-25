@@ -114,15 +114,13 @@
   (hl-line-mode 0))
 (add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
 
-(defun termmode ()
-  (interactive)
-  (term "/bin/bash"))
-
-(defun custom/term-mode-hooks ()
+(use-package term
+  :commands term
+  :config
+  (setq explicit-shell-file-name "/bin/bash")
   (fci-mode 0)
   (linum-mode 0)
   (hl-line-mode 0))
-(add-hook 'term-mode-hook 'custom/term-mode-hooks)
 
 (global-set-key "\C-l" 'goto-line)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
@@ -267,7 +265,6 @@
   :diminish
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)
          ("C-l" . ivy-alt-done)
          ("C-j" . ivy-next-line)
          ("C-k" . ivy-previous-line)
@@ -279,29 +276,29 @@
          ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
-  (ivy-mode 1)
-  ;; partial tab, only complete, not execute selection
-  (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial))
+  (ivy-mode 1))
+
+(defun custom/ivy-tab-hooks ()
+  (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
+(add-hook 'ivy-mode-hook 'custom/ivy-tab-hooks)
 
 (use-package ivy-rich
   :init
   (ivy-rich-mode 1))
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ;;("C-x C-f" . counsel-find-file)
          :map minibuffer-local-map
-         ("C-r" . 'counsel-minubuffer-history))
+         ("C-r" . 'counsel-minubuffer-history)))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
   :config
-  ;; avoid start search with ^
-  (setq ivy-initial-inputs-alist nil))
+  (setq which-key-idle-delay 1))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
