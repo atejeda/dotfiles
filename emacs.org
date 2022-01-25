@@ -669,9 +669,9 @@ Use ~C-c C-c~ to execute =cargo run=.
 #+begin_src emacs-lisp 
   (defun custom/rust-mode-hooks ()
     (setq indent-tabs-mode nil)
-    (define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
-    (#'lsp))
+    (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
   (add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
+  (add-hook 'rust-mode-hook #'lsp)
 #+end_src
 
 
@@ -716,6 +716,11 @@ Configuration TODO:
 - eval-after-load v/s hooks /2736087/eval-after-load-vs-mode-hook
 - (after! ivy ...) ?
 - emacs/lisp alist
+- defcustom, e.g.: rust-cargo.el
+- rust and lsp
+- faces counsel
+- faces rust, github.com/rust-lang/rust-mode/blob/master/rust-mode.el#L89
+- https://emacs-tree-sitter.github.io/syntax-highlighting/customization/
 
 Useful keybindings:
 

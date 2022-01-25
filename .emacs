@@ -327,9 +327,9 @@
 
 (defun custom/rust-mode-hooks ()
   (setq indent-tabs-mode nil)
-  (define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
-  (#'lsp))
+  (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 (add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
+(add-hook 'rust-mode-hook #'lsp)
 
 (dev-mode)
 (setq gc-cons-threshold (* 2 1000 1000))
