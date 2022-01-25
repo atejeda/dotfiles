@@ -279,9 +279,9 @@
          ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
-  (ivy-mode 1))
-
-(ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+  (ivy-mode 1)
+  ;; partial tab, only complete, not execute selection
+  (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial))
 
 (use-package ivy-rich
   :init

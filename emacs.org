@@ -550,13 +550,9 @@ It is possible to change the default browser, e.g.:
            ("C-k" . ivy-previous-line)
            ("C-d" . ivy-reverse-i-search-kill))
     :config
-    (ivy-mode 1))
-#+end_src
-
-Avoid to execute the selection with TAB, this will show only the "match".
-
-#+begin_src emacs-lisp
-  (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+    (ivy-mode 1)
+    ;; partial tab, only complete, not execute selection
+    (ivy-define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -682,7 +678,7 @@ Use ~C-c C-c~ to execute =cargo run=.
 - *ivy*, ivy is a framework for interactively picking something out
   of a lists in a nicer way (here using ivy as a better M-x)
   
-- *swiper*,swiper is another application of ivy, using ivy as a
+- *swiper*, swiper is another application of ivy, using ivy as a
   better C-s
 
 Configuration TODO:
