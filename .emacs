@@ -111,7 +111,7 @@
   :config
   (dashboard-setup-startup-hook)
   ;;(setq dashboard-projects-backend "projectile")
-  (setq dashboard-startup-banner "./emacs.dashboard.33.png")
+  (setq dashboard-startup-banner "./emacs.dashboard.gif")
   (setq dashboard-banner-logo-title "Gizmo.. caca!")
   (setq dashboard-items '((recents  . 5)
                           (bookmarks . 5)
