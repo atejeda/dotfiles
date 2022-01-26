@@ -111,9 +111,10 @@
   :config
   (dashboard-setup-startup-hook)
   ;;(setq dashboard-projects-backend "projectile")
-  (setq dashboard-startup-banner
-        (concat (file-name-as-directory default-directory)
-                "emacs.dashboard.33.png"))
+  ;;(setq dashboard-startup-banner
+  ;;      (concat (file-name-as-directory default-directory)
+  ;;             "emacs.dashboard.33.png"))
+  (setq dashboard-startup-banner "~/.dotfiles/emacs.dashboard.33.png")
   (setq dashboard-banner-logo-title "")
   (setq dashboard-items '((recents  . 5)
                           (bookmarks . 5)
@@ -126,6 +127,10 @@
   (linum-mode 0)
   (hl-line-mode 0))
 (add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
+
+(with-current-buffer "*scratch*"
+ (goto-char (point-max))
+ (insert (format "\ndd = %s" buffer-file-name)))
 
 (use-package term
   :commands term
