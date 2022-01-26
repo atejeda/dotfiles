@@ -109,7 +109,15 @@
 (use-package dashboard
   :ensure t
   :config
-  (dashboard-setup-startup-hook))
+  (dashboard-setup-startup-hook)
+  ;;(setq dashboard-projects-backend "projectile")
+  (setq dashboard-startup-banner "./emacs.dashboard.33.png")
+  (setq dashboard-banner-logo-title "Gizmo.. caca!")
+  (setq dashboard-items '((recents  . 5)
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (agenda . 5)
+                          (registers . 5))))
 
 (defun custom/dashboard-mode-hooks ()
   (fci-mode 0)
@@ -354,7 +362,7 @@
       (set-face-attribute face nil :weight 'normal :underline nil)
       ;; (with-current-buffer "*scratch*"
       ;;   (goto-char (point-max))
-      ;;   (insert (format "%s" facestr)))
+      ;;   (insert (format "\n%s" facestr)))
     ))
 
 (mapc (lambda (face)(custom/is-org-face face)) (face-list))

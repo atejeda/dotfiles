@@ -10,6 +10,8 @@ tailored for my taste and needs.
 
 [[./emacs.org.jpg]]
 
+** Some comments
+
 - use ~C-c C-x C-v~ =org-toggle-inline-image=.
   
 - use ~C-c C-v t~ to regenerate the emacs dotfile.
@@ -23,6 +25,7 @@ tailored for my taste and needs.
 #+begin_src emacs-lisp
   ;; generated from emacs.org file
 #+end_src
+
 
 ** Performance
 
@@ -202,6 +205,7 @@ enable globally and disabled it per major mode.
   (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
 
+
 ** Behavior
 
 Smooth scrolling, from https://www.emacswiki.org/emacs/SmoothScrolling:
@@ -234,7 +238,15 @@ Previous block is disabled from tangle, there's a package to deal with this:
   (use-package dashboard
     :ensure t
     :config
-    (dashboard-setup-startup-hook))
+    (dashboard-setup-startup-hook)
+    ;;(setq dashboard-projects-backend "projectile")
+    (setq dashboard-startup-banner "./emacs.dashboard.33.png")
+    (setq dashboard-banner-logo-title "Gizmo.. caca!")
+    (setq dashboard-items '((recents  . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (agenda . 5)
+                            (registers . 5))))
 
   (defun custom/dashboard-mode-hooks ()
     (fci-mode 0)
@@ -701,7 +713,6 @@ Use ~C-c C-c~ to execute =cargo run=.
 
 ** Final section and comments
 
-
 Configure garbage collector frequency:
 
 #+begin_src emacs-lisp
@@ -720,6 +731,8 @@ it has a lot of room for improvements, like e.g.: don't format face as a string,
 and test the match in other way (by not having a match.group(1) nil to disable
 what is intended).
 
+This, needs to be improved.
+
 #+begin_src emacs-lisp
   ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
   (defun custom/is-org-face (face)
@@ -732,12 +745,11 @@ what is intended).
         (set-face-attribute face nil :weight 'normal :underline nil)
         ;; (with-current-buffer "*scratch*"
         ;;   (goto-char (point-max))
-        ;;   (insert (format "%s" facestr)))
+        ;;   (insert (format "\n%s" facestr)))
       ))
 
   (mapc (lambda (face)(custom/is-org-face face)) (face-list))
 #+end_src
-
 
 #+begin_src emacs-lisp
   ;; eof
@@ -810,6 +822,7 @@ of emacs and lisp documentation.
 - https://www.masteringemacs.org/article/evaluating-lisp-forms-regular-expressions
 - http://xahlee.info/emacs/emacs/elisp_regex.html
 - questions/16243159/emacs-lisp-get-sub-matches-from-a-regexp-match
+
 
 ** To-Do lists
 
