@@ -5,6 +5,9 @@
 
 * Emacs dotfile
 
+This is the orgfile that generates my emacs configuration, it is
+tailored for my taste and needs.
+
 [[./emacs.org.jpg]]
 
 - use ~C-c C-x C-v~ =org-toggle-inline-image=.
@@ -31,7 +34,7 @@
 #+end_src
 
 
-** Package Configuration
+** Packages
 
 *Melpa and package configuration*
 
@@ -78,14 +81,13 @@ List of packages needed by this configuration.
     no-littering
     doom-modeline
     nix-haskell-mode
-    projectile))
+    projectile
+    magit))
 
   (when (cl-find-if-not #'package-installed-p package-selected-packages)
     (package-refresh-contents)
     (mapc #'package-install package-selected-packages))
 #+end_src
-
-#+RESULTS:
 
 Use ensure to ensure package installation when use-requiered is used.
 
@@ -96,6 +98,51 @@ Use ensure to ensure package installation when use-requiered is used.
 
 
 ** Look and feel
+
+*** Theme
+
+Interactive selection: ~M-x counsel-load-theme~
+    
+Development mode theme:
+    
+#+begin_src emacs-lisp
+  (defun dev-mode ()
+    (interactive)
+    (save-excursion
+      (require 'doom-themes)
+      (load-theme 'doom-one t)
+      (text-scale-set 0)
+      (cond
+       ((eq system-type 'gnu/linux)
+        (set-face-attribute 'default nil :family "Hack" :height 100)
+        (set-background-color "#1c2023")
+        (set-foreground-color "#c7ccd1"))
+       ((eq system-type 'darwin)
+        (set-face-attribute 'default nil :family "Courier New" :height 140)
+        (set-background-color "#121212")
+        (set-foreground-color "#d8dee8")))))
+  ;;(global-set-key (kbd "C-c r m") 'dev-mode)
+#+end_src
+
+Presentation mode theme:
+
+#+begin_src emacs-lisp
+  (defun presentation-mode ()
+    (interactive)
+    (save-excursion
+      (dev-mode)
+      (require 'doom-themes)
+      (load-theme 'doom-one-light t)
+      (text-scale-set 3)))
+  ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (dev-mode)
+#+end_src
+
+
+*** General Settings
 
 #+begin_src emacs-lisp
   (display-time)
@@ -138,8 +185,6 @@ Install the fonts: ~M-x all-the-icons-install-fonts~
     :custom ((doom-modeline-height 25)))
 #+end_src
 
-#+RESULTS:
-
 *Line Highlighting*:
 
 Emacs modes inherits from super modes or base modes, e.g.:
@@ -148,53 +193,14 @@ Emacs modes inherits from super modes or base modes, e.g.:
 - prog-mode inherits from fundamental-mode
 - text-mode inherits from fundamental-mode.
 
-Lets enable the hl on prog modes, org-mode and text-mode.
+Lets enable the hl on prog modes, org-mode and text-mode, there's no way to
+enable globally and disabled it per major mode.
 
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
   (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
   (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
-
-
-*** Theme
-
-Interactive selection: ~M-x counsel-load-theme~
-    
-Development mode theme:
-    
-#+begin_src emacs-lisp
-  (defun dev-mode ()
-    (interactive)
-    (save-excursion
-      (require 'doom-themes)
-      (load-theme 'doom-one t)
-      (text-scale-set 0)
-      (cond
-       ((eq system-type 'gnu/linux)
-        (set-face-attribute 'default nil :family "Hack" :height 100)
-        (set-background-color "#1c2023")
-        (set-foreground-color "#c7ccd1"))
-       ((eq system-type 'darwin)
-        (set-face-attribute 'default nil :family "Courier New" :height 140)
-        (set-background-color "#121212")
-        (set-foreground-color "#d8dee8")))))
-  ;;(global-set-key (kbd "C-c r m") 'dev-mode)
-#+end_src
-
-Presentation mode theme:
-
-#+begin_src emacs-lisp
-  (defun presentation-mode ()
-    (interactive)
-    (save-excursion
-      (dev-mode)
-      (require 'doom-themes)
-      (load-theme 'doom-one-light t)
-      (text-scale-set 3)))
-  ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
-#+end_src
-
 
 ** Behavior
 
@@ -208,10 +214,10 @@ scroll one line at a time (less "jumpy" than defaults)
 - ~(setq scroll-step 1)~ ;; keyboard scroll one line at a time
 
 #+begin_src emacs-lisp :tangle no
-    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) 
-    (setq mouse-wheel-progressive-speed nil)
-    (setq mouse-wheel-follow-mouse 't)
-    (setq scroll-step 1)
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) 
+  (setq mouse-wheel-progressive-speed nil)
+  (setq mouse-wheel-follow-mouse 't)
+  (setq scroll-step 1)
 #+end_src
 
 Previous block is disabled from tangle, there's a package to deal with this:
@@ -274,6 +280,14 @@ Bindings to move around the buffers, global keysets and def alises.
   (fset 'yes-or-no-p 'y-or-n-p)
 
   (defalias 'select-all 'mark-whole-buffer)
+#+end_src
+
+*Buffer names*:
+
+#+begin_src emacs-lisp
+  (require 'uniquify)
+  (setq uniquify-separator "/"
+        uniquify-buffer-name-style 'forward)
 #+end_src
 
 *Tabs:*
@@ -339,9 +353,7 @@ It draws a line at char 80, it marks with red any char after char 80.
     :defer t
     :init
     :config
-    (progn
-      (setq
-       treemacs-no-png-images t))
+    (progn (setq treemacs-no-png-images t))
     (treemacs-resize-icons 14)
     (dolist (face '(treemacs-root-face
                     treemacs-git-unmodified-face
@@ -528,6 +540,7 @@ It is possible to change the default browser, e.g.:
 
 ~(setq browse-url-browser-function 'eww-browse-url)~
 
+
 ** Ivy
 
 #+begin_src emacs-lisp
@@ -576,7 +589,8 @@ For enable/disable ^ for counsel-M-x, refer to
            ("C-x b" . counsel-ibuffer)
            ;;("C-x C-f" . counsel-find-file)
            :map minibuffer-local-map
-           ("C-r" . 'counsel-minubuffer-history)))
+           ("C-r" . 'counsel-minubuffer-history))
+    :config (fci-mode 0))
 #+end_src
 
 To not start the search with ^, set the varible ivy-initial-inputs-alist to nil.
@@ -593,6 +607,7 @@ What about these?
 
 ~(setq ivy-use-virtual-buffers t)~
 ~(setq enable-recursive-minibuffers t)~
+
 
 ** Visual aids
 
@@ -666,7 +681,7 @@ LSP rust configuration requirements:
 
 Use ~C-c C-c~ to execute =cargo run=.
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (defun custom/rust-mode-hooks ()
     (setq indent-tabs-mode nil)
     (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
@@ -675,12 +690,54 @@ Use ~C-c C-c~ to execute =cargo run=.
 #+end_src
 
 
-** Final section and comments
+** Magit
 
 #+begin_src emacs-lisp
-  (dev-mode)
+  (use-package magit
+    :config
+    (global-set-key (kbd "C-x g") 'magit-status))
+#+end_src
+
+
+** Final section and comments
+
+
+Configure garbage collector frequency:
+
+#+begin_src emacs-lisp
   (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
+
+Available faces:
+
+#+begin_src emacs-lisp :tangle no
+  ;; it appends to the current buffer each face name
+  (mapc (lambda (face)(insert (format "\n%s" face))) (face-list))
+#+end_src
+
+Disable face's bold for everything but org faces. I came up with this code block
+it has a lot of room for improvements, like e.g.: don't format face as a string,
+and test the match in other way (by not having a match.group(1) nil to disable
+what is intended).
+
+#+begin_src emacs-lisp
+  ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
+  (defun custom/is-org-face (face)
+    (setq matchstr nil)
+    (setq facestr (format "%s" face))
+    (save-match-data
+      (and (string-match "^.*\\(org\\).*$" facestr)
+           (setq matchstr (match-string 1 facestr))))
+    (if (null matchstr)
+        (set-face-attribute face nil :weight 'normal :underline nil)
+        ;; (with-current-buffer "*scratch*"
+        ;;   (goto-char (point-max))
+        ;;   (insert (format "%s" facestr)))
+      ))
+
+  (mapc (lambda (face)(custom/is-org-face face)) (face-list))
+#+end_src
+
 
 #+begin_src emacs-lisp
   ;; eof
@@ -721,7 +778,11 @@ Configuration TODO:
 - faces counsel
 - faces rust, github.com/rust-lang/rust-mode/blob/master/rust-mode.el#L89
 - https://emacs-tree-sitter.github.io/syntax-highlighting/customization/
-
+- disable fci and line globally, only visible in prog-mode.
+- #'what is, 'what
+- https://www.gnu.org/software/emacs/manual/html_node/elisp/String-Conversion.html
+- https://www.math.utah.edu/docs/info/emacs-lisp-intro_9.html#SEC103
+  
 Useful keybindings:
 
 #+begin_src text :tangle no
@@ -735,4 +796,41 @@ Review doc:
 
 *Sources*
 
-- r/emacs/comments/6x7ph2/is_company_different_from_helm_and_ivy/
+These are links that helped me to tweak my emacs configuration. There's a lot
+of emacs and lisp documentation.
+
+- r/emacs/comments/6x7ph2/is_company_different_from_helm_and_ivy
+- people.gnome.org/~federico/blog/bringing-my-emacs-from-the-past.html
+- 2064904/how-to-disable-bold-font-weight-globally-in-emacs
+- 8733072/how-to-change-the-color-of-emacs-comments-in-c-c-mode-to-light-pink
+- r/emacs/comments/7t2upq/write_to_buffer_command
+- http://xahlee.info/emacs/emacs/elisp_examples.html
+- https://www.math.utah.edu/docs/info/emacs-lisp-intro_9.html#SEC103
+- https://lispcookbook.github.io/cl-cookbook/regexp.html
+- https://www.masteringemacs.org/article/evaluating-lisp-forms-regular-expressions
+- http://xahlee.info/emacs/emacs/elisp_regex.html
+- questions/16243159/emacs-lisp-get-sub-matches-from-a-regexp-match
+
+** To-Do lists
+
+   - [ ] disable bold faces globally
+     
+   - [ ] disable fci-mode globally
+
+   - [ ] disable linenum-mode globally
+
+   - [ ] disable hl-line-mode globally
+     
+   - prog-mode:
+     
+     - [ ] enable fci-mode
+       
+     - [ ] enable linum-mode
+       
+     - [ ] enable hl-line-mode
+
+   - org-mode:
+
+     - [ ] enable hl-line-mode
+
+     - [ ] enable bold faces

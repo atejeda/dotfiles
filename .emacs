@@ -40,7 +40,8 @@
   no-littering
   doom-modeline
   nix-haskell-mode
-  projectile))
+  projectile
+  magit))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -48,31 +49,6 @@
 
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
-
-(display-time)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
-(column-number-mode 1)
-(line-number-mode 1)
-(setq inhibit-startup-screen t)
-(setq ring-bell-function 'ignore)
-(savehist-mode 1)
-(global-linum-mode 1)
-;;(global-hl-line-mode 1)
-(set-fringe-mode 10)
-(define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
-
-(require 'powerline)
-(powerline-default-theme)
-(setq powerline-arrow-shape 'arrow)
-
-(use-package all-the-icons
-  :if (display-graphic-p))
-
-(add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
-(add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
-(add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 (defun dev-mode ()
   (interactive)
@@ -99,6 +75,33 @@
     (load-theme 'doom-one-light t)
     (text-scale-set 3)))
 ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
+
+(dev-mode)
+
+(display-time)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+(column-number-mode 1)
+(line-number-mode 1)
+(setq inhibit-startup-screen t)
+(setq ring-bell-function 'ignore)
+(savehist-mode 1)
+(global-linum-mode 1)
+;;(global-hl-line-mode 1)
+(set-fringe-mode 10)
+(define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
+
+(require 'powerline)
+(powerline-default-theme)
+(setq powerline-arrow-shape 'arrow)
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1)
@@ -133,6 +136,10 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (defalias 'select-all 'mark-whole-buffer)
+
+(require 'uniquify)
+(setq uniquify-separator "/"
+      uniquify-buffer-name-style 'forward)
 
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
@@ -172,9 +179,7 @@
   :defer t
   :init
   :config
-  (progn
-    (setq
-     treemacs-no-png-images t))
+  (progn (setq treemacs-no-png-images t))
   (treemacs-resize-icons 14)
   (dolist (face '(treemacs-root-face
                   treemacs-git-unmodified-face
@@ -292,7 +297,8 @@
          ("C-x b" . counsel-ibuffer)
          ;;("C-x C-f" . counsel-find-file)
          :map minibuffer-local-map
-         ("C-r" . 'counsel-minubuffer-history)))
+         ("C-r" . 'counsel-minubuffer-history))
+  :config (fci-mode 0))
 
 (use-package which-key
   :init (which-key-mode)
@@ -331,8 +337,27 @@
 (add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
 (add-hook 'rust-mode-hook #'lsp)
 
-(dev-mode)
+(use-package magit
+  :config
+  (global-set-key (kbd "C-x g") 'magit-status))
+
 (setq gc-cons-threshold (* 2 1000 1000))
+
+;;(set-face-bold-p 'bold nil) ;; disable bold fonts
+(defun custom/is-org-face (face)
+  (setq matchstr nil)
+  (setq facestr (format "%s" face))
+  (save-match-data
+    (and (string-match "^.*\\(org\\).*$" facestr)
+         (setq matchstr (match-string 1 facestr))))
+  (if (null matchstr)
+      (set-face-attribute face nil :weight 'normal :underline nil)
+      ;; (with-current-buffer "*scratch*"
+      ;;   (goto-char (point-max))
+      ;;   (insert (format "%s" facestr)))
+    ))
+
+(mapc (lambda (face)(custom/is-org-face face)) (face-list))
 
 ;; eof
 ;; below this line, there's pure garbage
