@@ -41,7 +41,8 @@
   doom-modeline
   nix-haskell-mode
   projectile
-  magit))
+  magit
+  rust-mode))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -97,30 +98,21 @@
 
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
-(require 'powerline)
-(powerline-default-theme)
-(setq powerline-arrow-shape 'arrow)
-
 (use-package all-the-icons
   :if (display-graphic-p))
 
-(add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
-
-(add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
-
-(add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
-
-(require 'smooth-scrolling)
-(smooth-scrolling-mode 1)
+(use-package smooth-scrolling
+  :defer nil
+  :config
+  (smooth-scrolling-mode 1))
 
 (use-package dashboard
-  :ensure t
   :config
   (dashboard-setup-startup-hook)
   (setq dashboard-projects-backend 'projectile)
   (setq dashboard-startup-banner
-       (concat (file-name-directory (file-truename user-init-file))
-              "emacs.dashboard.33.png"))
+        (concat (file-name-directory (file-truename user-init-file))
+                "emacs.dashboard.33.png"))
   (setq dashboard-banner-logo-title "")
   (setq dashboard-items '((recents  . 5)
                           (bookmarks . 5)
@@ -128,15 +120,9 @@
                           (agenda . 5)
                           (registers . 5))))
 
-(defun custom/dashboard-mode-hooks ()
-  (fci-mode 0)
-  (linum-mode 0)
-  (hl-line-mode 0))
-(add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
-
-(with-current-buffer "*scratch*"
- (goto-char (point-max))
- (insert (format "\ndd = %s" buffer-file-name)))
+;;(with-current-buffer "*scratch*"
+;; (goto-char (point-max))
+;; (insert (format "\ndd = %s" buffer-file-name)))
 
 (use-package term
   :commands term
@@ -201,11 +187,12 @@
   (global-set-key (kbd "C->") 'mc/mark-next-word-like-this))
 
 (use-package multiple-cursors
+  :defer t
   :bind (("C-c m c" . 'mc/edit-lines)
          ("C->" . 'mc/mark-next-word-like-this)))
 
 (use-package treemacs
-  :init
+  :defer t
   :config
   (progn (setq treemacs-no-png-images t))
   (treemacs-resize-icons 14)
@@ -250,36 +237,30 @@
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 
 (use-package org
+  :defer t
   :config
-  (setq org-hide-emphasis-markers t))
+  (setq org-hide-emphasis-markers t)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
+  )
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)))
-
-(require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no"))
+(use-package org-tempo
+  :ensure nil
+  :defer nil
+  :after org
+  :config
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no")))
 
 (setq org-confirm-babel-evaluate nil)
 
-(push '("conf-unix" . conf-unix) org-src-lang-modes)
-
-(defun custom/org-babel-tangle-config()
-  (when (string-equal (buffer-file-name)
-                      (expand-file-name "some/absolute/path/emacs.org"))
-    ;; let dynamic scoping?
-    (let ((org-confirm-babel-evaluate-nil))
-      (org-babel-table))))
-
-(add-hook 'org-mode-hook
-  (lambda ()
-  (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
-
 (use-package org-auto-tangle
+  :defer t
+  :after org
   :hook (org-mode . org-auto-tangle-mode))
 
 (defun custom/org-mode-hooks ()
@@ -289,6 +270,7 @@
 (add-hook 'org-mode-hook 'custom/org-mode-hooks)
 
 (use-package elfeed
+  :defer t
   :config
   (setq elfeed-feeds
         (quote
@@ -303,6 +285,8 @@
          ("C-l" . ivy-alt-done)
          ("C-j" . ivy-next-line)
          ("C-k" . ivy-previous-line)
+         ("<tab>" . ivy-partial)
+         ("<ret>" . ivy-alt-done)
          :map ivy-switch-buffer-map
          ("C-k" . ivy-previous-line)
          ("C-l" . ivy-done)
@@ -311,9 +295,7 @@
          ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
-  (ivy-mode 1)
-  (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
-  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
+  (ivy-mode 1))
 
 (use-package ivy-rich
   :defer nil
@@ -345,8 +327,8 @@
   (lsp-enable-which-key-integration t)
   (setq lsp-prefer-capf t)
   (setq lsp-completion-provider :capf)
-  (setq lsp-completion-enable t)
-  :hook (rust-mode . lsp))
+  (setq lsp-completion-enable t))
+  ;;:hook (rust-mode . lsp))
 
 (use-package projectile
   :diminish projectile-mode
@@ -359,15 +341,15 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package rust-mode
-  :ensure t)
-
-(defun custom/rust-mode-hooks ()
-  (setq indent-tabs-mode nil)
-  (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
-(add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
-(add-hook 'rust-mode-hook #'lsp)
+  :bind (:map rust-mode-map
+              ("C-c C-c" . rust-run))
+  :config
+  (add-hook 'rust-mode-hook #'lsp)
+  :hook
+  (setq indent-tabs-mode nil))
 
 (use-package magit
+  :defer t
   :config
   (global-set-key (kbd "C-x g") 'magit-status))
 
@@ -388,6 +370,16 @@
     ))
 
 (mapc (lambda (face)(custom/is-org-face face)) (face-list))
+
+(defun custom/prog-mode-hooks ()
+  (fci-mode 1)
+  (linum-mode 1)
+  (hl-line-mode 1)
+  (whitespace-mode 1))
+
+  (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
+  (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 ;; eof
 ;; below this line, there's pure garbage

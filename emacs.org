@@ -85,7 +85,8 @@ List of packages needed by this configuration.
     doom-modeline
     nix-haskell-mode
     projectile
-    magit))
+    magit
+    rust-mode))
 
   (when (cl-find-if-not #'package-installed-p package-selected-packages)
     (package-refresh-contents)
@@ -168,9 +169,9 @@ Presentation mode theme:
   (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 #+end_src
 
-*Powerline* (/disabled/):
+*Powerline*:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (require 'powerline)
   (powerline-default-theme)
   (setq powerline-arrow-shape 'arrow)
@@ -191,26 +192,6 @@ Install the fonts: ~M-x all-the-icons-install-fonts~
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 25)))
-#+end_src
-
-*Line Highlighting*:
-
-Emacs modes inherits from super modes or base modes, e.g.:
-
-- lisp-mode inherits from prog-mode.
-- prog-mode inherits from fundamental-mode
-- text-mode inherits from fundamental-mode.
-
-Lets enable the hl on prog modes, org-mode and text-mode, there's no way to
-enable globally and disabled it per major mode.
-
-#+begin_src emacs-lisp
-
-  (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
-
-  (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
-
-  (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
 
 
@@ -235,8 +216,10 @@ scroll one line at a time (less "jumpy" than defaults)
 Previous block is disabled from tangle, there's a package to deal with this:
 
 #+begin_src emacs-lisp
-  (require 'smooth-scrolling)
-  (smooth-scrolling-mode 1)
+  (use-package smooth-scrolling
+    :defer nil
+    :config
+    (smooth-scrolling-mode 1))
 #+end_src
 
 
@@ -244,13 +227,12 @@ Previous block is disabled from tangle, there's a package to deal with this:
 
 #+begin_src emacs-lisp
   (use-package dashboard
-    :ensure t
     :config
     (dashboard-setup-startup-hook)
     (setq dashboard-projects-backend 'projectile)
     (setq dashboard-startup-banner
-         (concat (file-name-directory (file-truename user-init-file))
-                "emacs.dashboard.33.png"))
+          (concat (file-name-directory (file-truename user-init-file))
+                  "emacs.dashboard.33.png"))
     (setq dashboard-banner-logo-title "")
     (setq dashboard-items '((recents  . 5)
                             (bookmarks . 5)
@@ -258,15 +240,9 @@ Previous block is disabled from tangle, there's a package to deal with this:
                             (agenda . 5)
                             (registers . 5))))
 
-  (defun custom/dashboard-mode-hooks ()
-    (fci-mode 0)
-    (linum-mode 0)
-    (hl-line-mode 0))
-  (add-hook 'dashboard-mode-hook 'custom/dashboard-mode-hooks)
-
-  (with-current-buffer "*scratch*"
-   (goto-char (point-max))
-   (insert (format "\ndd = %s" buffer-file-name)))
+  ;;(with-current-buffer "*scratch*"
+  ;; (goto-char (point-max))
+  ;; (insert (format "\ndd = %s" buffer-file-name)))
 #+end_src
 
 
@@ -403,6 +379,7 @@ key-binding is executed.
 
 #+begin_src emacs-lisp
   (use-package multiple-cursors
+    :defer t
     :bind (("C-c m c" . 'mc/edit-lines)
            ("C->" . 'mc/mark-next-word-like-this)))
 #+end_src
@@ -411,7 +388,7 @@ key-binding is executed.
 
 #+begin_src emacs-lisp
   (use-package treemacs
-    :init
+    :defer t
     :config
     (progn (setq treemacs-no-png-images t))
     (treemacs-resize-icons 14)
@@ -507,13 +484,19 @@ Remove emphasis markers:
 
 #+begin_src emacs-lisp
   (use-package org
+    :defer t
     :config
-    (setq org-hide-emphasis-markers t))
+    (setq org-hide-emphasis-markers t)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (python . t)))
+    )
 #+end_src
 
 Babel configuration:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
@@ -524,11 +507,15 @@ Structured templates, these are generated on the editor by typing, e.g:
 =<el + tab=.
 
 #+begin_src emacs-lisp
-  (require 'org-tempo)
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no"))
+  (use-package org-tempo
+    :ensure nil
+    :defer nil
+    :after org
+    :config
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python"))
+    (add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no")))
 #+end_src
 
 Other org configuration:
@@ -539,10 +526,10 @@ Don't ask code-execution confirmation:
   (setq org-confirm-babel-evaluate nil)
 #+end_src
 
-Add src lang modes to org, use this as, e.g.: /#+begin_src conf-unix/
+Add src lang modes to org, use this as, e.g.: /conf-unix/
 
-#+begin_src emacs-lisp
-  (push '("conf-unix" . conf-unix) org-src-lang-modes)
+#+begin_src emacs-lisp :tangle no
+  ;; (push '("conf-unix" . conf-unix) org-src-lang-modes)
 #+end_src
 
 Tangle configuration:
@@ -550,23 +537,12 @@ Tangle configuration:
 - use ~:tangle no~ in each block to avoid include the source code block in the
 final file generated.
 
-#+begin_src emacs-lisp
-  (defun custom/org-babel-tangle-config()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "some/absolute/path/emacs.org"))
-      ;; let dynamic scoping?
-      (let ((org-confirm-babel-evaluate-nil))
-        (org-babel-table))))
-
-  (add-hook 'org-mode-hook
-    (lambda ()
-    (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
-#+end_src
-
 Auto-Tangle:
 
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
+    :defer t
+    :after org
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
@@ -590,6 +566,7 @@ This is a feed reader within emacs:
 
 #+begin_src emacs-lisp
   (use-package elfeed
+    :defer t
     :config
     (setq elfeed-feeds
           (quote
@@ -619,6 +596,8 @@ It is possible to change the default browser, e.g.:
            ("C-l" . ivy-alt-done)
            ("C-j" . ivy-next-line)
            ("C-k" . ivy-previous-line)
+           ("<tab>" . ivy-partial)
+           ("<ret>" . ivy-alt-done)
            :map ivy-switch-buffer-map
            ("C-k" . ivy-previous-line)
            ("C-l" . ivy-done)
@@ -627,9 +606,7 @@ It is possible to change the default browser, e.g.:
            ("C-k" . ivy-previous-line)
            ("C-d" . ivy-reverse-i-search-kill))
     :config
-    (ivy-mode 1)
-    (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
-    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
+    (ivy-mode 1))
 #+end_src
 
 
@@ -684,8 +661,8 @@ This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for functions, et
     (lsp-enable-which-key-integration t)
     (setq lsp-prefer-capf t)
     (setq lsp-completion-provider :capf)
-    (setq lsp-completion-enable t)
-    :hook (rust-mode . lsp))
+    (setq lsp-completion-enable t))
+    ;;:hook (rust-mode . lsp))
 #+end_src
 
 
@@ -708,47 +685,58 @@ Key binding is set to ~C-c p~, there's a bunch of comands to run.
 
 ** Language specific configuration
 
+- Define the language as, 1) mode, 2) lsp.
+- Each language should enable lsp, company, etc.
+
 *** Rust
 
-Configuration and hooks, check more for:
+**** Rust - Mode
 
-- configuration options at https://github.com/rust-lang/rust-mode
-- lsp mode at https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+Documentation, refert to https://github.com/rust-lang/rust-mode
 
-LSP rust configuration requirements:
+Use ~C-c C-c~ to execute =cargo run=.
+
+For some reason (which I don't know really) it won't let me to add the indent
+and enable lsp in the use-package :hook section, that's why it is the way
+is coded.
+
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :bind (:map rust-mode-map
+                ("C-c C-c" . rust-run))
+    :config
+    (add-hook 'rust-mode-hook #'lsp)
+    :hook
+    (setq indent-tabs-mode nil))
+#+end_src
+
+
+**** Rust - Language Server Protocol
+
+Documentation, refer to https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+
+Server setup:
 
 #+begin_src text :tangle no
   rustup update
   rustup component add rls rust-analysis rust-src
 #+end_src
 
-#+begin_src emacs-lisp
-  (use-package rust-mode
-    :ensure t)
-#+end_src
-
-Use ~C-c C-c~ to execute =cargo run=.
-
-#+begin_src emacs-lisp
-  (defun custom/rust-mode-hooks ()
-    (setq indent-tabs-mode nil)
-    (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
-  (add-hook 'rust-mode-hook 'custom/rust-mode-hooks)
-  (add-hook 'rust-mode-hook #'lsp)
-#+end_src
+There's a hook that enable lsp in rust-mode.
 
 
 ** Magit
 
 #+begin_src emacs-lisp
   (use-package magit
+    :defer t
     :config
     (global-set-key (kbd "C-x g") 'magit-status))
 #+end_src
 
 
 ** Final section and comments
-
+   
 Configure garbage collector frequency:
 
 #+begin_src emacs-lisp
@@ -786,6 +774,31 @@ This, needs to be improved.
 
   (mapc (lambda (face)(custom/is-org-face face)) (face-list))
 #+end_src
+
+
+*Line Highlighting*, Line Number, FCI Mode, etc:
+
+Emacs modes inherits from super modes or base modes, e.g.:
+
+- lisp-mode inherits from prog-mode.
+- prog-mode inherits from fundamental-mode
+- text-mode inherits from fundamental-mode.
+
+Lets enable the hl and other line modes on prog modes, org-mode and text-mode,
+there's no way to enable globally and disabled it per major mode.
+
+#+begin_src emacs-lisp
+  (defun custom/prog-mode-hooks ()
+    (fci-mode 1)
+    (linum-mode 1)
+    (hl-line-mode 1)
+    (whitespace-mode 1))
+
+    (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
+    (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+    (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
+#+end_src
+
 
 #+begin_src emacs-lisp
   ;; eof
@@ -846,6 +859,8 @@ Review packages:
 - silver surfer
 - https://github.com/10sr/fuzzy-finder-el
 - fzf and ripgrep
+- line breaks (auto)
+- ctags
 
 Review doc:
 
@@ -871,6 +886,7 @@ of emacs and lisp documentation.
 - gnu.org/software/emacs/manual/html_node/elisp/Kinds-of-Files.html
 - gnu.org/software/emacs/manual/html_node/elisp/Truenames.html
 - https://github.com/jwiegley/use-package
+
 
 ** To-Do lists
 
