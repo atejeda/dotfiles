@@ -78,18 +78,23 @@
 
 (dev-mode)
 
-(display-time)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
-(column-number-mode 1)
-(line-number-mode 1)
-(setq inhibit-startup-screen t)
-(setq ring-bell-function 'ignore)
-(savehist-mode 1)
-(global-linum-mode 1)
-;;(global-hl-line-mode 1)
-(set-fringe-mode 10)
+(display-time) ;; display time
+
+(menu-bar-mode -1) ;; no bar
+(tool-bar-mode -1) ;; no tool bar
+(toggle-scroll-bar -1) ;; no scroll bar
+(set-fringe-mode 10) ;; fringe to 10
+
+(column-number-mode 1) ;; column number in the mode line
+(line-number-mode 1) ;; line number in the mode line
+(global-linum-mode 0) ;; line number in the buffer left margin
+(global-hl-line-mode 0) ;; line highlight
+
+(setq inhibit-startup-screen t) ;; no startup screen
+(setq ring-bell-function 'ignore) ;; no bells
+
+(savehist-mode 1) ;; save history
+
 (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 
 (require 'powerline)
@@ -100,7 +105,9 @@
   :if (display-graphic-p))
 
 (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
+
 (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+
 (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 (require 'smooth-scrolling)
@@ -110,11 +117,10 @@
   :ensure t
   :config
   (dashboard-setup-startup-hook)
-  ;;(setq dashboard-projects-backend "projectile")
-  ;;(setq dashboard-startup-banner
-  ;;      (concat (file-name-as-directory default-directory)
-  ;;             "emacs.dashboard.33.png"))
-  (setq dashboard-startup-banner "~/.dotfiles/emacs.dashboard.33.png")
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-startup-banner
+       (concat (file-name-directory (file-truename user-init-file))
+              "emacs.dashboard.33.png"))
   (setq dashboard-banner-logo-title "")
   (setq dashboard-items '((recents  . 5)
                           (bookmarks . 5)
@@ -166,32 +172,39 @@
 (setq auto-fill-mode 1)
 (setq next-line-add-newlines nil)
 
-(require 'fill-column-indicator)
-(define-globalized-minor-mode global-fci-mode fci-mode (
-  lambda () (fci-mode 1)))
-(global-fci-mode 1)
-(setq fci-rule-column 79)
-(setq fci-rule-width 1)
-(setq fci-rule-color "grey22")
+(use-package fill-column-indicator
+  :defer t
+  :custom
+  (setq fci-rule-column 79)
+  (setq fci-rule-width 1)
+  (setq fci-rule-color "grey22"))
 
-(require 'whitespace)
-(setq whitespace-line-column 80)
-(setq whitespace-style '(face lines-tail))
-(global-whitespace-mode 1)
+(use-package whitespace
+  :defer t
+  :custom
+  (setq whitespace-line-column 80)
+  :config
+  (setq whitespace-style '(face lines-tail)))
 
 (use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
 
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
-(require 'multiple-cursors)
-(global-set-key (kbd "C-c m c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-word-like-this)
+(use-package multiple-cursors
+  :defer t
+  :commands (mc/edit-lines mc/mark-next-word-like-this)
+  :init
+  (global-set-key (kbd "C-c m c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-word-like-this))
+
+(use-package multiple-cursors
+  :bind (("C-c m c" . 'mc/edit-lines)
+         ("C->" . 'mc/mark-next-word-like-this)))
 
 (use-package treemacs
-  :ensure t
-  :defer t
   :init
   :config
   (progn (setq treemacs-no-png-images t))
@@ -210,11 +223,13 @@
                   treemacs-tags-face))
     (set-face-attribute face nil :family "Courier New" :height 140)))
 
-(setq user-emacs-directory "~/.cache/emacs")
-(use-package no-littering)
-
-(setq auto-save-file-name-transforms
-      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+(use-package no-littering
+  :defer nil
+  :init
+  (setq user-emacs-directory "~/.cache/emacs")
+  :config
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
 (defun custom/org-mode-visual-fill ()
   (setq visual-fill-column-width 80
@@ -264,10 +279,7 @@
   (lambda ()
   (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
 
-;;(require 'org-auto-tangle)
-;;(add-hook 'org-mode-hook 'org-auto-tangle-mode)
 (use-package org-auto-tangle
-  :defer t
   :hook (org-mode . org-auto-tangle-mode))
 
 (defun custom/org-mode-hooks ()
@@ -276,10 +288,13 @@
   (org-display-inline-images))
 (add-hook 'org-mode-hook 'custom/org-mode-hooks)
 
-(setq elfeed-feeds (quote
-  (("https://news.ycombinator.com/rss" tech hackernews)
-   ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
-   ("https://linuxnewbieguide.org/feed/" tech linux))))
+(use-package elfeed
+  :config
+  (setq elfeed-feeds
+        (quote
+         (("https://news.ycombinator.com/rss" tech hackernews)
+          ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
+          ("https://linuxnewbieguide.org/feed/" tech linux)))))
 
 (use-package ivy
   :diminish
@@ -296,24 +311,25 @@
          ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
-  (ivy-mode 1))
-
-(defun custom/ivy-tab-hooks ()
+  (ivy-mode 1)
   (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
   (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
-(add-hook 'ivy-mode-hook 'custom/ivy-tab-hooks)
 
 (use-package ivy-rich
+  :defer nil
+  :after ivy
   :init
   (ivy-rich-mode 1))
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ;;("C-x C-f" . counsel-find-file)
+         ("C-x C-b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
          :map minibuffer-local-map
-         ("C-r" . 'counsel-minubuffer-history))
-  :config (fci-mode 0))
+         ("C-e" . 'counsel-minubuffer-history))
+  :config
+  ;; (setq ivy-initial-inputs-alist nil) ;; avoid start search with ^
+  (fci-mode 0))
 
 (use-package which-key
   :init (which-key-mode)
@@ -327,11 +343,10 @@
   (setq lsp-keymap-prefix "C-c l")
   :config
   (lsp-enable-which-key-integration t)
+  (setq lsp-prefer-capf t)
+  (setq lsp-completion-provider :capf)
+  (setq lsp-completion-enable t)
   :hook (rust-mode . lsp))
-
-(setq lsp-prefer-capf t)
-(setq lsp-completion-provider :capf)
-(setq lsp-completion-enable t)
 
 (use-package projectile
   :diminish projectile-mode

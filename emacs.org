@@ -148,18 +148,23 @@ Presentation mode theme:
 *** General Settings
 
 #+begin_src emacs-lisp
-  (display-time)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
-  (column-number-mode 1)
-  (line-number-mode 1)
-  (setq inhibit-startup-screen t)
-  (setq ring-bell-function 'ignore)
-  (savehist-mode 1)
-  (global-linum-mode 1)
-  ;;(global-hl-line-mode 1)
-  (set-fringe-mode 10)
+  (display-time) ;; display time
+
+  (menu-bar-mode -1) ;; no bar
+  (tool-bar-mode -1) ;; no tool bar
+  (toggle-scroll-bar -1) ;; no scroll bar
+  (set-fringe-mode 10) ;; fringe to 10
+
+  (column-number-mode 1) ;; column number in the mode line
+  (line-number-mode 1) ;; line number in the mode line
+  (global-linum-mode 0) ;; line number in the buffer left margin
+  (global-hl-line-mode 0) ;; line highlight
+
+  (setq inhibit-startup-screen t) ;; no startup screen
+  (setq ring-bell-function 'ignore) ;; no bells
+
+  (savehist-mode 1) ;; save history
+
   (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
 #+end_src
 
@@ -200,8 +205,11 @@ Lets enable the hl on prog modes, org-mode and text-mode, there's no way to
 enable globally and disabled it per major mode.
 
 #+begin_src emacs-lisp
+
   (add-hook 'prog-mode-hook (lambda () (hl-line-mode 1)))
+
   (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+
   (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
 
@@ -239,11 +247,10 @@ Previous block is disabled from tangle, there's a package to deal with this:
     :ensure t
     :config
     (dashboard-setup-startup-hook)
-    ;;(setq dashboard-projects-backend "projectile")
-    ;;(setq dashboard-startup-banner
-    ;;      (concat (file-name-as-directory default-directory)
-    ;;             "emacs.dashboard.33.png"))
-    (setq dashboard-startup-banner "~/.dotfiles/emacs.dashboard.33.png")
+    (setq dashboard-projects-backend 'projectile)
+    (setq dashboard-startup-banner
+         (concat (file-name-directory (file-truename user-init-file))
+                "emacs.dashboard.33.png"))
     (setq dashboard-banner-logo-title "")
     (setq dashboard-items '((recents  . 5)
                             (bookmarks . 5)
@@ -325,28 +332,36 @@ Bindings to move around the buffers, global keysets and def alises.
 
 *Fill column indicator*:
 
-It draws a line at char 80, it marks with red any char after char 80.
+It draws a line at char 79, 0 to 79.
 
 #+begin_src emacs-lisp
-  (require 'fill-column-indicator)
-  (define-globalized-minor-mode global-fci-mode fci-mode (
-    lambda () (fci-mode 1)))
-  (global-fci-mode 1)
-  (setq fci-rule-column 79)
-  (setq fci-rule-width 1)
-  (setq fci-rule-color "grey22")
+  (use-package fill-column-indicator
+    :defer t
+    :custom
+    (setq fci-rule-column 79)
+    (setq fci-rule-width 1)
+    (setq fci-rule-color "grey22"))
+#+end_src
 
-  (require 'whitespace)
-  (setq whitespace-line-column 80)
-  (setq whitespace-style '(face lines-tail))
-  (global-whitespace-mode 1)
+Whitespace:
+
+Set the face to red from (including) char 80.
+
+#+begin_src emacs-lisp
+  (use-package whitespace
+    :defer t
+    :custom
+    (setq whitespace-line-column 80)
+    :config
+    (setq whitespace-style '(face lines-tail)))
 #+end_src
 
 *Rainbow delimiters*:
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
-    :hook (prog-mode . rainbow-delimiters-mode))
+    :hook
+    (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
 *Paren mode*:
@@ -358,18 +373,44 @@ It draws a line at char 80, it marks with red any char after char 80.
 
 *Multiple cursors*:
 
+A not about use-package and key-bindings.
+
+Refer to the official documentation:
+
+- https://github.com/jwiegley/use-package#key-binding
+
+When using :commands, it creates an autoload for those commands and
+defers loading the module until they are actually used, bear in mind
+when setting the key-bindins in :init (executed before loading the
+package), that needs to succeed either way.
+
+The code below is just an example of using :commands and :init
+configurations, this code will be not appended to the configuration
+file, kept for learning purposes only.
+
+#+begin_src emacs-lisp :togle no
+  (use-package multiple-cursors
+    :defer t
+    :commands (mc/edit-lines mc/mark-next-word-like-this)
+    :init
+    (global-set-key (kbd "C-c m c") 'mc/edit-lines)
+    (global-set-key (kbd "C->") 'mc/mark-next-word-like-this))
+#+end_src
+
+This is the code that actually be apended to the configuration file,
+it will autoload the package when it is actually use, that means the
+key-binding is executed.
+
 #+begin_src emacs-lisp
-  (require 'multiple-cursors)
-  (global-set-key (kbd "C-c m c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-word-like-this)
+  (use-package multiple-cursors
+    :bind (("C-c m c" . 'mc/edit-lines)
+           ("C->" . 'mc/mark-next-word-like-this)))
 #+end_src
 
 *Treemacs*:
 
 #+begin_src emacs-lisp
   (use-package treemacs
-    :ensure t
-    :defer t
     :init
     :config
     (progn (setq treemacs-no-png-images t))
@@ -391,20 +432,22 @@ It draws a line at char 80, it marks with red any char after char 80.
 
 *No Littering*:
 
-Keep emacs folder and project folders clean:
+Keep emacs folder and project folders clean, :defer is set to nil:
 
 #+begin_src emacs-lisp
-  (setq user-emacs-directory "~/.cache/emacs")
-  (use-package no-littering)
-
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-#+end_src
+  (use-package no-littering
+    :defer nil
+    :init
+    (setq user-emacs-directory "~/.cache/emacs")
+    :config
+    (setq auto-save-file-name-transforms
+          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+  #+end_src
 
 
 ** Evil Mode
 
-Check the undo-fu package for vim style undo.
+Check the undo-fu package for vim style undo, disabled for now.
 
 #+begin_src emacs-lisp :tangle no
   (use-package undo-fu)
@@ -523,10 +566,7 @@ final file generated.
 Auto-Tangle:
 
 #+begin_src emacs-lisp
-  ;;(require 'org-auto-tangle)
-  ;;(add-hook 'org-mode-hook 'org-auto-tangle-mode)
   (use-package org-auto-tangle
-    :defer t
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
@@ -549,10 +589,13 @@ It disable the fci-mode and linum-mode for org files.
 This is a feed reader within emacs:
 
 #+begin_src emacs-lisp
-  (setq elfeed-feeds (quote
-    (("https://news.ycombinator.com/rss" tech hackernews)
-     ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
-     ("https://linuxnewbieguide.org/feed/" tech linux))))
+  (use-package elfeed
+    :config
+    (setq elfeed-feeds
+          (quote
+           (("https://news.ycombinator.com/rss" tech hackernews)
+            ("https://blog.tartanllama.xyz/feed.xml" programming cpp)
+            ("https://linuxnewbieguide.org/feed/" tech linux)))))
 #+end_src
 
 It is possible to change the default browser, e.g.:
@@ -561,6 +604,12 @@ It is possible to change the default browser, e.g.:
 
 
 ** Ivy
+
+- Alt only to complete and not to open a file, exec a command, etc,
+  refer to https://github.com/abo-abo/swiper/issues/86.
+
+- For enable/disable ^ for counsel-M-x, refer to
+  /questions/38841/counsel-m-x-always-shows.
 
 #+begin_src emacs-lisp
   (use-package ivy
@@ -578,24 +627,16 @@ It is possible to change the default browser, e.g.:
            ("C-k" . ivy-previous-line)
            ("C-d" . ivy-reverse-i-search-kill))
     :config
-    (ivy-mode 1))
-#+end_src
-
-Alt only to complete and not to openfile, exec command, etc, refer to
-https://github.com/abo-abo/swiper/issues/86.
-
-For enable/disable ^ for counsel-M-x, refer to
-/questions/38841/counsel-m-x-always-shows.
-
-#+begin_src emacs-lisp
-  (defun custom/ivy-tab-hooks ()
+    (ivy-mode 1)
     (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
     (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
-  (add-hook 'ivy-mode-hook 'custom/ivy-tab-hooks)
 #+end_src
+
 
 #+begin_src emacs-lisp
   (use-package ivy-rich
+    :defer nil
+    :after ivy
     :init
     (ivy-rich-mode 1))
 #+end_src
@@ -605,21 +646,13 @@ For enable/disable ^ for counsel-M-x, refer to
 #+begin_src emacs-lisp
   (use-package counsel
     :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-ibuffer)
-           ;;("C-x C-f" . counsel-find-file)
+           ("C-x C-b" . counsel-ibuffer)
+           ("C-x C-f" . counsel-find-file)
            :map minibuffer-local-map
-           ("C-r" . 'counsel-minubuffer-history))
-    :config (fci-mode 0))
-#+end_src
-
-To not start the search with ^, set the varible ivy-initial-inputs-alist to nil.
-
-Append this to the config section of the =(use-package counsel...=.
-
-#+begin_src text :tangle no
-    ;;:config
-    ;; avoid start search with ^
-    ;; (setq ivy-initial-inputs-alist nil))
+           ("C-e" . 'counsel-minubuffer-history))
+    :config
+    ;; (setq ivy-initial-inputs-alist nil) ;; avoid start search with ^
+    (fci-mode 0))
 #+end_src
 
 What about these?
@@ -627,12 +660,9 @@ What about these?
 ~(setq ivy-use-virtual-buffers t)~
 ~(setq enable-recursive-minibuffers t)~
 
-
-** Visual aids
-
 *Which Key*:
 
-This is triggered with /C-h {v,f}/, v stands for variable, f for functions, etc.
+This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for functions, etc.
 
 #+begin_src emacs-lisp
   (use-package which-key
@@ -652,11 +682,10 @@ This is triggered with /C-h {v,f}/, v stands for variable, f for functions, etc.
     (setq lsp-keymap-prefix "C-c l")
     :config
     (lsp-enable-which-key-integration t)
+    (setq lsp-prefer-capf t)
+    (setq lsp-completion-provider :capf)
+    (setq lsp-completion-enable t)
     :hook (rust-mode . lsp))
-
-  (setq lsp-prefer-capf t)
-  (setq lsp-completion-provider :capf)
-  (setq lsp-completion-enable t)
 #+end_src
 
 
@@ -801,6 +830,9 @@ Configuration TODO:
 - #'what is, 'what
 - https://www.gnu.org/software/emacs/manual/html_node/elisp/String-Conversion.html
 - https://www.math.utah.edu/docs/info/emacs-lisp-intro_9.html#SEC103
+- M-x describe-personal-keybindings
+- #, ', #', x . y, :custom.
+- (autoload 'ace-jump-mode "ace-jump-mode" nil t) + use-package
   
 Useful keybindings:
 
@@ -835,7 +867,10 @@ of emacs and lisp documentation.
 - https://www.masteringemacs.org/article/evaluating-lisp-forms-regular-expressions
 - http://xahlee.info/emacs/emacs/elisp_regex.html
 - questions/16243159/emacs-lisp-get-sub-matches-from-a-regexp-match
-
+- questions/15390178/emacs-and-symbolic-links
+- gnu.org/software/emacs/manual/html_node/elisp/Kinds-of-Files.html
+- gnu.org/software/emacs/manual/html_node/elisp/Truenames.html
+- https://github.com/jwiegley/use-package
 
 ** To-Do lists
 
@@ -843,9 +878,11 @@ of emacs and lisp documentation.
      
    - [ ] disable fci-mode globally
 
-   - [ ] disable linenum-mode globally
+   - [X] disable linenum-mode globally
 
-   - [ ] disable hl-line-mode globally
+   - [X] disable hl-line-mode globally
+
+   - [ ] configure follow symlinks : (vc-follow-symlinks t)
      
    - prog-mode:
      
