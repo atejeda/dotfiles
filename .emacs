@@ -246,15 +246,11 @@
      (python . t)))
   )
 
-(use-package org-tempo
-  :ensure nil
-  :defer nil
-  :after org
-  :config
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no")))
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no"))
 
 (setq org-confirm-babel-evaluate nil)
 
