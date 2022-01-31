@@ -289,10 +289,10 @@ smooth scrolling.
 
 #+begin_src emacs-lisp
   (if custom/v-is-linux
-      ((use-package smooth-scrolling
+      (use-package smooth-scrolling
 	 :defer nil
 	 :config
-	 (smooth-scrolling-mode 1))))
+	 (smooth-scrolling-mode)))
 #+end_src
 
 

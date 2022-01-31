@@ -165,10 +165,10 @@
   (custom/f-config-look))
 
 (if custom/v-is-linux
-    ((use-package smooth-scrolling
+    (use-package smooth-scrolling
        :defer nil
        :config
-       (smooth-scrolling-mode 1))))
+       (smooth-scrolling-mode)))
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
