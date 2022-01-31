@@ -1,10 +1,10 @@
 
-#+title: Emacs Literate Configuration
+#+title: An Emacs Literate Configuration
 #+property: header-args emacs-lisp :tangle ./.emacs :mkdirp yes
 #+auto_tangle: t
 #+startup: noindent
 
-* Emacs Literate Configuration
+* Emacs Configuration
 
                         [[./emacs.org.jpg]]
 
