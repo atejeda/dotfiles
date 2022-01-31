@@ -1,101 +1,165 @@
 
-#+title emacs configuration
-#+property: header-args emacs-lisp :tangle ./.emacs
+#+title: Emacs Literate Configuration
+#+property: header-args emacs-lisp :tangle ./.emacs :mkdirp yes
 #+auto_tangle: t
+#+startup: noindent
 
-* Emacs dotfile
+* Emacs Literate Configuration
 
-This is the orgfile that generates my emacs configuration, it is
-tailored for my taste and needs.
+                        [[./emacs.org.jpg]]
 
-[[./emacs.org.jpg]]
+This is an org file which generates my personal emacs configuration, this
+configuration is tailored to my taste and needs.
 
-** Some comments
+** General notes and hints
 
-- use ~C-c C-x C-v~ =org-toggle-inline-image=.
-  
-- use ~C-c C-v t~ to regenerate the emacs dotfile.
+*** Hints
 
-- use ~M-q~ to trigger the ~adaptive-fill-mode~.
+Execute any code block with ~C-c C-c~, adding ~:tangle no~ will prevent to add this
+code to the generated configuration.
 
-- use ~C-c C-c~ to execute the code in a lisp code block.
 
-- append ~:tangle no~ to avoid write the source code block to the generate file.
+*** Notes
+
+About using ~use-package~:
+
+Refer to the official documentation:
+
+- https://github.com/jwiegley/use-package#key-binding
+
+When using :commands, it creates an autoload for those commands and defers
+loading the module until they are actually used, bear in mind when setting the
+key-bindins in :init (executed before loading the package), that needs to
+succeed either way.
+
+The code below is just an example of using :commands and :init configurations,
+this code will be not appended to the configuration file, kept for learning
+purposes only.
+
+~:defer t~ will lazy-load the package when is used, this is enabled when other
+fields of ~use-package~ like ~:hook~, setting ~:defer nil~ will load the package
+immediatly.
+
+
+** Prologue
 
 #+begin_src emacs-lisp
   ;; generated from emacs.org file
 #+end_src
 
-
-** Performance
+Performance related improvement:
 
 - Make gc pauses faster by decreasing the threshold.
-- The default is 800 kilobytes. Measured in bytes.
+- The default is 800 kilobytes, measured in bytes.
 
 #+begin_src emacs-lisp
+  ;; gc for faster initialization
   (setq gc-cons-threshold (* 50 1000 1000))
 #+end_src
 
 
-** Packages
-
-*Melpa and package configuration*
+** Global Variables
 
 #+begin_src emacs-lisp
+  ;; melpa repository
+  (setq custom/v-melpa "https://melpa.org/package")
+
+  ;; foreground, background color
+  (setq custom/v-color-bg nil)
+  (setq custom/v-color-fg nil)
+
+  ;; font family, height
+  (setq custom/v-font-fam nil)
+  (setq custom/v-font-ht nil)
+
+  ;; is linux
+  (setq custom/v-is-linux nil)
+
+  ;; is darwin
+  (setq custom/v-is-darwin nil)
+
+  ;; linux or darwin
+  (cond
+   ((eq system-type 'gnu/linux)
+    (setq custom/v-color-bg '(background-color . "#1c2023"))
+    (setq custom/v-color-fg '(foreground-color . "#c7ccd1"))
+    (setq custom/v-font-fam "Hack")
+    (setq custom/v-font-ht 100)
+    (setq custom/v-is-linux t))
+   ((eq system-type 'darwin)
+    (setq custom/v-color-bg '(background-color . "#121212"))
+    (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
+    (setq custom/v-font-fam "Courier New")
+    (setq custom/v-font-ht 140)
+    (setq custom/v-is-darwin t)))
+  #+end_src
+
+
+** Packages
+
+Melpa and package configuration
+
+#+begin_src emacs-lisp
+  ;; package
   (require 'package)
-  (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives (cons "melpa" custom/v-melpa) t)
   (package-initialize)
 #+end_src
 
-List of packages needed by this configuration.
+List of packages used by this configuration.
 
 #+begin_src emacs-lisp
-  (setq package-selected-packages '(
-    use-package
-    doom-themes
-    lsp-mode
-    multiple-cursors 
-    all-the-icons
-    powerline
-    neotree
-    fill-column-indicator
-    bazel
-    groovy-mode
-    yaml
-    yaml-mode
-    haskell-mode
-    elfeed
-    json-mode
-    rainbow-delimiters
-    which-key
-    ivy
-    ivy-rich
-    counsel
-    treemacs
-    visual-fill
-    visual-fill-column
-    dashboard
-    org-auto-tangle
-    evil
-    undo-fu
-    evil-collection
-    swiper
-    smooth-scrolling
-    no-littering
-    doom-modeline
-    nix-haskell-mode
-    projectile
-    magit
-    rust-mode))
+  ;; package list
+  (setq package-selected-packages
+        '(
+          use-package
+          doom-themes
+          lsp-mode
+          multiple-cursors 
+          all-the-icons
+          powerline
+          neotree
+          fill-column-indicator
+          bazel
+          groovy-mode
+          yaml
+          yaml-mode
+          haskell-mode
+          elfeed
+          json-mode
+          rainbow-delimiters
+          which-key
+          ivy
+          ivy-rich
+          counsel
+          treemacs
+          visual-fill
+          visual-fill-column
+          dashboard
+          org-auto-tangle
+          evil
+          undo-fu
+          evil-collection
+          swiper
+          smooth-scrolling
+          no-littering
+          doom-modeline
+          nix-haskell-mode
+          projectile
+          magit
+          rust-mode))
 
+  ;; auto install
   (when (cl-find-if-not #'package-installed-p package-selected-packages)
     (package-refresh-contents)
     (mapc #'package-install package-selected-packages))
-#+end_src
+    #+end_src
 
-Use ensure to ensure package installation when use-requiered is used.
+Enable the ~use-package~ package, useful when configuring and lazy loading
+packages.
 
 #+begin_src emacs-lisp
+  ;; use-package
   (require 'use-package-ensure)
   (setq use-package-always-ensure t)
 #+end_src
@@ -103,99 +167,105 @@ Use ensure to ensure package installation when use-requiered is used.
 
 ** Look and feel
 
-*** Theme
+*** Theme and frame configuration
 
-Interactive selection: ~M-x counsel-load-theme~
+General setting, frame independent:
+
+#+begin_src emacs-lisp
+  (display-time)
+  (savehist-mode 1)
+
+  ;; no startaup screen, no bell
+  (setq inhibit-startup-screen t)
+  (setq ring-bell-function 'ignore)
+#+end_src
+
+Function to defined the look and feel of the editor:
+
+- It configures scroll bars, line nums, etc.
+- Append to the frame-parameters the custom fore and background colors each time
+  a new frame is open, this is useful when emacsclient is being used instead of
+  running a standanlone emacs process.
     
-Development mode theme:
-    
 #+begin_src emacs-lisp
-  (defun dev-mode ()
+  ;; look
+  (defun custom/f-config-look ()
     (interactive)
-    (save-excursion
-      (require 'doom-themes)
-      (load-theme 'doom-one t)
-      (text-scale-set 0)
-      (cond
-       ((eq system-type 'gnu/linux)
-        (set-face-attribute 'default nil :family "Hack" :height 100)
-        (set-background-color "#1c2023")
-        (set-foreground-color "#c7ccd1"))
-       ((eq system-type 'darwin)
-        (set-face-attribute 'default nil :family "Courier New" :height 140)
-        (set-background-color "#121212")
-        (set-foreground-color "#d8dee8")))))
-  ;;(global-set-key (kbd "C-c r m") 'dev-mode)
+    (save-excursion)
+
+    ;; theme
+    (use-package doom-themes :defer nil)
+    ;;(load-theme 'doom-one t)
+    (load-theme 'doom-nord t)
+
+    ;; general settings
+    (menu-bar-mode -1)      ;; no bar
+    (tool-bar-mode -1)      ;; no tool bar
+    (scroll-bar-mode -1)    ;; no scroll bar
+    (set-fringe-mode 10)    ;; fringe to 10
+    (column-number-mode 1)  ;; column number in the mode line
+    (line-number-mode 1)    ;; line number in the mode line
+    (global-linum-mode 0)   ;; line number in the buffer left margin
+    (global-hl-line-mode 0) ;; line highlight
+
+    (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
+
+    ;; enable parenthesis hightlight
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
+
+    ;; reset text scale
+    (text-scale-set 0)
+
+    ;; tabs
+    (setq-default indent-tabs-mode nil)
+    (setq-default c-basic-offset 4)
+    (setq-default py-indent-offset 4)
+    (setq standard-indent 4)
+    (setq c-default-style "linux" c-basic-offset 4)
+    (setq scroll-step 1)
+    (setq make-backup-files nil)
+    (setq auto-fill-mode 1)
+    (setq next-line-add-newlines nil)
+
+    ;; paren
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
+
+    ;; frame parameters
+
+    ;; initial-frame-alist
+    (add-to-list 'initial-frame-alist custom/v-color-bg)
+    (add-to-list 'initial-frame-alist custom/v-color-fg)
+    ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+    ;; default-frame-alist
+    (add-to-list 'default-frame-alist custom/v-color-bg)
+    (add-to-list 'default-frame-alist custom/v-color-fg)
+    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+    ;; font
+    (set-face-attribute 'default nil
+                        :family custom/v-font-fam
+                        :height custom/v-font-ht)
+    )
 #+end_src
 
-Presentation mode theme:
+If is in daemon mode, hook the frame to reload the look and feel settings,
+otherwise, the emacsclient and every new frame in it will not load the color and
+other settings.
 
 #+begin_src emacs-lisp
-  (defun presentation-mode ()
-    (interactive)
-    (save-excursion
-      (dev-mode)
-      (require 'doom-themes)
-      (load-theme 'doom-one-light t)
-      (text-scale-set 3)))
-  ;;(global-set-key (kbd "C-c r m") 'presentation-mode)
-#+end_src
-
-#+begin_src emacs-lisp
-  (dev-mode)
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame (custom/f-config-look))))
+    (custom/f-config-look))
 #+end_src
 
 
-*** General Settings
 
-#+begin_src emacs-lisp
-  (display-time) ;; display time
-
-  (menu-bar-mode -1) ;; no bar
-  (tool-bar-mode -1) ;; no tool bar
-  (toggle-scroll-bar -1) ;; no scroll bar
-  (set-fringe-mode 10) ;; fringe to 10
-
-  (column-number-mode 1) ;; column number in the mode line
-  (line-number-mode 1) ;; line number in the mode line
-  (global-linum-mode 0) ;; line number in the buffer left margin
-  (global-hl-line-mode 0) ;; line highlight
-
-  (setq inhibit-startup-screen t) ;; no startup screen
-  (setq ring-bell-function 'ignore) ;; no bells
-
-  (savehist-mode 1) ;; save history
-
-  (define-key read-expression-map (kbd "TAB") #'lisp-complete-symbol)
-#+end_src
-
-*Powerline*:
-
-#+begin_src emacs-lisp :tangle no
-  (require 'powerline)
-  (powerline-default-theme)
-  (setq powerline-arrow-shape 'arrow)
-#+end_src
-
-*all-the-icons*:
-
-Install the fonts: ~M-x all-the-icons-install-fonts~
-
-#+begin_src emacs-lisp
-  (use-package all-the-icons
-    :if (display-graphic-p))
-#+end_src
-
-*Modeline* (/disabled/):
-
-#+begin_src emacs-lisp :tangle no
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 25)))
-#+end_src
-
-
-** Behavior
+*** Scrolling
 
 Smooth scrolling, from https://www.emacswiki.org/emacs/SmoothScrolling:
 
@@ -213,13 +283,265 @@ scroll one line at a time (less "jumpy" than defaults)
   (setq scroll-step 1)
 #+end_src
 
-Previous block is disabled from tangle, there's a package to deal with this:
+Previous block is disabled from tangle, there's a package to deal with
+this, enable it only for linux since my emacs on MacOS already support
+smooth scrolling.
 
 #+begin_src emacs-lisp
-  (use-package smooth-scrolling
+  (if custom/v-is-linux
+      ((use-package smooth-scrolling
+	 :defer nil
+	 :config
+	 (smooth-scrolling-mode 1))))
+#+end_src
+
+
+*** Powerline
+
+Powerline documentation at https://github.com/jonathanchu/emacs-powerline.
+
+#+begin_src emacs-lisp :tangle no
+  (use-package powerline
     :defer nil
     :config
-    (smooth-scrolling-mode 1))
+    ;;(powerline-nano-theme)
+    (powerline-default-theme)
+    ;;(setq powerline-image-apple-rgb t)
+    (setq powerline-arrow-shape 'arrow))
+#+end_src
+
+Change the modeline settings:
+
+#+begin_src emacs-lisp :tangle no
+  (custom-set-faces
+   '(mode-line ((t (:foreground "#000" :background "#c0c0c0" :box nil))))
+   '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
+#+end_src
+
+Doom Modeline documentation at https://github.com/seagle0128/doom-modeline.
+
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 18)
+	     (doom-modeline-icon nil)))
+#+end_src
+
+
+*** All the Icons
+
+Install the fonts: ~M-x all-the-icons-install-fonts~
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+#+end_src
+
+
+** Behavior
+
+*** Bindings
+
+Bindings to move around the buffers, global keysets and def alises.
+
+#+begin_src emacs-lisp
+
+  ;; global set keys
+
+  (global-set-key "\C-l" 'goto-line)
+
+  (global-set-key (kbd "C-x <up>") 'windmove-up)
+  (global-set-key (kbd "C-x <down>") 'windmove-down)
+  (global-set-key (kbd "C-x <left>") 'windmove-left)
+  (global-set-key (kbd "C-x <right>") 'windmove-right)
+  ;;(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+  (global-unset-key (kbd "C-z"))
+  
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+
+*** Aliases
+
+#+begin_src emacs-lisp
+  ;; aliases
+  (defalias 'select-all 'mark-whole-buffer)
+#+end_src
+
+
+** Org
+
+#+begin_src emacs-lisp
+  ;; orgmode
+#+end_src
+
+~C- '~ can be used to edit source code block, same keybinding can be used to
+enter and exit the mini editor (which supports syntax highlighting).
+
+~C-c C-c~ can execute the code within the source code block.
+
+The setup is structured in two functions, one that does the general
+configuration and the other that is intended to be executed by the
+hook.
+
+Among other things, what basically does is:
+
+- Disable auto-identation (after titles)
+- Break the line an 80, ~alt + q~ will autobreak the line
+- Visually hide the ~begin_src~ statements:
+- Remove emphasis markers
+- Structured templates, expanded with ~<el + tab~
+
+#+begin_src emacs-lisp
+  (defun custom/f-org-config ()
+    ;; remove emphasis markers
+    (setq org-hide-emphasis-markers t)
+
+    ;; don't ask y/n when exec babel code
+    (setq org-confirm-babel-evaluate nil)
+
+    ;; disable auto-identation
+    (setq org-indent-mode -1)
+    (setq org-adapt-indentation nil)
+
+    ;; source code blocks identation (left padding)
+    (setq org-edit-src-content-indentation 2)
+    (setq org-src-preserve-indentation nil)
+
+    ;; babel configuration
+    (org-babel-do-load-languages
+     'org-babel-load-languages '((emacs-lisp . t)
+                                 (python . t)))
+
+    ;; org-tempo, structured templates, "<el + tab" to expand template
+    (require 'org-tempo)
+
+    (add-to-list 'org-structure-template-alist
+                 '("sh" . "src shell"))
+
+    (add-to-list 'org-structure-template-alist
+                 '("el" . "src emacs-lisp"))
+
+    (add-to-list 'org-structure-template-alist
+                 '("py" . "src python"))
+
+    (add-to-list 'org-structure-template-alist
+                 '("nn" . "src text :tangle no")))
+
+  (defun custom/f-org-hook ()
+    ;; look
+    (fci-mode 0)
+    (linum-mode 0)
+
+    ;; content padding
+    (visual-fill-column-mode)
+
+    ;; display inline images
+    (org-display-inline-images)
+
+    ;; break column at 80
+    (setq fill-column 80)
+    (auto-fill-mode)
+
+    ;; prettify symbols
+    (setq-default prettify-symbols-alist
+                  '(("#+begin_src" . "")
+                    ("#+begin_src emacs-lisp" . "")
+                    ("#+begin_src text :tangle no" . "")
+                    ("#+end_src" . "")))
+    (setq prettify-symbols-unprettify-at-point 'right-edge)
+    (prettify-symbols-mode))
+
+  (defun custom/f-org-face-block()
+    (interactive)
+    (save-excursion)
+    (custom-set-faces
+     '(org-block-begin-line
+       ((t (
+            ;;:underline "#A7A6AA"
+            ;;:foreground "#008ED1"
+            :background "#1e1e1e"
+            :extend t))))
+     '(org-block
+       ((t (
+            :background "#1e1e1e"
+            :extend t))))
+     '(org-block-end-line
+       ((t (
+            ;;:overline "#A7A6AA"
+            ;;:foreground "#008ED1"
+            :background "#1e1e1e"
+            :extend t))))
+     ))
+
+  (use-package org
+    :defer t
+    :config
+    (custom/f-org-config)
+    (custom/f-org-face-block)
+    :hook (org-mode . custom/f-org-hook))
+#+end_src
+
+Padding org-mode content to center or not, limited up to 80 chars:
+
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :defer t
+    :hook
+    (lambda ()
+      ((setq visual-fill-column-width 80)
+       (setq visual-fill-column-center-text nil)
+       (visual-fill-column-mode 1))))
+#+end_src
+
+Tangle configuration:
+
+- use ~:tangle no~ in each block to avoid include the source code block in the
+final file generated.
+
+Auto-Tangle:
+
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :defer t
+    :after org
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+
+Supporting more lang modes, e.g.: adding =conf-unix=:
+
+#+begin_src emacs-lisp :tangle no
+  ;; (push '("conf-unix" . conf-unix) org-src-lang-modes)
+#+end_src
+
+
+** Term
+
+Key bindings to take in count:
+
+- ~C-c o~, emulates ~C-x o~
+- ~C-c C-j~, term-line-mode
+- ~C-c C-k~, go back to char mode
+- ~C-c C-c~, emulates a ctrl+c sent to the terminal
+  
+#+begin_src emacs-lisp
+  (use-package term
+    :defer t
+    :init
+    (setq-default shell-file-name "/bin/bash") ;; doesn't work with term
+    :commands term
+    :config
+    (fci-mode 0)
+    (linum-mode 0)
+    (hl-line-mode 0))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun termc ()
+    (interactive)
+    (save-excursion)
+    (term "/bin/bash"))
 #+end_src
 
 
@@ -240,86 +562,31 @@ Previous block is disabled from tangle, there's a package to deal with this:
                             (agenda . 5)
                             (registers . 5))))
 
-  ;;(with-current-buffer "*scratch*"
-  ;; (goto-char (point-max))
-  ;; (insert (format "\ndd = %s" buffer-file-name)))
+  ;;(with-current-buffer "*scratch*" (goto-char (point-max)) (insert (format "\ndd = %s" buffer-file-name)))
 #+end_src
 
 
-** Term
+** Packages
 
-A =termmode= is being used to run term with =/bin/bash=.
+These are the packages that can be configured by itself, other
+packages like powerline, visual-fill-column are configured where are
+needed.
 
-- ~C-c o~, emulates ~C-x o~
-- ~C-c C-j~, term-line-mode
-- ~C-c C-k~, go back to char mode
-- ~C-c C-c~, emulates a ctrl+c sent to the terminal
-  
-#+begin_src emacs-lisp
-  (use-package term
-    :commands term
-    :config
-    (setq explicit-shell-file-name "/bin/bash")
-    (fci-mode 0)
-    (linum-mode 0)
-    (hl-line-mode 0))
-#+end_src
-
-
-** Editor
-
-Bindings to move around the buffers, global keysets and def alises.
-
-#+begin_src emacs-lisp
-  (global-set-key "\C-l" 'goto-line)
-  (global-set-key (kbd "C-x <up>") 'windmove-up)
-  (global-set-key (kbd "C-x <down>") 'windmove-down)
-  (global-set-key (kbd "C-x <left>") 'windmove-left)
-  (global-set-key (kbd "C-x <right>") 'windmove-right)
-  (global-set-key (kbd "C-x C-b") 'ibuffer)
-
-  (global-unset-key (kbd "C-z"))
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  (defalias 'select-all 'mark-whole-buffer)
-#+end_src
-
-*Buffer names*:
-
-#+begin_src emacs-lisp
-  (require 'uniquify)
-  (setq uniquify-separator "/"
-        uniquify-buffer-name-style 'forward)
-#+end_src
-
-*Tabs:*
-
-#+begin_src emacs-lisp
-  (setq-default indent-tabs-mode nil)
-  (setq-default c-basic-offset 4)
-  (setq-default py-indent-offset 4)
-  (setq standard-indent 4)
-  (setq c-default-style "linux" c-basic-offset 4)
-  (setq scroll-step 1)
-  (setq make-backup-files nil)
-  (setq auto-fill-mode 1)
-  (setq next-line-add-newlines nil)
-#+end_src
-
-*Fill column indicator*:
+*** Fill Column Indicator
 
 It draws a line at char 79, 0 to 79.
 
 #+begin_src emacs-lisp
   (use-package fill-column-indicator
     :defer t
-    :custom
+    :config
     (setq fci-rule-column 79)
     (setq fci-rule-width 1)
     (setq fci-rule-color "grey22"))
 #+end_src
 
-Whitespace:
+
+*** Whitespace
 
 Set the face to red from (including) char 80.
 
@@ -332,7 +599,8 @@ Set the face to red from (including) char 80.
     (setq whitespace-style '(face lines-tail)))
 #+end_src
 
-*Rainbow delimiters*:
+
+*** Rainbow delimiters
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
@@ -340,31 +608,10 @@ Set the face to red from (including) char 80.
     (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-*Paren mode*:
 
-#+begin_src emacs-lisp
-  (show-paren-mode 1)
-  (setq show-paren-delay 0)
-#+end_src
+*** Multiple Cursors
 
-*Multiple cursors*:
-
-A not about use-package and key-bindings.
-
-Refer to the official documentation:
-
-- https://github.com/jwiegley/use-package#key-binding
-
-When using :commands, it creates an autoload for those commands and
-defers loading the module until they are actually used, bear in mind
-when setting the key-bindins in :init (executed before loading the
-package), that needs to succeed either way.
-
-The code below is just an example of using :commands and :init
-configurations, this code will be not appended to the configuration
-file, kept for learning purposes only.
-
-#+begin_src emacs-lisp :togle no
+#+begin_src emacs-lisp :tangle no
   (use-package multiple-cursors
     :defer t
     :commands (mc/edit-lines mc/mark-next-word-like-this)
@@ -374,8 +621,8 @@ file, kept for learning purposes only.
 #+end_src
 
 This is the code that actually be apended to the configuration file,
-it will autoload the package when it is actually use, that means the
-key-binding is executed.
+it will autoload the package when it is actually used, that means the
+key-binding is section is evaluated.
 
 #+begin_src emacs-lisp
   (use-package multiple-cursors
@@ -384,30 +631,36 @@ key-binding is executed.
            ("C->" . 'mc/mark-next-word-like-this)))
 #+end_src
 
-*Treemacs*:
+
+*** Treemacs
 
 #+begin_src emacs-lisp
+
+  ;; on the treemacs buffer
+  ;; C-c p is the prefix command.
   (use-package treemacs
     :defer t
     :config
     (progn (setq treemacs-no-png-images t))
     (treemacs-resize-icons 14)
     (dolist (face '(treemacs-root-face
-                    treemacs-git-unmodified-face
-                    treemacs-git-modified-face
-                    treemacs-git-renamed-face
-                    treemacs-git-ignored-face
-                    treemacs-git-untracked-face
-                    treemacs-git-added-face
-                    treemacs-git-conflict-face
-                    treemacs-directory-face
-                    treemacs-directory-collapsed-face
-                    treemacs-file-face
-                    treemacs-tags-face))
-      (set-face-attribute face nil :family "Courier New" :height 140)))
+		    treemacs-git-unmodified-face
+		    treemacs-git-modified-face
+		    treemacs-git-renamed-face
+		    treemacs-git-ignored-face
+		    treemacs-git-untracked-face
+		    treemacs-git-added-face
+		    treemacs-git-conflict-face
+		    treemacs-directory-face
+		    treemacs-directory-collapsed-face
+		    treemacs-file-face
+		    treemacs-tags-face))
+      (set-face-attribute face nil :family custom/v-font-fam :height custom/v-font-ht)))
 #+end_src
 
-*No Littering*:
+
+*** No Littering
+
 
 Keep emacs folder and project folders clean, :defer is set to nil:
 
@@ -418,16 +671,17 @@ Keep emacs folder and project folders clean, :defer is set to nil:
     (setq user-emacs-directory "~/.cache/emacs")
     :config
     (setq auto-save-file-name-transforms
-          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
-  #+end_src
+	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+end_src
 
 
-** Evil Mode
+*** Evil Mode
 
 Check the undo-fu package for vim style undo, disabled for now.
 
 #+begin_src emacs-lisp :tangle no
-  (use-package undo-fu)
+  (use-package undo-fu
+    :defer t)
 
   (use-package evil
     :demand t
@@ -446,117 +700,7 @@ Check the undo-fu package for vim style undo, disabled for now.
 #+end_src
 
 
-** Orgmode
-
-/C- '/ can be used to edit source code block, same keybinding can be used to
-enter and exit the mini editor (which supports syntax highlighting).
-
-/C-c C-c/ can execute the code within the source code block.
-   
-This configuration limits the orgfile to 80 chars width and content is put
-at the center of the buffer.
-
-#+begin_src emacs-lisp
-  (defun custom/org-mode-visual-fill ()
-    (setq visual-fill-column-width 80
-          visual-fill-column-center-text t
-          fci-mode 0)
-    (visual-fill-column-mode 1))
-
-  (use-package visual-fill-column
-    :defer t
-    :hook
-    (org-mode . custom/org-mode-visual-fill))
-#+end_src
-
-Visually hide the begin_src statements:
-
-#+begin_src emacs-lisp
-  (setq-default prettify-symbols-alist '(("#+begin_src" . "")
-                                         ("#+begin_src emacs-lisp" . "")
-                                         ("#+begin_src text :tangle no" . "")
-                                         ("#+end_src" . "")))
-  (setq prettify-symbols-unprettify-at-point 'right-edge)
-  (add-hook 'org-mode-hook 'prettify-symbols-mode)
-#+end_src
-
-Remove emphasis markers:
-
-#+begin_src emacs-lisp
-  (use-package org
-    :defer t
-    :config
-    (setq org-hide-emphasis-markers t)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (python . t)))
-    )
-#+end_src
-
-Babel configuration:
-
-#+begin_src emacs-lisp :tangle no
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)))
-#+end_src
-
-Structured templates, these are generated on the editor by typing, e.g:
-=<el + tab=.
-
-#+begin_src emacs-lisp
-  (require 'org-tempo)
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("nn" . "src text :tangle no"))
-      #+end_src
-
-Other org configuration:
-
-Don't ask code-execution confirmation:
-
-#+begin_src emacs-lisp
-  (setq org-confirm-babel-evaluate nil)
-#+end_src
-
-Add src lang modes to org, use this as, e.g.: /conf-unix/
-
-#+begin_src emacs-lisp :tangle no
-  ;; (push '("conf-unix" . conf-unix) org-src-lang-modes)
-#+end_src
-
-Tangle configuration:
-
-- use ~:tangle no~ in each block to avoid include the source code block in the
-final file generated.
-
-Auto-Tangle:
-
-#+begin_src emacs-lisp
-  (use-package org-auto-tangle
-    :defer t
-    :after org
-    :hook (org-mode . org-auto-tangle-mode))
-#+end_src
-
-
-*** Hooks
-
-It disable the fci-mode and linum-mode for org files.
-
-#+begin_src emacs-lisp
-  (defun custom/org-mode-hooks ()
-    (fci-mode 0)
-    (linum-mode 0)
-    (org-display-inline-images))
-  (add-hook 'org-mode-hook 'custom/org-mode-hooks)
-#+end_src
-
-
-** Elfeed
+*** Elfeed
 
 This is a feed reader within emacs:
 
@@ -576,35 +720,41 @@ It is possible to change the default browser, e.g.:
 ~(setq browse-url-browser-function 'eww-browse-url)~
 
 
-** Ivy
+*** Ivy
 
 - Alt only to complete and not to open a file, exec a command, etc,
   refer to https://github.com/abo-abo/swiper/issues/86.
 
-- For enable/disable ^ for counsel-M-x, refer to
+- For enable/disable ~^~ for ~counsel-M-x~, refer to
   /questions/38841/counsel-m-x-always-shows.
 
+This configuration does a partial search, means that /execute/ the
+seleccion on =<ret>= and not with double-tab.
+
 #+begin_src emacs-lisp
+  ;; ivy
   (use-package ivy
     :diminish
     :bind (("C-s" . swiper)
-           :map ivy-minibuffer-map
-           ("C-l" . ivy-alt-done)
-           ("C-j" . ivy-next-line)
-           ("C-k" . ivy-previous-line)
-           ("<tab>" . ivy-partial)
-           ("<ret>" . ivy-alt-done)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
+	   :map ivy-minibuffer-map
+	   ("C-l" . ivy-alt-done)
+	   ("C-j" . ivy-next-line)
+	   ("C-k" . ivy-previous-line)
+	   ("<tab>" . ivy-partial) ;; partial search
+	   ("<ret>" . ivy-alt-done) ;; done with <ret>
+	   :map ivy-switch-buffer-map
+	   ("C-k" . ivy-previous-line)
+	   ("C-l" . ivy-done)
+	   ("C-d" . ivy-switch-buffer-kill)
+	   :map ivy-reverse-i-search-map
+	   ("C-k" . ivy-previous-line)
+	   ("C-d" . ivy-reverse-i-search-kill))
     :config
     (ivy-mode 1))
 #+end_src
 
+
+*** Ivy Rich
 
 #+begin_src emacs-lisp
   (use-package ivy-rich
@@ -614,28 +764,32 @@ It is possible to change the default browser, e.g.:
     (ivy-rich-mode 1))
 #+end_src
 
-*Counsel*:
+
+*** Counsel
 
 #+begin_src emacs-lisp
   (use-package counsel
     :bind (("M-x" . counsel-M-x)
-           ("C-x C-b" . counsel-ibuffer)
-           ("C-x C-f" . counsel-find-file)
-           :map minibuffer-local-map
-           ("C-e" . 'counsel-minubuffer-history))
+	   ("C-x C-b" . counsel-ibuffer)
+	   ("C-x C-f" . counsel-find-file)
+	   :map minibuffer-local-map
+	   ("C-e" . 'counsel-minubuffer-history))
     :config
-    ;; (setq ivy-initial-inputs-alist nil) ;; avoid start search with ^
+    ;; will avoid start search with ^
+    ;; (setq ivy-initial-inputs-alist nil) 
     (fci-mode 0))
 #+end_src
 
 What about these?
 
-~(setq ivy-use-virtual-buffers t)~
-~(setq enable-recursive-minibuffers t)~
+- ~(setq ivy-use-virtual-buffers t)~
+- ~(setq enable-recursive-minibuffers t)~
 
-*Which Key*:
 
-This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for functions, etc.
+*** Which Key
+
+This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for
+functions, etc.
 
 #+begin_src emacs-lisp
   (use-package which-key
@@ -644,6 +798,34 @@ This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for functions, et
     :config
     (setq which-key-idle-delay 1))
 #+end_src
+
+
+*** Projectile
+
+Key binding is set to ~C-c p~, there's a bunch of comands to run.
+   
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    (when (file-directory-p "~/projects/")
+      (setq projectile-project-search-path '("~/projects/")))
+    (setq projectile-switch-project-action #'projectile-dired))
+#+end_src
+
+
+*** Magit
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :defer t
+    :config
+    (global-set-key (kbd "C-x g") 'magit-status))
+#+end_src
+
 
 
 ** LSP Mode
@@ -662,24 +844,7 @@ This is triggered by ~C-h {v,f}~, =v= stands for variable, =f= for functions, et
 #+end_src
 
 
-** Projectile
-
-Key binding is set to ~C-c p~, there's a bunch of comands to run.
-   
-#+begin_src emacs-lisp
-  (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    (when (file-directory-p "~/projects/")
-      (setq projectile-project-search-path '("~/projects/")))
-    (setq projectile-switch-project-action #'projectile-dired))
-#+end_src
-
-
-** Language specific configuration
+** LSP Mode Language specific configuration
 
 - Define the language as, 1) mode, 2) lsp.
 - Each language should enable lsp, company, etc.
@@ -692,9 +857,9 @@ Documentation, refert to https://github.com/rust-lang/rust-mode
 
 Use ~C-c C-c~ to execute =cargo run=.
 
-For some reason (which I don't know really) it won't let me to add the indent
-and enable lsp in the use-package :hook section, that's why it is the way
-is coded.
+For some reason (which I don't know really) it won't let me to add the
+indent and enable lsp in the use-package :hook section, that's why it
+is the way is coded.
 
 #+begin_src emacs-lisp
   (use-package rust-mode
@@ -709,7 +874,8 @@ is coded.
 
 **** Rust - Language Server Protocol
 
-Documentation, refer to https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
+Documentation, refer to
+https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
 
 Server setup:
 
@@ -721,41 +887,113 @@ Server setup:
 There's a hook that enable lsp in rust-mode.
 
 
-** Magit
+** Daemon
 
-#+begin_src emacs-lisp
-  (use-package magit
-    :defer t
-    :config
-    (global-set-key (kbd "C-x g") 'magit-status))
+*** Server
+
+To start emacs daemon within emacs, closeing that emacs session
+running the damone, will kill the server as well.
+
+#+begin_src emacs-lisp :tangle no
+  (server-start)
+#+end_src
+
+As a daemon from the command line:
+
+#+begin_src shell :tangle no
+
+  # as a daemon
+  emacs --daemon
+
+  # as a foreground daemon, debugging purposes
+  emacs --fg-daemon
+
+  # a name daemon if necessary
+  emacs --daemon[={daemon name}]
+#+end_src
+
+Check emacs daemon running, list /tmp/emacs1000 and list the socket
+files.
+
+Kill the server and client running against that server too.
+
+#+begin_src shell :tangle no
+  emacsclient -e "(kill-server)" [-s {name}]
+  emacsclient -e "server-socker-dir"
+  emacsclient -e "(counsel-switch-buffer)"
+#+end_src
+
+There's a systemd support for emacs in most linux distros:
+
+#+begin_src shell :tangle no
+  sudo systemctl --user enable emacs
+  sudo systemctl --user start emacs
 #+end_src
 
 
-** Final section and comments
-   
-Configure garbage collector frequency:
+*** Client
 
-#+begin_src emacs-lisp
-  (setq gc-cons-threshold (* 2 1000 1000))
+#+begin_src shell :tangle no
+
+  # launch emacs client
+  # -c, with a new name
+  # -n, don't wait, -a for a
+  # -a, alternative editor
+  # -u, supress output
+  # -s, socket name or daemon name
+  # -mm, maximize
+  emacsclient -c -n -a emacs
+
+  # use it as an editor, e.g.: git commit
+  export EDITOR="emacsclient -c -a emacs"
 #+end_src
 
-Available faces:
+In MacOS, emacsclient is in:
+
+- /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_11/emacsclient
+
+It is recommended to create an alias or a function so when a new frame
+is open form the command line without specifying any file, it opens
+the dashboard, e.g.:
+
+#+begin_src text :tangle no
+  emacsclient -c -e '(switch-to-buffer "*dashboard*")'
+#+end_src
+
+*** Configuration
+
+This is an example on how to check if is running in daemon mode or
+not, if is a "named" dameon, it will return the name of the daemon.
+
+#+begin_src emacs-lisp :tangle no
+  (if (daemonp)
+      (message "emacs, daemon mode")
+    (message "emacs, standalone mode"))
+#+end_src
+
+
+** Epilogue
+
+Available faces, print them out in the current buffer:
 
 #+begin_src emacs-lisp :tangle no
   ;; it appends to the current buffer each face name
   (mapc (lambda (face)(insert (format "\n%s" face))) (face-list))
 #+end_src
 
-Disable face's bold for everything but org faces. I came up with this code block
-it has a lot of room for improvements, like e.g.: don't format face as a string,
-and test the match in other way (by not having a match.group(1) nil to disable
-what is intended).
+Disable face's bold for everything but org faces. I came up with this
+code block it has a lot of room for improvements, like e.g.: don't
+format face as a string, and test the match in other way (by not
+having a match.group(1) nil to disable what is intended).
 
-This, needs to be improved.
+This, needs to be improved, orgmode filter doesn't work, it seems it
+also disable another face used by orgmode.
 
 #+begin_src emacs-lisp
+  ;; set bold off EVERYWHERE but orgmode
   ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
-  (defun custom/is-org-face (face)
+
+  (defun custom/f-is-org-face (face)
     (setq matchstr nil)
     (setq facestr (format "%s" face))
     (save-match-data
@@ -763,16 +1001,15 @@ This, needs to be improved.
            (setq matchstr (match-string 1 facestr))))
     (if (null matchstr)
         (set-face-attribute face nil :weight 'normal :underline nil)
-        ;; (with-current-buffer "*scratch*"
-        ;;   (goto-char (point-max))
-        ;;   (insert (format "\n%s" facestr)))
+      ;; (with-current-buffer "*scratch*"
+      ;;   (goto-char (point-max))
+      ;;   (insert (format "\n%s" facestr)))
       ))
 
-  (mapc (lambda (face)(custom/is-org-face face)) (face-list))
+  (mapc (lambda (face)(custom/f-is-org-face face)) (face-list))
 #+end_src
 
-
-*Line Highlighting*, Line Number, FCI Mode, etc:
+Line Highlighting, Line Number, FCI Mode, etc:
 
 Emacs modes inherits from super modes or base modes, e.g.:
 
@@ -780,10 +1017,14 @@ Emacs modes inherits from super modes or base modes, e.g.:
 - prog-mode inherits from fundamental-mode
 - text-mode inherits from fundamental-mode.
 
-Lets enable the hl and other line modes on prog modes, org-mode and text-mode,
-there's no way to enable globally and disabled it per major mode.
+Lets enable the hl and other line modes on prog modes, org-mode and
+text-mode, there's no way to enable globally and disabled it per major
+mode.
 
 #+begin_src emacs-lisp
+  ;; enable fci, linenum, hl and whitespace for prog
+  ;; modes only
+
   (defun custom/prog-mode-hooks ()
     (fci-mode 1)
     (linum-mode 1)
@@ -793,6 +1034,12 @@ there's no way to enable globally and disabled it per major mode.
     (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
     (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
     (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
+#+end_src
+
+Configure garbage collector frequency:
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 
@@ -807,65 +1054,58 @@ there's no way to enable globally and disabled it per major mode.
 - *company*, company "just" does code/text autocompletion and a few
   related things like docstring lookup
   
-- *ivy*, ivy is a framework for interactively picking something out
-  of a lists in a nicer way (here using ivy as a better M-x)
+- *ivy*, ivy is a framework for interactively picking something out of a
+  lists in a nicer way (here using ivy as a better M-x)
   
-- *swiper*, swiper is another application of ivy, using ivy as a
-  better C-s
+- *swiper*, swiper is another application of ivy, using ivy as a better
+  C-s
 
-Configuration TODO:
+Configuration todo:
 
-- swiper, done
-- evilmode
-- plantuml
-- when opening new windows (keep configurations), check dameon mode video.
-- command-log-mode
-- projectile
-- treemacs C-c C-p a to add, d to delete, etc..
-- defun vs progn
-- avoid #+results when installing packages
-- learn how to use use-package
-- dsp, gdb
-- rust, gdb
-- eval-after-load v/s hooks /2736087/eval-after-load-vs-mode-hook
-- (after! ivy ...) ?
-- emacs/lisp alist
-- defcustom, e.g.: rust-cargo.el
-- rust and lsp
-- faces counsel
-- faces rust, github.com/rust-lang/rust-mode/blob/master/rust-mode.el#L89
-- https://emacs-tree-sitter.github.io/syntax-highlighting/customization/
-- disable fci and line globally, only visible in prog-mode.
-- #'what is, 'what
-- https://www.gnu.org/software/emacs/manual/html_node/elisp/String-Conversion.html
-- https://www.math.utah.edu/docs/info/emacs-lisp-intro_9.html#SEC103
-- M-x describe-personal-keybindings
-- #, ', #', x . y, :custom.
-- (autoload 'ace-jump-mode "ace-jump-mode" nil t) + use-package
+- [ ] company
+- [ ] evilmode
+- [ ] plantuml
+- [ ] pdf
+- [ ] command-log-mode
+- [ ] autosave
+- [ ] async package
+- [ ] dsp, gdb
+- [ ] rust, gdb
+- [ ] faces counsel
   
-Useful keybindings:
+Find out:
+
+- [ ] (autoload 'ace-jump-mode "ace-jump-mode" nil t) + use-package
+- [ ] defun vs progn
+- [ ] avoid #+results when installing packages
+- [ ] eval-after-load v/s hooks /2736087/eval-after-load-vs-mode-hook
+- [ ] emacs/lisp alist
+- [ ] defcustom, e.g.: rust-cargo.el
+- [ ] #, ', #', x . y
+- [ ] Magit + Rebase
+- [ ] setq-default
+
+Useful keybindings and commands:
 
 #+begin_src text :tangle no
-  M-; toggle code comments
-  M-x M-p to traverse M-x history (with ivy-counsel)
+  general,  M-;        toggle code comments
+  general,  M-x M-p    to traverse M-x history (with ivy-counsel)
+  command,  M-x        describe-personal-keybindings    
+  treemacs, C-c C-p    a to add, d to delete, etc.
 #+end_src
 
 Review packages:
 
-- silver surfer
-- https://github.com/10sr/fuzzy-finder-el
-- fzf and ripgrep
-- line breaks (auto)
-- ctags
+- [ ] silver surfer
+- [ ] https://github.com/10sr/fuzzy-finder-el
+- [ ] fzf and ripgrep)
+- [ ] ctags
 
-Review doc:
 
-- Magit + Rebase
+** Sources
 
-*Sources*
-
-These are links that helped me to tweak my emacs configuration. There's a lot
-of emacs and lisp documentation.
+These are links that helped me to tweak my emacs
+configuration. There's a lot of emacs and lisp documentation.
 
 - r/emacs/comments/6x7ph2/is_company_different_from_helm_and_ivy
 - people.gnome.org/~federico/blog/bringing-my-emacs-from-the-past.html
@@ -882,38 +1122,14 @@ of emacs and lisp documentation.
 - gnu.org/software/emacs/manual/html_node/elisp/Kinds-of-Files.html
 - gnu.org/software/emacs/manual/html_node/elisp/Truenames.html
 - https://github.com/jwiegley/use-package
-
-
-** To-Do lists
-
-   - [ ] disable bold faces globally
-     
-   - [ ] disable fci-mode globally
-
-   - [X] disable linenum-mode globally
-
-   - [X] disable hl-line-mode globally
-
-   - [ ] configure follow symlinks : (vc-follow-symlinks t)
-     
-   - prog-mode:
-     
-     - [ ] enable fci-mode
-       
-     - [ ] enable linum-mode
-       
-     - [ ] enable hl-line-mode
-
-   - org-mode:
-
-     - [ ] enable hl-line-mode
-
-     - [ ] enable bold faces
-
-   - DO!
-
-     - [ ] fix <el + tab
-       
-     - [ ] term keep asking about which command to use
-       
-     - [ ] fix the bottom bar (dimished stuff)
+- https://emacsredux.com/blog/2020/12/04/maximize-the-emacs-frame-on-startup/
+- https://emacs.stackexchange.com/questions/59578/how-to-turn-off-automatic-indenting-for-org-files-in-a-specific-folder
+- https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+- https://orgmode.org/manual/Org-Indent-Mode.html
+- https://emacs.stackexchange.com/questions/55413/org-mode-how-to-expand-s-after-heading-without-indentation
+- https://github.com/syl20bnr/spacemacs/issues/13255
+- https://www.gnu.org/software/emacs/manual/html_node/elisp/String-Conversion.html
+- https://www.math.utah.edu/docs/info/emacs-lisp-intro_9.html#SEC103
+- https://emacs-tree-sitter.github.io/syntax-highlighting/customization/
+- faces rust, github.com/rust-lang/rust-mode/blob/master/rust-mode.el#L89
+  
