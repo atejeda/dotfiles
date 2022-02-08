@@ -62,7 +62,7 @@ Performance related improvement:
 
 #+begin_src emacs-lisp
   ;; melpa repository
-  (setq custom/v-melpa "https://melpa.org/package")
+  (setq custom/v-melpa "https://melpa.org/packages/")
 
   ;; foreground, background color
   (setq custom/v-color-bg nil)
@@ -93,7 +93,6 @@ Performance related improvement:
     (setq custom/v-font-ht 140)
     (setq custom/v-is-darwin t)))
   #+end_src
-
 
 ** Packages
 

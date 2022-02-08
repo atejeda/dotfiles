@@ -4,7 +4,7 @@
 (setq gc-cons-threshold (* 50 1000 1000))
 
 ;; melpa repository
-(setq custom/v-melpa "https://melpa.org/package")
+(setq custom/v-melpa "https://melpa.org/packages/")
 
 ;; foreground, background color
 (setq custom/v-color-bg nil)
