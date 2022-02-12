@@ -168,8 +168,15 @@
   (interactive)
   (save-excursion
     (end-of-line)
-    (hs-toggle-hiding)))
-(global-set-key (kbd "C-x +") 'custom/f-fold)
+    (hs-hide-block)))
+(global-set-key (kbd "C-c C--") 'custom/f-fold)
+
+(defun custom/f-ufold ()
+  (interactive)
+  (save-excursion
+    ;;(move-beginning-of-line)
+    (hs-show-block)))
+(global-set-key (kbd "C-c C-=") 'custom/f-ufold)
 
 (if custom/v-is-linux
     (use-package smooth-scrolling
