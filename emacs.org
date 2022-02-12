@@ -263,6 +263,17 @@ other settings.
 #+end_src
 
 
+** Fold/Unfold
+
+#+begin_src emacs-lisp
+  (defun custom/f-fold ()
+    (interactive)
+    (save-excursion
+      (end-of-line)
+      (hs-toggle-hiding)))
+  (global-set-key (kbd "C-x +") 'custom/f-fold)
+#+end_src
+
 
 *** Scrolling
 
@@ -346,7 +357,6 @@ Install the fonts: ~M-x all-the-icons-install-fonts~
 Bindings to move around the buffers, global keysets and def alises.
 
 #+begin_src emacs-lisp
-
   ;; global set keys
 
   (global-set-key "\C-l" 'goto-line)
@@ -563,7 +573,8 @@ Key bindings to take in count:
                             (agenda . 5)
                             (registers . 5))))
 
-  ;;(with-current-buffer "*scratch*" (goto-char (point-max)) (insert (format "\ndd = %s" buffer-file-name)))
+  ;;(with-current-buffer "*scratch*" (goto-char (point-max))
+  ;;(insert (format "\ndd = %s" buffer-file-name)))
 #+end_src
 
 
@@ -636,7 +647,6 @@ key-binding is section is evaluated.
 *** Treemacs
 
 #+begin_src emacs-lisp
-
   ;; on the treemacs buffer
   ;; C-c p is the prefix command.
   (use-package treemacs
@@ -1030,11 +1040,12 @@ mode.
     (fci-mode 1)
     (linum-mode 1)
     (hl-line-mode 1)
-    (whitespace-mode 1))
+    (whitespace-mode 1)
+    (hs-minor-mode 1))
 
-    (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
-    (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
-    (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
+  (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 #+end_src
 
 Configure garbage collector frequency:

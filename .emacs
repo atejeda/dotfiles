@@ -164,6 +164,13 @@
                 (with-selected-frame frame (custom/f-config-look))))
   (custom/f-config-look))
 
+(defun custom/f-fold ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (hs-toggle-hiding)))
+(global-set-key (kbd "C-x +") 'custom/f-fold)
+
 (if custom/v-is-linux
     (use-package smooth-scrolling
        :defer nil
@@ -327,7 +334,8 @@
                           (agenda . 5)
                           (registers . 5))))
 
-;;(with-current-buffer "*scratch*" (goto-char (point-max)) (insert (format "\ndd = %s" buffer-file-name)))
+;;(with-current-buffer "*scratch*" (goto-char (point-max))
+;;(insert (format "\ndd = %s" buffer-file-name)))
 
 (use-package fill-column-indicator
   :defer t
@@ -492,11 +500,12 @@
   (fci-mode 1)
   (linum-mode 1)
   (hl-line-mode 1)
-  (whitespace-mode 1))
+  (whitespace-mode 1)
+  (hs-minor-mode 1))
 
-  (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
-  (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
-  (add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
+(add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
+(add-hook 'org-mode-hook (lambda () (hl-line-mode 1)))
 
 (setq gc-cons-threshold (* 2 1000 1000))
 
