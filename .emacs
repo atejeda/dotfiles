@@ -31,8 +31,9 @@
  ((eq system-type 'darwin)
   (setq custom/v-color-bg '(background-color . "#121212"))
   (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
-  (setq custom/v-font-fam "Courier New")
-  (setq custom/v-font-ht 140)
+  ;;(setq custom/v-font-fam "Courier New") ;; fh 120
+  (setq custom/v-font-fam "Monaco") ;; fh 120
+  (setq custom/v-font-ht 100)
   (setq custom/v-is-darwin t)))
 
 ;; package
@@ -103,14 +104,22 @@
 
   ;; theme
   (use-package doom-themes :defer nil)
+
+  ;; doom-one
   ;;(load-theme 'doom-one t)
+
+  ;; atom-one-dark
+  ;;(load-theme 'atom-one-dark t)
+
+  ;; doom-nord
   (load-theme 'doom-nord t)
+  (setq doom-nord-brighter-comments nil)
 
   ;; general settings
   (menu-bar-mode -1)      ;; no bar
   (tool-bar-mode -1)      ;; no tool bar
   (scroll-bar-mode -1)    ;; no scroll bar
-  (set-fringe-mode 10)    ;; fringe to 10
+  ;(set-fringe-mode 10)    ;; fringe to 10
   (column-number-mode 1)  ;; column number in the mode line
   (line-number-mode 1)    ;; line number in the mode line
   (global-linum-mode 0)   ;; line number in the buffer left margin
@@ -156,6 +165,10 @@
   (set-face-attribute 'default nil
                       :family custom/v-font-fam
                       :height custom/v-font-ht)
+
+  ;; line spacing
+
+  (setq-default line-spacing 0.1)
   )
 
 (if (daemonp)
@@ -480,7 +493,27 @@
   :config
   (add-hook 'rust-mode-hook #'lsp)
   :hook
-  (setq indent-tabs-mode nil))
+  (custom/f-config-look)
+  )
+
+(defun gk-next-theme ()
+  "Switch to the next theme in ‘custom-known-themes’.
+If exhausted, disable themes.  If run again thereafter, wrap to
+the beginning of the list."
+  (interactive)
+  (let* ((ct (or (car custom-enabled-themes)
+                 (car custom-known-themes)))
+         (next (cadr (memq ct custom-known-themes))))
+    (when (memq next '(user changed))
+      (setq next nil))
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme))
+    (if next
+        (progn
+          (load-theme next t)
+          (message "Loaded theme ‘%S’" next))
+      (message "All themes disabled"))))
+(global-set-key (kbd "C-c C-t") 'gk-next-theme)
 
 ;; set bold off EVERYWHERE but orgmode
 ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
@@ -508,7 +541,8 @@
   (linum-mode 1)
   (hl-line-mode 1)
   (whitespace-mode 1)
-  (hs-minor-mode 1))
+  (hs-minor-mode 1)
+  (mapc (lambda (face)(custom/f-is-org-face face)) (face-list)))
 
 (add-hook 'prog-mode-hook 'custom/prog-mode-hooks)
 (add-hook 'text-mode-hook (lambda () (hl-line-mode 1)))
