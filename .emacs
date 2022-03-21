@@ -32,8 +32,9 @@
   (setq custom/v-color-bg '(background-color . "#121212"))
   (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
   ;;(setq custom/v-font-fam "Courier New") ;; fh 120
-  (setq custom/v-font-fam "Monaco") ;; fh 120
-  (setq custom/v-font-ht 100)
+  ;;(setq custom/v-font-fam "Monaco") ;; fh 120
+  (setq custom/v-font-fam "Liberation Mono");; fh 120
+  (setq custom/v-font-ht 120)
   (setq custom/v-is-darwin t)))
 
 ;; package
@@ -79,7 +80,17 @@
         nix-haskell-mode
         projectile
         magit
-        rust-mode))
+        rust-mode
+        ;; lsp-mode c++
+        yasnippet
+        lsp-treemacs
+        helm-lsp
+        flycheck
+        company
+        avy
+        helm-xref
+        dap-mode
+        ))
 
 ;; auto install
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
@@ -495,6 +506,28 @@
   :hook
   (custom/f-config-look)
   )
+
+(helm-mode)
+(require 'helm-xref)
+(define-key global-map [remap find-file] #'helm-find-files)
+(define-key global-map [remap execute-extended-command] #'helm-M-x)
+(define-key global-map [remap switch-to-buffer] #'helm-mini)
+
+;;(which-key-mode)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-idle-delay 0.0
+      company-minimum-prefix-length 1
+      lsp-idle-delay 0.1)  ;; clangd is fast
+
+(with-eval-after-load 'lsp-mode
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+  (require 'dap-cpptools)
+  (yas-global-mode))
 
 (defun gk-next-theme ()
   "Switch to the next theme in ‘custom-known-themes’.
