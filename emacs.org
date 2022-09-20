@@ -91,7 +91,7 @@ Performance related improvement:
     (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
     ;;(setq custom/v-font-fam "Courier New") ;; fh 120
     ;;(setq custom/v-font-fam "Monaco") ;; fh 120
-    (setq custom/v-font-fam "Liberation Mono");; fh 120
+    ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
     (setq custom/v-font-ht 120)
     (setq custom/v-is-darwin t)))
   #+end_src
@@ -150,10 +150,8 @@ List of packages used by this configuration.
           projectile
           magit
           rust-mode
-          ;; lsp-mode c++
           yasnippet
           lsp-treemacs
-          helm-lsp
           flycheck
           company
           avy
@@ -187,7 +185,7 @@ General setting, frame independent:
   (display-time)
   (savehist-mode 1)
 
-  ;; no startaup screen, no bell
+  ;; no startup screen, no bell
   (setq inhibit-startup-screen t)
   (setq ring-bell-function 'ignore)
 #+end_src
@@ -200,79 +198,78 @@ Function to defined the look and feel of the editor:
   running a standanlone emacs process.
     
 #+begin_src emacs-lisp
-  ;; look
-  (defun custom/f-config-look ()
-    (interactive)
-    (save-excursion)
+    ;; look
+    (defun custom/f-config-look ()
+      (interactive)
+      (save-excursion)
 
-    ;; theme
-    (use-package doom-themes :defer nil)
+      ;; theme
+      (use-package doom-themes :defer nil)
 
-    ;; doom-one
-    ;;(load-theme 'doom-one t)
+      ;; doom-one
+      ;;(load-theme 'doom-one t)
 
-    ;; atom-one-dark
-    ;;(load-theme 'atom-one-dark t)
+      ;; atom-one-dark
+      ;;(load-theme 'atom-one-dark t)
 
-    ;; doom-nord
-    (load-theme 'doom-nord t)
-    (setq doom-nord-brighter-comments nil)
+      ;; doom-nord
+      (load-theme 'doom-nord t)
+      (setq doom-nord-brighter-comments nil)
 
-    ;; general settings
-    (menu-bar-mode -1)      ;; no bar
-    (tool-bar-mode -1)      ;; no tool bar
-    (scroll-bar-mode -1)    ;; no scroll bar
-    ;(set-fringe-mode 10)    ;; fringe to 10
-    (column-number-mode 1)  ;; column number in the mode line
-    (line-number-mode 1)    ;; line number in the mode line
-    (global-linum-mode 0)   ;; line number in the buffer left margin
-    (global-hl-line-mode 0) ;; line highlight
+      ;; general settings
+      (menu-bar-mode -1)      ;; no bar
+      (tool-bar-mode -1)      ;; no tool bar
+      (scroll-bar-mode -1)    ;; no scroll bar
+      ;(set-fringe-mode 10)    ;; fringe to 10
+      (column-number-mode 1)  ;; column number in the mode line
+      (line-number-mode 1)    ;; line number in the mode line
+      (global-linum-mode 0)   ;; line number in the buffer left margin
+      (global-hl-line-mode 0) ;; line highlight
 
-    (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
+      (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
 
-    ;; enable parenthesis hightlight
-    (show-paren-mode 1)
-    (setq show-paren-delay 0)
+      ;; enable parenthesis hightlight
+      (show-paren-mode 1)
+      (setq show-paren-delay 0)
 
-    ;; reset text scale
-    (text-scale-set 0)
+      ;; reset text scale
+      (text-scale-set 0)
 
-    ;; tabs
-    (setq-default indent-tabs-mode nil)
-    (setq-default c-basic-offset 4)
-    (setq-default py-indent-offset 4)
-    (setq standard-indent 4)
-    (setq c-default-style "linux" c-basic-offset 4)
-    (setq scroll-step 1)
-    (setq make-backup-files nil)
-    (setq auto-fill-mode 1)
-    (setq next-line-add-newlines nil)
+      ;; tabs
+      (setq-default indent-tabs-mode nil)
+      (setq-default c-basic-offset 4)
+      (setq-default py-indent-offset 4)
+      (setq standard-indent 4)
+      (setq c-default-style "linux" c-basic-offset 4)
+      (setq scroll-step 1)
+      (setq make-backup-files nil)
+      (setq auto-fill-mode 1)
+      (setq next-line-add-newlines nil)
 
-    ;; paren
-    (show-paren-mode 1)
-    (setq show-paren-delay 0)
+      ;; paren
+      (show-paren-mode 1)
+      (setq show-paren-delay 0)
 
-    ;; frame parameters
+      ;; frame parameters
 
-    ;; initial-frame-alist
-    (add-to-list 'initial-frame-alist custom/v-color-bg)
-    (add-to-list 'initial-frame-alist custom/v-color-fg)
-    ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+      ;; initial-frame-alist
+      (add-to-list 'initial-frame-alist custom/v-color-bg)
+      (add-to-list 'initial-frame-alist custom/v-color-fg)
+      ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
-    ;; default-frame-alist
-    (add-to-list 'default-frame-alist custom/v-color-bg)
-    (add-to-list 'default-frame-alist custom/v-color-fg)
-    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+      ;; default-frame-alist
+      (add-to-list 'default-frame-alist custom/v-color-bg)
+      (add-to-list 'default-frame-alist custom/v-color-fg)
+      ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-    ;; font
-    (set-face-attribute 'default nil
-                        :family custom/v-font-fam
-                        :height custom/v-font-ht)
+      ;; font
+      (set-face-attribute 'default nil
+                          :family custom/v-font-fam
+                          :height custom/v-font-ht)
 
-    ;; line spacing
+      ;; line spacing
 
-    (setq-default line-spacing 0.1)
-    )
+      (setq-default line-spacing 0.1))
 #+end_src
 
 If is in daemon mode, hook the frame to reload the look and feel settings,
@@ -297,13 +294,13 @@ Fold
     (interactive)
     (save-excursion
       (end-of-line)
-      (hs-hide-block)))
+      (hs-toggle-hidding)))
   (global-set-key (kbd "C-c C--") 'custom/f-fold)
 #+end_src
 
 Unfold
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun custom/f-ufold ()
     (interactive)
     (save-excursion
@@ -373,7 +370,7 @@ Doom Modeline documentation at https://github.com/seagle0128/doom-modeline.
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 18)
+    :custom ((doom-modeline-height 24)
 	     (doom-modeline-icon nil)))
 #+end_src
 
@@ -382,7 +379,7 @@ Doom Modeline documentation at https://github.com/seagle0128/doom-modeline.
 
 Install the fonts: ~M-x all-the-icons-install-fonts~
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package all-the-icons
     :if (display-graphic-p))
 #+end_src
@@ -876,27 +873,7 @@ Key binding is set to ~C-c p~, there's a bunch of comands to run.
 #+end_src
 
 
-
-** LSP Mode
-
-#+begin_src emacs-lisp
-  (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    :config
-    (lsp-enable-which-key-integration t)
-    (setq lsp-prefer-capf t)
-    (setq lsp-completion-provider :capf)
-    (setq lsp-completion-enable t))
-    ;;:hook (rust-mode . lsp))
-#+end_src
-
-
-** LSP Mode Language specific configuration
-
-- Define the language as, 1) mode, 2) lsp.
-- Each language should enable lsp, company, etc.
+** IDEs
 
 *** Rust
 
@@ -910,7 +887,7 @@ For some reason (which I don't know really) it won't let me to add the
 indent and enable lsp in the use-package :hook section, that's why it
 is the way is coded.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package rust-mode
     :bind (:map rust-mode-map
                 ("C-c C-c" . rust-run))
@@ -929,7 +906,7 @@ https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-rls/
 
 Server setup:
 
-#+begin_src text :tangle no
+#+begin_src text :tangle no :tangle no
   rustup update
   rustup component add rls rust-analysis rust-src
 #+end_src
@@ -937,68 +914,13 @@ Server setup:
 There's a hook that enable lsp in rust-mode.
 
 
-** C++ IDE
-
-#+begin_src emacs-lisp
-  (helm-mode)
-  (require 'helm-xref)
-  (define-key global-map [remap find-file] #'helm-find-files)
-  (define-key global-map [remap execute-extended-command] #'helm-M-x)
-  (define-key global-map [remap switch-to-buffer] #'helm-mini)
-
-  ;;(which-key-mode)
-  (add-hook 'c-mode-hook 'lsp)
-  (add-hook 'c++-mode-hook 'lsp)
-
-  (setq gc-cons-threshold (* 100 1024 1024)
-        read-process-output-max (* 1024 1024)
-        treemacs-space-between-root-nodes nil
-        company-idle-delay 0.0
-        company-minimum-prefix-length 1
-        lsp-idle-delay 0.1)  ;; clangd is fast
-
-  (with-eval-after-load 'lsp-mode
-    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-    (require 'dap-cpptools)
-    (yas-global-mode))
-#+end_src
-
-
-
-
-** Others
-
-
-*** Theme cycle
-
-#+begin_src emacs-lisp
-  (defun gk-next-theme ()
-    "Switch to the next theme in ‘custom-known-themes’.
-  If exhausted, disable themes.  If run again thereafter, wrap to
-  the beginning of the list."
-    (interactive)
-    (let* ((ct (or (car custom-enabled-themes)
-                   (car custom-known-themes)))
-           (next (cadr (memq ct custom-known-themes))))
-      (when (memq next '(user changed))
-        (setq next nil))
-      (dolist (theme custom-enabled-themes)
-        (disable-theme theme))
-      (if next
-          (progn
-            (load-theme next t)
-            (message "Loaded theme ‘%S’" next))
-        (message "All themes disabled"))))
-  (global-set-key (kbd "C-c C-t") 'gk-next-theme)
-#+end_src
-
 
 ** Daemon
 
 *** Server
 
 To start emacs daemon within emacs, closeing that emacs session
-running the damone, will kill the server as well.
+running the daemon, will kill the server as well.
 
 #+begin_src emacs-lisp :tangle no
   (server-start)
@@ -1077,6 +999,23 @@ not, if is a "named" dameon, it will return the name of the daemon.
     (message "emacs, standalone mode"))
 #+end_src
 
+
+** Custom Functions
+
+#+begin_src emacs-lisp
+
+  ;; (treemacs-add-project-to-workspace PATH &optional NAME)
+  ;; (projectile-add-known-project PROJECT-ROOT)
+
+  (defun choose-directory (directory)
+    "sample that uses interactive to get a directory"
+    (interactive (list (read-directory-name "What directory? " 
+                                            choose-directory-default-directory)))
+    (message "You chose %s." directory))
+
+  (defvar choose-directory-default-directory "~"
+    "Initial starting point.")
+#+end_src
 
 ** Epilogue
 
@@ -1241,3 +1180,13 @@ configuration. There's a lot of emacs and lisp documentation.
 - https://emacs-tree-sitter.github.io/syntax-highlighting/customization/
 - faces rust, github.com/rust-lang/rust-mode/blob/master/rust-mode.el#L89
 - https://www.reddit.com/r/emacs/comments/6x7ph2/is_company_different_from_helm_and_ivy/
+
+
+** TODO
+
+- company-mode enable
+- flymake
+- eglot
+- treemacs and projectile
+- projectile and project.el (https://ddavis.io/posts/eglot-cpp-ide/)
+- projectile and ag + fzf ?

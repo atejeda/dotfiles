@@ -33,7 +33,7 @@
   (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
   ;;(setq custom/v-font-fam "Courier New") ;; fh 120
   ;;(setq custom/v-font-fam "Monaco") ;; fh 120
-  (setq custom/v-font-fam "Liberation Mono");; fh 120
+  ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
   (setq custom/v-font-ht 120)
   (setq custom/v-is-darwin t)))
 
@@ -81,10 +81,8 @@
         projectile
         magit
         rust-mode
-        ;; lsp-mode c++
         yasnippet
         lsp-treemacs
-        helm-lsp
         flycheck
         company
         avy
@@ -104,7 +102,7 @@
 (display-time)
 (savehist-mode 1)
 
-;; no startaup screen, no bell
+;; no startup screen, no bell
 (setq inhibit-startup-screen t)
 (setq ring-bell-function 'ignore)
 
@@ -179,8 +177,7 @@
 
   ;; line spacing
 
-  (setq-default line-spacing 0.1)
-  )
+  (setq-default line-spacing 0.1))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
@@ -192,15 +189,8 @@
   (interactive)
   (save-excursion
     (end-of-line)
-    (hs-hide-block)))
+    (hs-toggle-hidding)))
 (global-set-key (kbd "C-c C--") 'custom/f-fold)
-
-(defun custom/f-ufold ()
-  (interactive)
-  (save-excursion
-    ;;(move-beginning-of-line)
-    (hs-show-block)))
-(global-set-key (kbd "C-c C-=") 'custom/f-ufold)
 
 (if custom/v-is-linux
     (use-package smooth-scrolling
@@ -210,11 +200,8 @@
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 18)
+  :custom ((doom-modeline-height 24)
 	   (doom-modeline-icon nil)))
-
-(use-package all-the-icons
-  :if (display-graphic-p))
 
 ;; global set keys
 
@@ -487,66 +474,17 @@
   :config
   (global-set-key (kbd "C-x g") 'magit-status))
 
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :config
-  (lsp-enable-which-key-integration t)
-  (setq lsp-prefer-capf t)
-  (setq lsp-completion-provider :capf)
-  (setq lsp-completion-enable t))
-  ;;:hook (rust-mode . lsp))
+;; (treemacs-add-project-to-workspace PATH &optional NAME)
+;; (projectile-add-known-project PROJECT-ROOT)
 
-(use-package rust-mode
-  :bind (:map rust-mode-map
-              ("C-c C-c" . rust-run))
-  :config
-  (add-hook 'rust-mode-hook #'lsp)
-  :hook
-  (custom/f-config-look)
-  )
+(defun choose-directory (directory)
+  "sample that uses interactive to get a directory"
+  (interactive (list (read-directory-name "What directory? " 
+                                          choose-directory-default-directory)))
+  (message "You chose %s." directory))
 
-(helm-mode)
-(require 'helm-xref)
-(define-key global-map [remap find-file] #'helm-find-files)
-(define-key global-map [remap execute-extended-command] #'helm-M-x)
-(define-key global-map [remap switch-to-buffer] #'helm-mini)
-
-;;(which-key-mode)
-(add-hook 'c-mode-hook 'lsp)
-(add-hook 'c++-mode-hook 'lsp)
-
-(setq gc-cons-threshold (* 100 1024 1024)
-      read-process-output-max (* 1024 1024)
-      treemacs-space-between-root-nodes nil
-      company-idle-delay 0.0
-      company-minimum-prefix-length 1
-      lsp-idle-delay 0.1)  ;; clangd is fast
-
-(with-eval-after-load 'lsp-mode
-  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-  (require 'dap-cpptools)
-  (yas-global-mode))
-
-(defun gk-next-theme ()
-  "Switch to the next theme in ‘custom-known-themes’.
-If exhausted, disable themes.  If run again thereafter, wrap to
-the beginning of the list."
-  (interactive)
-  (let* ((ct (or (car custom-enabled-themes)
-                 (car custom-known-themes)))
-         (next (cadr (memq ct custom-known-themes))))
-    (when (memq next '(user changed))
-      (setq next nil))
-    (dolist (theme custom-enabled-themes)
-      (disable-theme theme))
-    (if next
-        (progn
-          (load-theme next t)
-          (message "Loaded theme ‘%S’" next))
-      (message "All themes disabled"))))
-(global-set-key (kbd "C-c C-t") 'gk-next-theme)
+(defvar choose-directory-default-directory "~"
+  "Initial starting point.")
 
 ;; set bold off EVERYWHERE but orgmode
 ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
@@ -585,3 +523,19 @@ the beginning of the list."
 
 ;; eof
 ;; below this line, there's pure garbage
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(terraform-mode use-package doom-themes lsp-mode multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode haskell-mode elfeed json-mode rainbow-delimiters which-key ivy ivy-rich counsel treemacs visual-fill visual-fill-column dashboard org-auto-tangle evil undo-fu evil-collection swiper smooth-scrolling no-littering doom-modeline nix-haskell-mode projectile magit rust-mode yasnippet lsp-treemacs flycheck company avy helm-xref dap-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-block ((t (:background "#1e1e1e" :extend t))))
+ '(org-block-begin-line ((t (:background "#1e1e1e" :extend t))))
+ '(org-block-end-line ((t (:background "#1e1e1e" :extend t)))))
+(put 'downcase-region 'disabled nil)
