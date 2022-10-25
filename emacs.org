@@ -80,12 +80,14 @@ Performance related improvement:
 
   ;; linux or darwin
   (cond
+   
    ((eq system-type 'gnu/linux)
     (setq custom/v-color-bg '(background-color . "#1c2023"))
     (setq custom/v-color-fg '(foreground-color . "#c7ccd1"))
-    (setq custom/v-font-fam "Hack")
+    (setq custom/v-font-fam "Monospace")
     (setq custom/v-font-ht 100)
     (setq custom/v-is-linux t))
+
    ((eq system-type 'darwin)
     (setq custom/v-color-bg '(background-color . "#121212"))
     (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
@@ -93,7 +95,8 @@ Performance related improvement:
     ;;(setq custom/v-font-fam "Monaco") ;; fh 120
     ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
     (setq custom/v-font-ht 120)
-    (setq custom/v-is-darwin t)))
+    (setq custom/v-is-darwin t))
+   )
   #+end_src
 
 
@@ -198,78 +201,81 @@ Function to defined the look and feel of the editor:
   running a standanlone emacs process.
     
 #+begin_src emacs-lisp
-    ;; look
-    (defun custom/f-config-look ()
-      (interactive)
-      (save-excursion)
+  ;; look
+  (defun custom/f-config-look ()
+    (interactive)
+    (save-excursion)
 
-      ;; theme
-      (use-package doom-themes :defer nil)
+    ;; theme
+    (use-package doom-themes :defer nil)
 
-      ;; doom-one
-      ;;(load-theme 'doom-one t)
+    ;; doom-one
+    ;;(load-theme 'doom-one t)
 
-      ;; atom-one-dark
-      ;;(load-theme 'atom-one-dark t)
+    ;; atom-one-dark
+    ;;(load-theme 'atom-one-dark t)
 
-      ;; doom-nord
-      (load-theme 'doom-nord t)
-      (setq doom-nord-brighter-comments nil)
+    ;; doom-nord
+    (load-theme 'doom-nord t)
+    (setq doom-nord-brighter-comments nil)
 
-      ;; general settings
-      (menu-bar-mode -1)      ;; no bar
-      (tool-bar-mode -1)      ;; no tool bar
-      (scroll-bar-mode -1)    ;; no scroll bar
-      ;(set-fringe-mode 10)    ;; fringe to 10
-      (column-number-mode 1)  ;; column number in the mode line
-      (line-number-mode 1)    ;; line number in the mode line
-      (global-linum-mode 0)   ;; line number in the buffer left margin
-      (global-hl-line-mode 0) ;; line highlight
+    ;; general settings
+    (menu-bar-mode -1)      ;; no bar
+    (tool-bar-mode -1)      ;; no tool bar
+    (scroll-bar-mode -1)    ;; no scroll bar
+                                          ;(set-fringe-mode 10)    ;; fringe to 10
+    (column-number-mode 1)  ;; column number in the mode line
+    (line-number-mode 1)    ;; line number in the mode line
+    (global-linum-mode 0)   ;; line number in the buffer left margin
+    (global-hl-line-mode 0) ;; line highlight
 
-      (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
+    (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
 
-      ;; enable parenthesis hightlight
-      (show-paren-mode 1)
-      (setq show-paren-delay 0)
+    ;; enable parenthesis hightlight
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
 
-      ;; reset text scale
-      (text-scale-set 0)
+    ;; reset text scale
+    (text-scale-set 0)
 
-      ;; tabs
-      (setq-default indent-tabs-mode nil)
-      (setq-default c-basic-offset 4)
-      (setq-default py-indent-offset 4)
-      (setq standard-indent 4)
-      (setq c-default-style "linux" c-basic-offset 4)
-      (setq scroll-step 1)
-      (setq make-backup-files nil)
-      (setq auto-fill-mode 1)
-      (setq next-line-add-newlines nil)
+    ;; tabs
+    (setq-default indent-tabs-mode nil)
+    (setq-default c-basic-offset 4)
+    (setq-default py-indent-offset 4)
+    (setq standard-indent 4)
+    (setq c-default-style "linux" c-basic-offset 4)
+    (setq scroll-step 1)
+    (setq make-backup-files nil)
+    (setq auto-fill-mode 1)
+    (setq next-line-add-newlines nil)
 
-      ;; paren
-      (show-paren-mode 1)
-      (setq show-paren-delay 0)
+    ;; paren
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
 
-      ;; frame parameters
+    ;; frame parameters
 
-      ;; initial-frame-alist
-      (add-to-list 'initial-frame-alist custom/v-color-bg)
-      (add-to-list 'initial-frame-alist custom/v-color-fg)
-      ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+    ;; initial-frame-alist
+    (add-to-list 'initial-frame-alist custom/v-color-bg)
+    (add-to-list 'initial-frame-alist custom/v-color-fg)
+    (add-to-list 'initial-frame-alist '(width . 180))
+    (add-to-list 'initial-frame-alist '(height . 65))
+    ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
-      ;; default-frame-alist
-      (add-to-list 'default-frame-alist custom/v-color-bg)
-      (add-to-list 'default-frame-alist custom/v-color-fg)
-      ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; default-frame-alist
+    (add-to-list 'default-frame-alist custom/v-color-bg)
+    (add-to-list 'default-frame-alist custom/v-color-fg)
+    (add-to-list 'initial-frame-alist '(width . 180))
+    (add-to-list 'initial-frame-alist '(height . 65))
+    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-      ;; font
-      (set-face-attribute 'default nil
-                          :family custom/v-font-fam
-                          :height custom/v-font-ht)
+    ;; font
+    (set-face-attribute 'default nil
+                        :family custom/v-font-fam
+                        :height custom/v-font-ht)
 
-      ;; line spacing
-
-      (setq-default line-spacing 0.1))
+    ;; line spacing
+    (setq-default line-spacing 0.1))
 #+end_src
 
 If is in daemon mode, hook the frame to reload the look and feel settings,
@@ -1002,8 +1008,7 @@ not, if is a "named" dameon, it will return the name of the daemon.
 
 ** Custom Functions
 
-#+begin_src emacs-lisp
-
+#+begin_src text :tangle no
   ;; (treemacs-add-project-to-workspace PATH &optional NAME)
   ;; (projectile-add-known-project PROJECT-ROOT)
 
@@ -1016,6 +1021,81 @@ not, if is a "named" dameon, it will return the name of the daemon.
   (defvar choose-directory-default-directory "~"
     "Initial starting point.")
 #+end_src
+
+This function (below) sets the current working directory 
+
+#+begin_src emacs-lisp
+  ;; set treemacs to --cwd argument
+
+  (require 'treemacs-macros)
+  (require 'treemacs-customization)
+  (require 'treemacs-logging)
+  (require 'treemacs-themes)
+  (require 'treemacs-icons)
+  (require 'treemacs-faces)
+  (require 'treemacs-visuals)
+  (require 'treemacs-rendering)
+  (require 'treemacs-core-utils)
+  (require 'treemacs-scope)
+  (require 'treemacs-follow-mode)
+  (require 'treemacs-filewatch-mode)
+  (require 'treemacs-mode)
+  (require 'treemacs-interface)
+  (require 'treemacs-persistence)
+  (require 'treemacs-async)
+  (require 'treemacs-compatibility)
+  (require 'treemacs-workspaces)
+  (require 'treemacs-fringe-indicator)
+  (require 'treemacs-header-line)
+  (require 'treemacs-annotations)
+
+  (defun custom/treemacs-select-directory (directory)
+    (interactive)
+    (setq default-directory directory)
+    (message default-directory)
+
+    (treemacs-block
+     (let* ((path (expand-file-name default-directory))
+            (name (treemacs--filename path))
+            (ws (treemacs-current-workspace)))
+
+       (treemacs-return-if
+           (and (= 1 (length (treemacs-workspace->projects ws)))
+                (string= path (-> ws
+                                  (treemacs-workspace->projects)
+                                  (car)
+                                  (treemacs-project->path))))
+         (treemacs-select-window))
+       (treemacs--show-single-project path name)
+       (treemacs-pulse-on-success "Now showing %s"
+         (propertize path 'face 'font-lock-string-face))))
+
+
+    ;; get dired buffer name from path
+    (setq dired-buffer-name
+          (file-name-nondirectory
+           (directory-file-name
+            (file-name-directory directory))))
+    (message dired-buffer-name)
+
+    ;; kill dired buffer
+    (kill-matching-buffers dired-buffer-name)
+    (delete-other-windows)
+
+    ;; swith to the scratch buffer
+    (switch-to-buffer "*scratch*")
+
+    ;; dashboard-mode, dashboard-refresh-buffer
+    )
+
+  ;; so 13672229
+  ;;(setq default-directory (or x (getenv "PWD")))
+  (add-to-list
+   'command-switch-alist
+   '("--cwd" . (lambda(x)
+                 (custom/treemacs-select-directory
+                  (car command-line-args-left)))))
+  #+end_src
 
 ** Epilogue
 

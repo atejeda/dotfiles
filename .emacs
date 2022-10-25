@@ -22,12 +22,14 @@
 
 ;; linux or darwin
 (cond
+
  ((eq system-type 'gnu/linux)
   (setq custom/v-color-bg '(background-color . "#1c2023"))
   (setq custom/v-color-fg '(foreground-color . "#c7ccd1"))
-  (setq custom/v-font-fam "Hack")
+  (setq custom/v-font-fam "Monospace")
   (setq custom/v-font-ht 100)
   (setq custom/v-is-linux t))
+
  ((eq system-type 'darwin)
   (setq custom/v-color-bg '(background-color . "#121212"))
   (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
@@ -35,7 +37,8 @@
   ;;(setq custom/v-font-fam "Monaco") ;; fh 120
   ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
   (setq custom/v-font-ht 120)
-  (setq custom/v-is-darwin t)))
+  (setq custom/v-is-darwin t))
+ )
 
 ;; package
 (require 'package)
@@ -128,7 +131,7 @@
   (menu-bar-mode -1)      ;; no bar
   (tool-bar-mode -1)      ;; no tool bar
   (scroll-bar-mode -1)    ;; no scroll bar
-  ;(set-fringe-mode 10)    ;; fringe to 10
+                                        ;(set-fringe-mode 10)    ;; fringe to 10
   (column-number-mode 1)  ;; column number in the mode line
   (line-number-mode 1)    ;; line number in the mode line
   (global-linum-mode 0)   ;; line number in the buffer left margin
@@ -163,11 +166,15 @@
   ;; initial-frame-alist
   (add-to-list 'initial-frame-alist custom/v-color-bg)
   (add-to-list 'initial-frame-alist custom/v-color-fg)
+  (add-to-list 'initial-frame-alist '(width . 180))
+  (add-to-list 'initial-frame-alist '(height . 65))
   ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
   ;; default-frame-alist
   (add-to-list 'default-frame-alist custom/v-color-bg)
   (add-to-list 'default-frame-alist custom/v-color-fg)
+  (add-to-list 'initial-frame-alist '(width . 180))
+  (add-to-list 'initial-frame-alist '(height . 65))
   ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
   ;; font
@@ -176,7 +183,6 @@
                       :height custom/v-font-ht)
 
   ;; line spacing
-
   (setq-default line-spacing 0.1))
 
 (if (daemonp)
@@ -474,17 +480,76 @@
   :config
   (global-set-key (kbd "C-x g") 'magit-status))
 
-;; (treemacs-add-project-to-workspace PATH &optional NAME)
-;; (projectile-add-known-project PROJECT-ROOT)
+;; set treemacs to --cwd argument
 
-(defun choose-directory (directory)
-  "sample that uses interactive to get a directory"
-  (interactive (list (read-directory-name "What directory? " 
-                                          choose-directory-default-directory)))
-  (message "You chose %s." directory))
+(require 'treemacs-macros)
+(require 'treemacs-customization)
+(require 'treemacs-logging)
+(require 'treemacs-themes)
+(require 'treemacs-icons)
+(require 'treemacs-faces)
+(require 'treemacs-visuals)
+(require 'treemacs-rendering)
+(require 'treemacs-core-utils)
+(require 'treemacs-scope)
+(require 'treemacs-follow-mode)
+(require 'treemacs-filewatch-mode)
+(require 'treemacs-mode)
+(require 'treemacs-interface)
+(require 'treemacs-persistence)
+(require 'treemacs-async)
+(require 'treemacs-compatibility)
+(require 'treemacs-workspaces)
+(require 'treemacs-fringe-indicator)
+(require 'treemacs-header-line)
+(require 'treemacs-annotations)
 
-(defvar choose-directory-default-directory "~"
-  "Initial starting point.")
+(defun custom/treemacs-select-directory (directory)
+  (interactive)
+  (setq default-directory directory)
+  (message default-directory)
+
+  (treemacs-block
+   (let* ((path (expand-file-name default-directory))
+          (name (treemacs--filename path))
+          (ws (treemacs-current-workspace)))
+
+     (treemacs-return-if
+         (and (= 1 (length (treemacs-workspace->projects ws)))
+              (string= path (-> ws
+                                (treemacs-workspace->projects)
+                                (car)
+                                (treemacs-project->path))))
+       (treemacs-select-window))
+     (treemacs--show-single-project path name)
+     (treemacs-pulse-on-success "Now showing %s"
+       (propertize path 'face 'font-lock-string-face))))
+
+
+  ;; get dired buffer name from path
+  (setq dired-buffer-name
+        (file-name-nondirectory
+         (directory-file-name
+          (file-name-directory directory))))
+  (message dired-buffer-name)
+
+  ;; kill dired buffer
+  (kill-matching-buffers dired-buffer-name)
+  (delete-other-windows)
+
+  ;; swith to the scratch buffer
+  (switch-to-buffer "*scratch*")
+
+  ;; dashboard-mode, dashboard-refresh-buffer
+  )
+
+;; so 13672229
+;;(setq default-directory (or x (getenv "PWD")))
+(add-to-list
+ 'command-switch-alist
+ '("--cwd" . (lambda(x)
+               (custom/treemacs-select-directory
+                (car command-line-args-left)))))
 
 ;; set bold off EVERYWHERE but orgmode
 ;;(set-face-bold-p 'bold nil) ;; disable bold fonts
@@ -523,19 +588,3 @@
 
 ;; eof
 ;; below this line, there's pure garbage
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(terraform-mode use-package doom-themes lsp-mode multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode haskell-mode elfeed json-mode rainbow-delimiters which-key ivy ivy-rich counsel treemacs visual-fill visual-fill-column dashboard org-auto-tangle evil undo-fu evil-collection swiper smooth-scrolling no-littering doom-modeline nix-haskell-mode projectile magit rust-mode yasnippet lsp-treemacs flycheck company avy helm-xref dap-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-block ((t (:background "#1e1e1e" :extend t))))
- '(org-block-begin-line ((t (:background "#1e1e1e" :extend t))))
- '(org-block-end-line ((t (:background "#1e1e1e" :extend t)))))
-(put 'downcase-region 'disabled nil)
