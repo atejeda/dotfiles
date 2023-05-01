@@ -1,5 +1,6 @@
 [user]
-    name = Alexis Tejeda
+	name = Alexis Tejeda
+	email = alexis.tejeda@temba.cl
 [credential]
     helper = cache --timeout=3600
 [push]

@@ -91,7 +91,10 @@ Performance related improvement:
     (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
     ;;(setq custom/v-font-fam "Courier New") ;; fh 120
     ;;(setq custom/v-font-fam "Monaco") ;; fh 120
-    ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
+    (setq custom/v-font-fam "Liberation Mono");; fh 120
+    ;; (setq custom/v-font-fam "Jetbrains Mono");; fh 125
+    ;;(setq custom/v-font-fam "IBM Plex Mono");; fh 125
+    ;;(setq custom/v-font-fam "Fira Code");; fh 125
     (setq custom/v-font-ht 120)
     (setq custom/v-is-darwin t)))
   #+end_src
@@ -157,6 +160,8 @@ List of packages used by this configuration.
           avy
           helm-xref
           dap-mode
+          eglot
+          dockerfile-mode
           ))
 
   ;; auto install
@@ -177,7 +182,14 @@ packages.
 
 ** Look and feel
 
-*** Theme and frame configuration
+From https://xenodium.com/my-emacs-eye-candy/ (macos settings):
+
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+#+end_src
+
+* Theme and frame configuration
 
 General setting, frame independent:
 
@@ -198,78 +210,112 @@ Function to defined the look and feel of the editor:
   running a standanlone emacs process.
     
 #+begin_src emacs-lisp
-    ;; look
-    (defun custom/f-config-look ()
-      (interactive)
-      (save-excursion)
+  ;; look
+  (defun custom/f-config-look ()
+    (interactive)
+    (save-excursion)
 
-      ;; theme
-      (use-package doom-themes :defer nil)
+    ;; theme
+    (use-package doom-themes :defer nil)
 
-      ;; doom-one
-      ;;(load-theme 'doom-one t)
+    ;; doom-one
+    ;;(load-theme 'doom-one t)
 
-      ;; atom-one-dark
-      ;;(load-theme 'atom-one-dark t)
+    ;; atom-one-dark
+    ;;(load-theme 'atom-one-dark t)
 
-      ;; doom-nord
-      (load-theme 'doom-nord t)
-      (setq doom-nord-brighter-comments nil)
+    ;; doom-nord
+    (load-theme 'doom-nord t)
+    (setq doom-nord-brighter-comments nil)
 
-      ;; general settings
-      (menu-bar-mode -1)      ;; no bar
-      (tool-bar-mode -1)      ;; no tool bar
-      (scroll-bar-mode -1)    ;; no scroll bar
-      ;(set-fringe-mode 10)    ;; fringe to 10
-      (column-number-mode 1)  ;; column number in the mode line
-      (line-number-mode 1)    ;; line number in the mode line
-      (global-linum-mode 0)   ;; line number in the buffer left margin
-      (global-hl-line-mode 0) ;; line highlight
+    ;; general settings
+    (menu-bar-mode -1)      ;; no bar
+    (tool-bar-mode -1)      ;; no tool bar
+    (scroll-bar-mode -1)    ;; no scroll bar
+                                          ;(set-fringe-mode 10)    ;; fringe to 10
+    (column-number-mode 1)  ;; column number in the mode line
+    (line-number-mode 1)    ;; line number in the mode line
+    (global-linum-mode 0)   ;; line number in the buffer left margin
+    (global-hl-line-mode 0) ;; line highlight
 
-      (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
+    (setq vc-follow-symlinks t)  ;; follow symlinks, default 'ask'
 
-      ;; enable parenthesis hightlight
-      (show-paren-mode 1)
-      (setq show-paren-delay 0)
+    ;; enable parenthesis hightlight
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
 
-      ;; reset text scale
-      (text-scale-set 0)
+    ;; reset text scale
+    (text-scale-set 0)
 
-      ;; tabs
-      (setq-default indent-tabs-mode nil)
-      (setq-default c-basic-offset 4)
-      (setq-default py-indent-offset 4)
-      (setq standard-indent 4)
-      (setq c-default-style "linux" c-basic-offset 4)
-      (setq scroll-step 1)
-      (setq make-backup-files nil)
-      (setq auto-fill-mode 1)
-      (setq next-line-add-newlines nil)
+    ;; tabs
+    (setq-default indent-tabs-mode nil)
+    (setq-default c-basic-offset 4)
+    (setq-default py-indent-offset 4)
+    (setq standard-indent 4)
+    (setq c-default-style "linux" c-basic-offset 4)
+    (setq scroll-step 1)
+    (setq make-backup-files nil)
+    (setq auto-fill-mode 1)
+    (setq next-line-add-newlines nil)
 
-      ;; paren
-      (show-paren-mode 1)
-      (setq show-paren-delay 0)
+    ;; paren
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
 
-      ;; frame parameters
+    ;; frame parameters
 
-      ;; initial-frame-alist
-      (add-to-list 'initial-frame-alist custom/v-color-bg)
-      (add-to-list 'initial-frame-alist custom/v-color-fg)
-      ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+    ;; initial-frame-alist
+    (add-to-list 'initial-frame-alist custom/v-color-bg)
+    (add-to-list 'initial-frame-alist custom/v-color-fg)
+    ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
-      ;; default-frame-alist
-      (add-to-list 'default-frame-alist custom/v-color-bg)
-      (add-to-list 'default-frame-alist custom/v-color-fg)
-      ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; default-frame-alist
+    (add-to-list 'default-frame-alist custom/v-color-bg)
+    (add-to-list 'default-frame-alist custom/v-color-fg)
+    ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-      ;; font
-      (set-face-attribute 'default nil
-                          :family custom/v-font-fam
-                          :height custom/v-font-ht)
+    ;; font
+    (set-face-attribute 'default nil
+                        :stipple nil
+                        :inverse-video nil
+                        :family custom/v-font-fam
+                        :height custom/v-font-ht
+                        :box nil
+                        :strike-through nil
+                        :overline nil
+                        :underline nil
+                        :slant 'normal
+                        :weight 'normal
+                        :width 'normal
+                        :foundry "nil")
 
-      ;; line spacing
+    ;; padding
+    ;; https://stackoverflow.com/questions/3626632/right-align-line-numbers-with-linum-mode
 
-      (setq-default line-spacing 0.1))
+    ;;(set-window-margins nil 3)
+    ;;(global-linum-mode t)
+    ;;(setq linum-format " ")
+
+    ;; windows margin
+    ;;(set-window-margins (selected-window) 1 1)
+    ;;(setq-default left-margin-width 1 right-margin-width 1)
+    ;;(set-window-buffer nil (current-buffer))
+
+    ;;(custom-set-variables '(linum-format (quote "%4d")))
+    (custom-set-variables '(linum-format 'dynamic))
+    (defadvice linum-update-window (around linum-dynamic activate)
+  (let* ((w (length (number-to-string
+                     (count-lines (point-min) (point-max)))))
+         (linum-format (concat "  %" (number-to-string w) "d ")))
+    ad-do-it))
+    ;;(setq linum-format "    %d")
+    (setq-default left-fringe-width  20)
+    (setq-default right-fringe-width  20)
+    ;;(set-face-attribute 'fringe nil :background "black")
+
+    ;; line spacing
+
+    (setq-default line-spacing 0.35))
 #+end_src
 
 If is in daemon mode, hook the frame to reload the look and feel settings,
@@ -282,6 +328,16 @@ other settings.
                 (lambda (frame)
                   (with-selected-frame frame (custom/f-config-look))))
     (custom/f-config-look))
+#+end_src
+
+
+** Neotree
+
+#+begin_src emacs-lisp
+  (require 'neotree)
+  (global-set-key [f8] 'neotree-toggle)
+  ;;(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (setq neo-theme (if (display-graphic-p) 'arrow))
 #+end_src
 
 
@@ -367,11 +423,11 @@ Change the modeline settings:
 
 Doom Modeline documentation at https://github.com/seagle0128/doom-modeline.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 24)
-	     (doom-modeline-icon nil)))
+	     (doom-modeline-icon 1)))
 #+end_src
 
 
@@ -658,7 +714,7 @@ Set the face to red from (including) char 80.
 
 *** Multiple Cursors
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp 
   (use-package multiple-cursors
     :defer t
     :commands (mc/edit-lines mc/mark-next-word-like-this)
@@ -690,18 +746,19 @@ key-binding is section is evaluated.
     (progn (setq treemacs-no-png-images t))
     (treemacs-resize-icons 14)
     (dolist (face '(treemacs-root-face
-		    treemacs-git-unmodified-face
-		    treemacs-git-modified-face
-		    treemacs-git-renamed-face
-		    treemacs-git-ignored-face
-		    treemacs-git-untracked-face
-		    treemacs-git-added-face
-		    treemacs-git-conflict-face
-		    treemacs-directory-face
-		    treemacs-directory-collapsed-face
-		    treemacs-file-face
-		    treemacs-tags-face))
-      (set-face-attribute face nil :family custom/v-font-fam :height custom/v-font-ht)))
+                    treemacs-git-unmodified-face
+                    treemacs-git-modified-face
+                    treemacs-git-renamed-face
+                    treemacs-git-ignored-face
+                    treemacs-git-untracked-face
+                    treemacs-git-added-face
+                    treemacs-git-conflict-face
+                    treemacs-directory-face
+                    treemacs-directory-collapsed-face
+                    treemacs-file-face
+                    treemacs-tags-face))
+      (set-face-attribute face nil :family custom/v-font-fam :height custom/v-font-ht)      
+      ))
 #+end_src
 
 
@@ -865,7 +922,7 @@ Key binding is set to ~C-c p~, there's a bunch of comands to run.
 
 *** Magit
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package magit
     :defer t
     :config
@@ -873,7 +930,93 @@ Key binding is set to ~C-c p~, there's a bunch of comands to run.
 #+end_src
 
 
-** IDEs
+** Eglot
+
+
+Common configuration:
+
+#+begin_src emacs-lisp :tangle no
+  (use-package eglot
+    :defer t)
+
+  (require 'eglot)
+
+  (add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'typescript-mode-hook 'eglot-ensure)
+  (add-hook 'after-init-hook 'global-company-mode)
+
+  (cl-defmethod project-root ((project (head eglot-project)))
+    (cdr project))
+#+end_src
+
+Documentaion at https://github.com/joaotavora/eglot.
+
+TODO: review treesitter https://emacs-tree-sitter.github.io/
+
+*** C/C++'s clangd or ccls
+
+- https://clang.llvm.org/extra/clangd.html
+
+  
+*** Javascript's TS & JS Language Server
+
+Documentation:
+
+- https://github.com/typescript-language-server/typescript-language-server
+- https://notes.alexkehayias.com/setting-up-typescript-and-eslint-with-eglot/
+- https://mihamina.rktmb.org/2022/11/emacs-typescript-eglot.html
+
+Prerequisites:
+
+#+begin_src emacs-lisp :tangle no
+  npm install -g typescript-language-server typescript
+  npm install typescript-eslint-language-service -D
+  npm install -g tree-sitter-cli
+  typescript-language-server --stdio
+#+end_src
+
+Configuration:
+
+#+begin_src emacs-lisp :tangle no
+  (defun my-project-try-tsconfig-json (dir)
+    (when-let* ((found (locate-dominating-file dir "tsconfig.json")))
+      (cons 'eglot-project found)))
+
+  (add-hook 'project-find-functions
+            'my-project-try-tsconfig-json nil nil)
+
+  (add-to-list 'eglot-server-programs
+               '((typescript-mode) "typescript-language-server" "--stdio"))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :ensure t
+    :config
+    ;; activate tree-sitter on any buffer containing code for which it has a parser available
+    (global-tree-sitter-mode)
+    ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+    ;; by switching on and off
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter)
+  
+  (use-package eglot
+    :ensure t)
+
+  ;; Ensure Eglot is launched on Typescript buffers
+  (add-hook 'typescript-mode-hook 'eglot-ensure)
+
+  ;; Ensure Company is maunched in all buffers (not Typescript only)
+  ;; Please tell me a way to make it selective
+  (add-hook 'after-init-hook 'global-company-mode)
+#+end_src
+
+
+** IDEs (deprecated)
 
 *** Rust
 
@@ -919,7 +1062,7 @@ There's a hook that enable lsp in rust-mode.
 
 *** Server
 
-To start emacs daemon within emacs, closeing that emacs session
+To start emacs daemon within emacs, closing that emacs session
 running the daemon, will kill the server as well.
 
 #+begin_src emacs-lisp :tangle no

@@ -33,7 +33,10 @@
   (setq custom/v-color-fg '(foreground-color . "#d8dee8"))
   ;;(setq custom/v-font-fam "Courier New") ;; fh 120
   ;;(setq custom/v-font-fam "Monaco") ;; fh 120
-  ;;(setq custom/v-font-fam "Liberation Mono");; fh 120
+  (setq custom/v-font-fam "Liberation Mono");; fh 120
+  ;; (setq custom/v-font-fam "Jetbrains Mono");; fh 125
+  ;;(setq custom/v-font-fam "IBM Plex Mono");; fh 125
+  ;;(setq custom/v-font-fam "Fira Code");; fh 125
   (setq custom/v-font-ht 120)
   (setq custom/v-is-darwin t)))
 
@@ -88,6 +91,8 @@
         avy
         helm-xref
         dap-mode
+        eglot
+        dockerfile-mode
         ))
 
 ;; auto install
@@ -98,6 +103,9 @@
 ;; use-package
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
 
 (display-time)
 (savehist-mode 1)
@@ -128,7 +136,7 @@
   (menu-bar-mode -1)      ;; no bar
   (tool-bar-mode -1)      ;; no tool bar
   (scroll-bar-mode -1)    ;; no scroll bar
-  ;(set-fringe-mode 10)    ;; fringe to 10
+                                        ;(set-fringe-mode 10)    ;; fringe to 10
   (column-number-mode 1)  ;; column number in the mode line
   (line-number-mode 1)    ;; line number in the mode line
   (global-linum-mode 0)   ;; line number in the buffer left margin
@@ -172,18 +180,57 @@
 
   ;; font
   (set-face-attribute 'default nil
+                      :stipple nil
+                      :inverse-video nil
                       :family custom/v-font-fam
-                      :height custom/v-font-ht)
+                      :height custom/v-font-ht
+                      :box nil
+                      :strike-through nil
+                      :overline nil
+                      :underline nil
+                      :slant 'normal
+                      :weight 'normal
+                      :width 'normal
+                      :foundry "nil")
+
+  ;; padding
+  ;; https://stackoverflow.com/questions/3626632/right-align-line-numbers-with-linum-mode
+
+  ;;(set-window-margins nil 3)
+  ;;(global-linum-mode t)
+  ;;(setq linum-format " ")
+
+  ;; windows margin
+  ;;(set-window-margins (selected-window) 1 1)
+  ;;(setq-default left-margin-width 1 right-margin-width 1)
+  ;;(set-window-buffer nil (current-buffer))
+
+  ;;(custom-set-variables '(linum-format (quote "%4d")))
+  (custom-set-variables '(linum-format 'dynamic))
+  (defadvice linum-update-window (around linum-dynamic activate)
+(let* ((w (length (number-to-string
+                   (count-lines (point-min) (point-max)))))
+       (linum-format (concat "  %" (number-to-string w) "d ")))
+  ad-do-it))
+  ;;(setq linum-format "    %d")
+  (setq-default left-fringe-width  20)
+  (setq-default right-fringe-width  20)
+  ;;(set-face-attribute 'fringe nil :background "black")
 
   ;; line spacing
 
-  (setq-default line-spacing 0.1))
+  (setq-default line-spacing 0.35))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
                 (with-selected-frame frame (custom/f-config-look))))
   (custom/f-config-look))
+
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
+;;(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(setq neo-theme (if (display-graphic-p) 'arrow))
 
 (defun custom/f-fold ()
   (interactive)
@@ -201,7 +248,7 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 24)
-	   (doom-modeline-icon nil)))
+	   (doom-modeline-icon 1)))
 
 ;; global set keys
 
@@ -375,6 +422,13 @@
 
 (use-package multiple-cursors
   :defer t
+  :commands (mc/edit-lines mc/mark-next-word-like-this)
+  :init
+  (global-set-key (kbd "C-c m c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-word-like-this))
+
+(use-package multiple-cursors
+  :defer t
   :bind (("C-c m c" . 'mc/edit-lines)
          ("C->" . 'mc/mark-next-word-like-this)))
 
@@ -386,18 +440,19 @@
   (progn (setq treemacs-no-png-images t))
   (treemacs-resize-icons 14)
   (dolist (face '(treemacs-root-face
-		  treemacs-git-unmodified-face
-		  treemacs-git-modified-face
-		  treemacs-git-renamed-face
-		  treemacs-git-ignored-face
-		  treemacs-git-untracked-face
-		  treemacs-git-added-face
-		  treemacs-git-conflict-face
-		  treemacs-directory-face
-		  treemacs-directory-collapsed-face
-		  treemacs-file-face
-		  treemacs-tags-face))
-    (set-face-attribute face nil :family custom/v-font-fam :height custom/v-font-ht)))
+                  treemacs-git-unmodified-face
+                  treemacs-git-modified-face
+                  treemacs-git-renamed-face
+                  treemacs-git-ignored-face
+                  treemacs-git-untracked-face
+                  treemacs-git-added-face
+                  treemacs-git-conflict-face
+                  treemacs-directory-face
+                  treemacs-directory-collapsed-face
+                  treemacs-file-face
+                  treemacs-tags-face))
+    (set-face-attribute face nil :family custom/v-font-fam :height custom/v-font-ht)      
+    ))
 
 (use-package no-littering
   :defer nil
@@ -474,6 +529,29 @@
   :config
   (global-set-key (kbd "C-x g") 'magit-status))
 
+(use-package tree-sitter
+  :ensure t
+  :config
+  ;; activate tree-sitter on any buffer containing code for which it has a parser available
+  (global-tree-sitter-mode)
+  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+  ;; by switching on and off
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter)
+
+(use-package eglot
+  :ensure t)
+
+;; Ensure Eglot is launched on Typescript buffers
+(add-hook 'typescript-mode-hook 'eglot-ensure)
+
+;; Ensure Company is maunched in all buffers (not Typescript only)
+;; Please tell me a way to make it selective
+(add-hook 'after-init-hook 'global-company-mode)
+
 ;; (treemacs-add-project-to-workspace PATH &optional NAME)
 ;; (projectile-add-known-project PROJECT-ROOT)
 
@@ -523,19 +601,3 @@
 
 ;; eof
 ;; below this line, there's pure garbage
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(terraform-mode use-package doom-themes lsp-mode multiple-cursors all-the-icons powerline neotree fill-column-indicator bazel groovy-mode yaml yaml-mode haskell-mode elfeed json-mode rainbow-delimiters which-key ivy ivy-rich counsel treemacs visual-fill visual-fill-column dashboard org-auto-tangle evil undo-fu evil-collection swiper smooth-scrolling no-littering doom-modeline nix-haskell-mode projectile magit rust-mode yasnippet lsp-treemacs flycheck company avy helm-xref dap-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-block ((t (:background "#1e1e1e" :extend t))))
- '(org-block-begin-line ((t (:background "#1e1e1e" :extend t))))
- '(org-block-end-line ((t (:background "#1e1e1e" :extend t)))))
-(put 'downcase-region 'disabled nil)
